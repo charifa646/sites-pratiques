@@ -12,9 +12,8 @@ Installe ces deux skills depuis GitHub avant de commencer :
 - https://github.com/nextlevelbuilder/ui-ux-pro-max-skill
 
 ### 2. Installer le MCP 21st.dev (composants motion premium)
-```bash
-claude mcp add magic --scope user --env API_KEY="c91c939169646ee516c2f37eacb42e309a2905a4d784804802730003f0ebefa1" -- npx -y @21st-dev/magic@latest
-```
+> MCP 21st.dev (magic) déjà installé sur l'environnement — l'utiliser pour les composants motion premium.
+
 Ce MCP te donne accès à des composants motion design premium. Utilise-le pour tous les éléments d'animation sophistiqués.
 
 ### 3. Confirmer que tout est installé avant d'écrire la moindre ligne de code.
