@@ -17,7 +17,7 @@ const config: Config = {
       },
       fontFamily: {
         sans: ["var(--font-inter)", "system-ui", "sans-serif"],
-        display: ["var(--font-poppins)", "var(--font-inter)", "sans-serif"],
+        display: ["var(--font-display)", "var(--font-inter)", "sans-serif"],
       },
       letterSpacing: { tightest: "-0.04em", tighter2: "-0.02em" },
       boxShadow: {
@@ -47,6 +47,15 @@ const config: Config = {
           "0%, 100%": { transform: "translate3d(-8%, -4%, 0) rotate(0deg)" },
           "50%": { transform: "translate3d(8%, 6%, 0) rotate(8deg)" },
         },
+        marquee: {
+          from: { transform: "translateX(0)" },
+          to: { transform: "translateX(-50%)" },
+        },
+        "light-sweep": {
+          "0%": { transform: "translateX(-120%) skewX(-12deg)", opacity: "0" },
+          "30%": { opacity: "0.7" },
+          "100%": { transform: "translateX(220%) skewX(-12deg)", opacity: "0" },
+        },
       },
       animation: {
         "gradient-pan": "gradient-pan 12s ease infinite",
@@ -55,6 +64,8 @@ const config: Config = {
         "pulse-glow": "pulse-glow 6s ease-in-out infinite",
         "spin-slow": "spin-slow 34s linear infinite",
         aurora: "aurora 18s ease-in-out infinite",
+        marquee: "marquee 30s linear infinite",
+        "light-sweep": "light-sweep 7s ease-in-out infinite",
       },
     },
   },

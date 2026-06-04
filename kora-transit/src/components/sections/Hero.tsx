@@ -61,10 +61,17 @@ export function Hero() {
       <div className="absolute inset-0 bg-gradient-to-t from-navy via-transparent to-navy/50" />
       <AuroraBackground />
 
+      {/* warm headlight pool */}
+      <div className="pointer-events-none absolute bottom-0 left-1/2 h-[45vh] w-[85vw] -translate-x-1/2 translate-y-1/3 rounded-[50%] bg-gold/15 blur-[130px]" />
+      {/* travelling light sweep */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="absolute -top-1/4 left-0 h-[150%] w-1/3 animate-light-sweep bg-gradient-to-r from-transparent via-gold/10 to-transparent blur-2xl" />
+      </div>
+
       <motion.span
         style={{ y: yWord }}
         aria-hidden
-        className="pointer-events-none absolute -bottom-[7vw] left-1/2 -translate-x-1/2 select-none whitespace-nowrap font-display text-[34vw] font-black leading-none text-white/[0.03]"
+        className="pointer-events-none absolute -bottom-[7vw] left-1/2 -translate-x-1/2 select-none whitespace-nowrap font-display text-[34vw] font-black leading-none text-gold/[0.05]"
       >
         KORA
       </motion.span>

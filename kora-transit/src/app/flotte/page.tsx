@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { PageHeader } from "@/components/sections/PageHeader";
 import { FleetClasses } from "@/components/sections/FleetClasses";
 import { FinalCta } from "@/components/sections/FinalCta";
-import { headers } from "@/lib/data";
+import { headers, images } from "@/lib/data";
 
 export const metadata: Metadata = {
   title: "Notre flotte",
@@ -16,6 +16,7 @@ export default function FlottePage() {
         title={headers.flotte.title}
         subtitle={headers.flotte.subtitle}
         text={headers.flotte.text}
+        image={images.fleet.standard}
       />
       <FleetClasses />
       <FinalCta />

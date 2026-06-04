@@ -21,9 +21,8 @@ const unsplash = (id: string, w = 1920) =>
 
 export const images = {
   heroPoster: unsplash("1544620347-c4fd4a3d5957", 2400),
-  // Drop a night-road / coach .mp4 URL here to enable the video background.
-  // Left empty on purpose so the premium poster image is used by default.
-  heroVideo: "",
+  // Self-hosted, optimized night-road loop (kora-transit/public/hero.mp4).
+  heroVideo: "/hero.mp4",
   highway: unsplash("1506277204481-fb831bb22403", 2200),
   highwayAlt: unsplash("1542705959-878ca346eb20", 2000),
   service: {
@@ -39,6 +38,14 @@ export const images = {
   about: {
     story: unsplash("1553152531-b98a2fc8d3bf", 1600),
     terminal: unsplash("1600198741448-fc40d918673a", 1600),
+  },
+  // Cinematic section backgrounds (dark, layered behind content).
+  scene: {
+    headlights: unsplash("1605367811611-f6011b264cb5", 2000),
+    lightTrails: unsplash("1516319915504-015b432d407c", 2200),
+    lightTrailsAlt: unsplash("1494481524892-b1bf38423fd1", 2200),
+    terminalNight: unsplash("1584792224177-047beb05002a", 2000),
+    street: unsplash("1738427436305-453325092968", 2000),
   },
 } as const;
 

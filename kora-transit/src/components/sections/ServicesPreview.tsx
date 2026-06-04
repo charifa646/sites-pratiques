@@ -6,14 +6,16 @@ import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { SectionTitle } from "@/components/ui/SectionTitle";
 import { ButtonLink } from "@/components/ui/Button";
+import { AuroraBackground } from "@/components/ui/AuroraBackground";
 import { servicesPreview } from "@/lib/data";
 import { staggerContainer, staggerItem, VIEWPORT } from "@/lib/animations";
 import { cn } from "@/lib/utils";
 
 export function ServicesPreview() {
   return (
-    <section className="section relative overflow-hidden bg-navy-deep/40">
-      <div className="shell">
+    <section className="section relative overflow-hidden">
+      <AuroraBackground />
+      <div className="shell relative">
         <div className="flex flex-col items-start justify-between gap-6 md:flex-row md:items-end">
           <SectionTitle
             number="02"

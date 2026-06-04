@@ -3,13 +3,15 @@
 import { motion } from "framer-motion";
 import { Quote } from "lucide-react";
 import { SectionTitle } from "@/components/ui/SectionTitle";
-import { testimonials } from "@/lib/data";
+import { AuroraBackground } from "@/components/ui/AuroraBackground";
+import { testimonials, images } from "@/lib/data";
 import { staggerContainer, staggerItem, VIEWPORT } from "@/lib/animations";
 
 export function Testimonials() {
   return (
-    <section className="section relative overflow-hidden bg-navy-deep/40">
-      <div className="shell">
+    <section className="section relative overflow-hidden">
+      <AuroraBackground image={images.scene.terminalNight} imageOpacity={0.1} />
+      <div className="shell relative">
         <SectionTitle number="04" eyebrow="Témoignages" title={testimonials.title} />
 
         <motion.div

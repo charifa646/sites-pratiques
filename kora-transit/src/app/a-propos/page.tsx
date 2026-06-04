@@ -6,7 +6,7 @@ import { Values } from "@/components/sections/Values";
 import { Team } from "@/components/sections/Team";
 import { Stats } from "@/components/sections/Stats";
 import { FinalCta } from "@/components/sections/FinalCta";
-import { headers, statsAbout } from "@/lib/data";
+import { headers, statsAbout, images } from "@/lib/data";
 
 export const metadata: Metadata = {
   title: "À propos",
@@ -19,6 +19,7 @@ export default function AProposPage() {
       <PageHeader
         title={headers.apropos.title}
         subtitle={headers.apropos.subtitle}
+        image={images.about.story}
       />
       <Story />
       <MissionVision />

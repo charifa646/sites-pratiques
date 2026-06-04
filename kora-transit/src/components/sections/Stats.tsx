@@ -2,8 +2,9 @@
 
 import { motion } from "framer-motion";
 import { AnimatedCounter } from "@/components/ui/AnimatedCounter";
+import { AuroraBackground } from "@/components/ui/AuroraBackground";
 import { staggerContainer, staggerItem, VIEWPORT } from "@/lib/animations";
-import { statsHome, type Stat } from "@/lib/data";
+import { statsHome, images, type Stat } from "@/lib/data";
 import { cn } from "@/lib/utils";
 
 export function Stats({
@@ -15,18 +16,16 @@ export function Stats({
 }) {
   return (
     <section
-      className={cn(
-        "relative border-y border-line/50 bg-navy-light/30",
-        className,
-      )}
+      className={cn("relative overflow-hidden border-y border-line/50", className)}
     >
+      <AuroraBackground image={images.scene.lightTrails} imageOpacity={0.16} />
       <motion.div
         variants={staggerContainer}
         initial="hidden"
         whileInView="visible"
         viewport={VIEWPORT}
         className={cn(
-          "shell grid gap-x-8 gap-y-12 py-16 md:py-20",
+          "shell relative grid gap-x-8 gap-y-12 py-16 md:py-20",
           stats.length === 5
             ? "grid-cols-2 md:grid-cols-3 lg:grid-cols-5"
             : "grid-cols-2 md:grid-cols-4",

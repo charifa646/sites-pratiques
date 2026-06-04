@@ -8,14 +8,16 @@ export function PageHeader({
   title,
   subtitle,
   text,
+  image,
 }: {
   title: string;
   subtitle?: string;
   text?: string;
+  image?: string;
 }) {
   return (
     <section className="relative overflow-hidden pt-[72px]">
-      <AuroraBackground />
+      <AuroraBackground image={image} imageOpacity={0.32} />
       <div className="shell relative py-20 md:py-28 lg:py-32">
         <motion.div
           variants={staggerContainer}

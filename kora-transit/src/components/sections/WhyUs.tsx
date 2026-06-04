@@ -2,13 +2,15 @@
 
 import { motion } from "framer-motion";
 import { SectionTitle } from "@/components/ui/SectionTitle";
+import { AuroraBackground } from "@/components/ui/AuroraBackground";
 import { whyUs } from "@/lib/data";
 import { staggerContainer, staggerItem, VIEWPORT } from "@/lib/animations";
 
 export function WhyUs() {
   return (
     <section className="section relative overflow-hidden">
-      <div className="shell">
+      <AuroraBackground />
+      <div className="shell relative">
         <SectionTitle
           number="01"
           eyebrow="Pourquoi KORA TRANSIT"

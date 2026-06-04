@@ -3,7 +3,7 @@ import { PageHeader } from "@/components/sections/PageHeader";
 import { ServiceDetail } from "@/components/sections/ServiceDetail";
 import { Destinations } from "@/components/sections/Destinations";
 import { FinalCta } from "@/components/sections/FinalCta";
-import { headers, servicesDetail } from "@/lib/data";
+import { headers, servicesDetail, images } from "@/lib/data";
 
 export const metadata: Metadata = {
   title: "Nos services",
@@ -16,6 +16,7 @@ export default function ServicesPage() {
       <PageHeader
         title={headers.services.title}
         subtitle={headers.services.subtitle}
+        image={images.service.voyageurs}
       />
       <section className="section">
         <div className="shell flex flex-col gap-20 lg:gap-28">
