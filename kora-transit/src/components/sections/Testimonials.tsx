@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
 
 export function Testimonials() {
   return (
-    <section className="section relative overflow-hidden">
+    <section className="section cv-auto relative overflow-hidden">
       <Duotone
         src={images.scene.terminalNight}
         alt=""

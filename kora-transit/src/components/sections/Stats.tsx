@@ -19,7 +19,7 @@ export function Stats({
   return (
     <section
       className={cn(
-        "relative overflow-hidden border-y border-line/60 bg-navy-deep",
+        "cv-auto relative overflow-hidden border-y border-line/60 bg-navy-deep",
         className,
       )}
     >

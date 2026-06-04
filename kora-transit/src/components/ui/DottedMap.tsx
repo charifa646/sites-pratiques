@@ -32,7 +32,7 @@ export interface DottedMapProps extends React.SVGProps<SVGSVGElement> {
 export function DottedMap({
   width = 150,
   height = 75,
-  mapSamples = 5500,
+  mapSamples = 3000,
   markers = [],
   dotColor = "#37506F",
   markerColor = "#C9A84C",
@@ -43,15 +43,23 @@ export function DottedMap({
   style,
   ...svgProps
 }: DottedMapProps) {
-  const { points, addMarkers } = createMap({
-    width,
-    height,
-    mapSamples,
-    ...(region ? { region } : {}),
-  });
-  const processedMarkers = addMarkers(markers) as Array<
-    { x: number; y: number; size?: number; pulse?: boolean }
-  >;
+  const { points, processedMarkers } = React.useMemo(() => {
+    const { points, addMarkers } = createMap({
+      width,
+      height,
+      mapSamples,
+      ...(region ? { region } : {}),
+    });
+    return {
+      points,
+      processedMarkers: addMarkers(markers) as Array<{
+        x: number;
+        y: number;
+        size?: number;
+        pulse?: boolean;
+      }>,
+    };
+  }, [width, height, mapSamples, region, markers]);
 
   return (
     <svg

@@ -14,7 +14,7 @@ import { cn } from "@/lib/utils";
 
 export function ServicesPreview() {
   return (
-    <section className="section relative overflow-hidden bg-navy-deep">
+    <section className="section cv-auto relative overflow-hidden bg-navy-deep">
       <div className="pointer-events-none absolute right-0 top-1/3 h-[36rem] w-[36rem] rounded-full bg-gold/[0.05] blur-[150px]" />
       <GiantText outline className="left-1/2 top-2 -translate-x-1/2 text-[17vw]">
         SERVICES
@@ -48,7 +48,7 @@ export function ServicesPreview() {
               <motion.div
                 key={it.title}
                 variants={staggerItem}
-                className={cn(big ? "lg:col-span-2 lg:row-span-2" : "lg:col-span-1")}
+                className={cn("h-full", big ? "lg:col-span-2 lg:row-span-2" : "lg:col-span-1")}
               >
                 <MagicCard className="group h-full rounded-2xl">
                   <Link href="/services" className="block h-full">

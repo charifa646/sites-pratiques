@@ -7,7 +7,7 @@ import { staggerContainer, staggerItem, VIEWPORT } from "@/lib/animations";
 
 export function FinalCta() {
   return (
-    <section className="section relative overflow-hidden">
+    <section className="section cv-auto relative overflow-hidden">
       <div className="shell">
         <div className="edge-glow relative overflow-hidden rounded-[2rem] px-6 py-20 text-center md:px-16 md:py-32">
           {/* Video background */}
@@ -16,6 +16,7 @@ export function FinalCta() {
             muted
             loop
             playsInline
+            preload="none"
             poster={images.scene.lightTrailsAlt}
             className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-30"
           >

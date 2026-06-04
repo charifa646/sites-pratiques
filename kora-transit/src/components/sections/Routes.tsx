@@ -28,7 +28,7 @@ const REGION = { lat: { min: 1, max: 22 }, lng: { min: -20, max: 7 } };
 
 export function Routes() {
   return (
-    <section className="section relative overflow-hidden">
+    <section className="section cv-auto relative overflow-hidden">
       <WireGrid />
       <GiantText outline className="-bottom-6 -right-[2%] text-[15vw]">
         RÉSEAU

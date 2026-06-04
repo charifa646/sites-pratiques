@@ -167,10 +167,10 @@ export function BusExperience() {
             </div>
           </motion.div>
 
-          {/* Chapter title (beats 2-6) */}
+          {/* Chapter title (beats 2-6) — left, mid-height, larger */}
           <motion.div
             style={{ opacity: chapterTitle }}
-            className="absolute left-0 right-0 top-28 z-20 mx-auto max-w-7xl px-6 lg:top-32"
+            className="absolute left-0 right-0 top-[24%] z-20 mx-auto max-w-7xl px-6 lg:top-[30%]"
           >
             <div className="flex items-center gap-4">
               <span className="font-display text-sm font-semibold text-gold">(02)</span>
@@ -179,7 +179,7 @@ export function BusExperience() {
                 Pourquoi KORA TRANSIT
               </span>
             </div>
-            <h2 className="mt-4 max-w-2xl font-display text-[clamp(1.9rem,4.2vw,3.4rem)] font-semibold leading-[1.0] tracking-tightest text-ink">
+            <h2 className="mt-4 max-w-2xl font-display text-[clamp(2.2rem,5vw,4.2rem)] font-semibold leading-[0.98] tracking-tightest text-ink">
               {whyUs.title}
             </h2>
             <motion.p
@@ -190,9 +190,9 @@ export function BusExperience() {
             </motion.p>
           </motion.div>
 
-          {/* Feature callouts (beats 3-6) — slide in from the right */}
-          <div className="pointer-events-none absolute inset-x-0 bottom-[9%] z-20 mx-auto max-w-7xl px-6 lg:inset-y-0 lg:bottom-auto lg:flex lg:items-center lg:justify-end">
-            <div className="relative h-[210px] lg:h-[250px] lg:w-[390px]">
+          {/* Feature callouts (beats 3-6) — lower-right, clear of the navbar */}
+          <div className="pointer-events-none absolute inset-x-0 bottom-[8%] z-20 mx-auto max-w-7xl px-6 lg:bottom-[12%]">
+            <div className="relative ml-auto h-[200px] w-full sm:w-[420px] lg:h-[230px] lg:w-[400px]">
               {whyUs.items.map((it, i) => (
                 <motion.div
                   key={it.title}
@@ -200,7 +200,7 @@ export function BusExperience() {
                     opacity: callouts[i].opacity,
                     x: reduce ? 0 : callouts[i].x,
                   }}
-                  className="glass edge-glow absolute inset-x-0 bottom-0 rounded-2xl p-6 lg:inset-y-0 lg:bottom-auto"
+                  className="glass edge-glow absolute inset-x-0 bottom-0 rounded-2xl p-6"
                 >
                   <div className="flex items-center justify-between">
                     <div className="grid h-12 w-12 place-items-center rounded-xl border border-gold/30 bg-gold/10 text-gold">
