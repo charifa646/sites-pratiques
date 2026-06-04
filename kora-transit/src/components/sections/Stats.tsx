@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { AnimatedCounter } from "@/components/ui/AnimatedCounter";
+import { NumberTicker } from "@/components/ui/NumberTicker";
 import { Duotone } from "@/components/ui/Duotone";
 import { WireGrid } from "@/components/ui/WireGrid";
 import { BracketLabel } from "@/components/ui/BracketLabel";
@@ -55,11 +55,8 @@ export function Stats({
                 <span className="absolute -left-4 top-1.5 hidden h-[78%] w-px bg-line/70 md:block" />
               )}
               <div className="text-gradient-gold font-display text-[clamp(2.4rem,5vw,3.4rem)] font-bold leading-none tracking-tightest">
-                <AnimatedCounter
-                  value={s.value}
-                  suffix={s.suffix}
-                  separator={s.separator}
-                />
+                <NumberTicker value={s.value} group={s.separator} className="text-gradient-gold" />
+                {s.suffix}
               </div>
               <p className="mt-3 text-[0.8rem] uppercase tracking-[0.16em] text-muted">
                 {s.label}
