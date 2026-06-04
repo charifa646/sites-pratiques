@@ -1,46 +1,47 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { staggerContainer, staggerItem, VIEWPORT } from "@/lib/animations";
+import { VIEWPORT, EASE } from "@/lib/animations";
 import { cn } from "@/lib/utils";
 
+/**
+ * Premium section header: numbered index + gold rule + eyebrow, then an
+ * oversized Clash Display title and optional intro paragraph.
+ */
 export function SectionTitle({
   number,
   eyebrow,
   title,
-  subtitle,
+  intro,
   align = "left",
   className,
 }: {
   number?: string;
   eyebrow?: string;
-  title: string;
-  subtitle?: string;
+  title: React.ReactNode;
+  intro?: React.ReactNode;
   align?: "left" | "center";
   className?: string;
 }) {
+  const centered = align === "center";
   return (
-    <motion.div
-      variants={staggerContainer}
-      initial="hidden"
-      whileInView="visible"
-      viewport={VIEWPORT}
-      className={cn(
-        "flex flex-col gap-5",
-        align === "center" && "items-center text-center",
-        className,
-      )}
-    >
+    <div className={cn(centered && "mx-auto max-w-3xl text-center", className)}>
       {(number || eyebrow) && (
-        <motion.div variants={staggerItem} className="flex items-center gap-3">
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={VIEWPORT}
+          transition={{ duration: 0.6, ease: EASE }}
+          className={cn("flex items-center gap-4", centered && "justify-center")}
+        >
           {number && (
-            <span className="font-display text-2xl font-bold text-gold">
-              {number}
+            <span className="font-display text-sm font-semibold text-gold">
+              ({number})
             </span>
           )}
-          {number && <span className="h-px w-10 bg-gold/50" />}
+          <span className="h-px w-10 bg-gold/40" />
           {eyebrow && (
-            <span className="text-xs font-semibold uppercase tracking-[0.28em] text-muted">
+            <span className="text-[0.72rem] font-medium uppercase tracking-[0.24em] text-muted">
               {eyebrow}
             </span>
           )}
@@ -48,23 +49,29 @@ export function SectionTitle({
       )}
 
       <motion.h2
-        variants={staggerItem}
-        className="max-w-3xl text-balance text-3xl font-bold leading-[1.08] sm:text-4xl lg:text-[2.75rem]"
+        initial={{ opacity: 0, y: 24 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={VIEWPORT}
+        transition={{ duration: 0.75, ease: EASE, delay: 0.05 }}
+        className="mt-5 text-balance font-display text-[clamp(2rem,4.4vw,3.6rem)] font-semibold leading-[1.02] tracking-tightest text-ink"
       >
         {title}
       </motion.h2>
 
-      {subtitle && (
+      {intro && (
         <motion.p
-          variants={staggerItem}
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={VIEWPORT}
+          transition={{ duration: 0.7, ease: EASE, delay: 0.12 }}
           className={cn(
-            "max-w-2xl text-base leading-relaxed text-muted",
-            align === "center" && "mx-auto",
+            "mt-5 text-base leading-relaxed text-muted sm:text-lg",
+            centered ? "mx-auto max-w-2xl" : "max-w-2xl",
           )}
         >
-          {subtitle}
+          {intro}
         </motion.p>
       )}
-    </motion.div>
+    </div>
   );
 }

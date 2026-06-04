@@ -2,28 +2,34 @@
 
 import Image from "next/image";
 import { motion } from "framer-motion";
+import { GiantText } from "@/components/ui/GiantText";
 import { about, images } from "@/lib/data";
 import { slideInRight, staggerContainer, staggerItem, VIEWPORT } from "@/lib/animations";
 
 export function Story() {
   return (
-    <section className="section">
-      <div className="shell grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
+    <section className="section relative overflow-hidden">
+      <GiantText outline className="-right-[3%] top-10 text-[18vw]">
+        2012
+      </GiantText>
+
+      <div className="shell relative grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
         <motion.div
           variants={staggerContainer}
           initial="hidden"
           whileInView="visible"
           viewport={VIEWPORT}
         >
-          <motion.span
-            variants={staggerItem}
-            className="text-xs font-semibold uppercase tracking-[0.28em] text-gold"
-          >
-            Depuis 2012
-          </motion.span>
+          <motion.div variants={staggerItem} className="flex items-center gap-4">
+            <span className="font-display text-sm font-semibold text-gold">(01)</span>
+            <span className="h-px w-10 bg-gold/40" />
+            <span className="text-[0.72rem] font-medium uppercase tracking-[0.24em] text-muted">
+              Depuis 2012
+            </span>
+          </motion.div>
           <motion.h2
             variants={staggerItem}
-            className="mt-3 text-3xl font-bold sm:text-4xl"
+            className="mt-5 font-display text-[clamp(2rem,4vw,3.2rem)] font-semibold tracking-tightest text-ink"
           >
             {about.story.title}
           </motion.h2>
@@ -54,9 +60,9 @@ export function Story() {
               sizes="(max-width: 1024px) 100vw, 50vw"
               className="object-cover"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-navy/60 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-navy-deep/70 to-transparent" />
           </div>
-          <div className="absolute -bottom-8 -left-8 hidden w-44 overflow-hidden rounded-xl border border-gold/40 shadow-card sm:block">
+          <div className="edge-glow absolute -bottom-8 -left-8 hidden w-44 overflow-hidden rounded-xl border border-gold/40 sm:block">
             <div className="relative aspect-square">
               <Image
                 src={images.about.terminal}

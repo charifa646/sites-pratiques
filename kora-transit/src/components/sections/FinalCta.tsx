@@ -1,7 +1,6 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { AuroraBackground } from "@/components/ui/AuroraBackground";
 import { ButtonLink } from "@/components/ui/Button";
 import { finalCta, images } from "@/lib/data";
 import { staggerContainer, staggerItem, VIEWPORT } from "@/lib/animations";
@@ -10,31 +9,33 @@ export function FinalCta() {
   return (
     <section className="section relative overflow-hidden">
       <div className="shell">
-        <div className="relative overflow-hidden rounded-[2rem] border border-gold/20 px-6 py-20 text-center md:px-16 md:py-28">
+        <div className="edge-glow relative overflow-hidden rounded-[2rem] px-6 py-20 text-center md:px-16 md:py-32">
           {/* Video background */}
           <video
             autoPlay
             muted
             loop
             playsInline
-            poster={images.highway}
-            className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-[0.22]"
+            poster={images.scene.lightTrailsAlt}
+            className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-30"
           >
             <source src="/hero.mp4" type="video/mp4" />
           </video>
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-navy-deep/88 via-navy-deep/72 to-navy-deep/92" />
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-navy-deep/70 via-transparent to-navy-deep/70" />
 
-          {/* Layered overlays */}
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-navy/90 via-navy/75 to-navy/92" />
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-navy/60 via-transparent to-navy/60" />
-
-          {/* Aurora glow */}
-          <AuroraBackground />
-
-          {/* Gold border shimmer */}
-          <div
+          {/* Giant backdrop word */}
+          <span
             aria-hidden
-            className="pointer-events-none absolute inset-0 rounded-[2rem] border border-gold/10 shadow-[inset_0_0_60px_rgba(201,168,76,0.06)]"
-          />
+            className="text-stroke-ink pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 select-none whitespace-nowrap font-display text-[24vw] font-bold leading-none tracking-tightest opacity-50"
+          >
+            KORA
+          </span>
+
+          {/* Animated gold speed line */}
+          <div className="pointer-events-none absolute inset-0 overflow-hidden">
+            <div className="absolute left-0 top-[42%] h-px w-1/3 animate-speed-line bg-gradient-to-r from-transparent via-gold to-transparent" />
+          </div>
 
           <motion.div
             variants={staggerContainer}
@@ -45,15 +46,14 @@ export function FinalCta() {
           >
             <motion.span
               variants={staggerItem}
-              className="mb-4 inline-flex items-center gap-2 rounded-full border border-gold/30 bg-gold/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-gold"
+              className="mb-5 inline-flex items-center gap-2 rounded-full border border-gold/30 bg-gold/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-gold"
             >
               <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-gold" />
               Départs quotidiens
             </motion.span>
-
             <motion.h2
               variants={staggerItem}
-              className="text-balance font-display text-3xl font-extrabold leading-tight sm:text-4xl lg:text-5xl"
+              className="text-balance font-display text-[clamp(2.2rem,5vw,4rem)] font-bold leading-[1.0] tracking-tightest text-ink"
             >
               {finalCta.title}
             </motion.h2>

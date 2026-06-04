@@ -1,7 +1,9 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { AuroraBackground } from "@/components/ui/AuroraBackground";
+import { Duotone } from "@/components/ui/Duotone";
+import { WireGrid } from "@/components/ui/WireGrid";
+import { BracketLabel } from "@/components/ui/BracketLabel";
 import { staggerContainer, staggerItem } from "@/lib/animations";
 
 export function PageHeader({
@@ -9,35 +11,64 @@ export function PageHeader({
   subtitle,
   text,
   image,
+  bgWord,
 }: {
   title: string;
   subtitle?: string;
   text?: string;
   image?: string;
+  bgWord?: string;
 }) {
   return (
     <section className="relative overflow-hidden pt-[72px]">
-      <AuroraBackground image={image} imageOpacity={0.32} />
-      <div className="shell relative py-20 md:py-28 lg:py-32">
+      {image && (
+        <Duotone
+          src={image}
+          alt=""
+          className="absolute inset-0"
+          intensity="strong"
+          priority
+        />
+      )}
+      <div className="absolute inset-0 bg-gradient-to-t from-navy-deep via-navy-deep/85 to-navy-deep/65" />
+      <div className="absolute inset-0 bg-gradient-to-r from-navy-deep via-navy-deep/55 to-transparent" />
+      <WireGrid />
+
+      {/* Headlight bloom */}
+      <div className="pointer-events-none absolute -right-20 top-0 h-[40vh] w-[40vh] animate-pulse-glow rounded-full bg-gold/15 blur-[150px]" />
+
+      {bgWord && (
+        <span
+          aria-hidden
+          className="text-stroke-ink pointer-events-none absolute -bottom-[10%] right-[-2%] select-none whitespace-nowrap font-display text-[20vw] font-bold leading-none tracking-tightest opacity-50"
+        >
+          {bgWord}
+        </span>
+      )}
+
+      <div className="shell relative py-24 md:py-32 lg:py-40">
         <motion.div
           variants={staggerContainer}
           initial="hidden"
           animate="visible"
           className="max-w-3xl"
         >
-          <motion.span
-            variants={staggerItem}
-            className="mb-6 inline-flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.28em] text-gold"
-          >
-            <span className="h-px w-8 bg-gold/60" />
-            KORA TRANSIT
-          </motion.span>
+          <motion.div variants={staggerItem} className="mb-6 flex items-center gap-4">
+            <span className="relative flex h-2 w-2">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-gold/70" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-gold" />
+            </span>
+            <span className="h-px w-10 bg-gold/40" />
+            <BracketLabel className="text-ink/60">KORA TRANSIT</BracketLabel>
+          </motion.div>
+
           <motion.h1
             variants={staggerItem}
-            className="text-balance text-4xl font-extrabold leading-[1.05] sm:text-5xl lg:text-6xl"
+            className="text-balance font-display text-[clamp(2.6rem,6vw,5rem)] font-bold leading-[0.96] tracking-tightest text-ink"
           >
             {title}
           </motion.h1>
+
           {subtitle && (
             <motion.p
               variants={staggerItem}
@@ -56,7 +87,8 @@ export function PageHeader({
           )}
         </motion.div>
       </div>
-      <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-line to-transparent" />
+
+      <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-gold/30 to-transparent" />
     </section>
   );
 }

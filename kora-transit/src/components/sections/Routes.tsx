@@ -1,16 +1,21 @@
 "use client";
 
 import { SectionTitle } from "@/components/ui/SectionTitle";
-import { AuroraBackground } from "@/components/ui/AuroraBackground";
+import { GiantText } from "@/components/ui/GiantText";
+import { WireGrid } from "@/components/ui/WireGrid";
 import { LiaisonsMap } from "@/components/sections/LiaisonsMap";
-import { liaisons, images } from "@/lib/data";
+import { liaisons } from "@/lib/data";
 
 export function Routes() {
   return (
     <section className="section relative overflow-hidden">
-      <AuroraBackground image={images.scene.lightTrailsAlt} imageOpacity={0.12} />
+      <WireGrid />
+      <GiantText outline className="-bottom-6 -right-[2%] text-[15vw]">
+        RÉSEAU
+      </GiantText>
+
       <div className="shell relative">
-        <SectionTitle number="03" title={liaisons.title} />
+        <SectionTitle number="04" eyebrow="Nos liaisons" title={liaisons.title} />
 
         <div className="mt-14">
           <LiaisonsMap />
