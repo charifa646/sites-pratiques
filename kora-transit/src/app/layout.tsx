@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { Inter, Bricolage_Grotesque } from "next/font/google";
+import { Inter } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
@@ -10,10 +11,16 @@ const inter = Inter({
   display: "swap",
 });
 
-const display = Bricolage_Grotesque({
-  subsets: ["latin"],
+// Clash Display (Fontshare) — self-hosted for performance + no layout shift.
+const display = localFont({
   variable: "--font-display",
   display: "swap",
+  src: [
+    { path: "../fonts/ClashDisplay-Regular.woff2", weight: "400", style: "normal" },
+    { path: "../fonts/ClashDisplay-Medium.woff2", weight: "500", style: "normal" },
+    { path: "../fonts/ClashDisplay-Semibold.woff2", weight: "600", style: "normal" },
+    { path: "../fonts/ClashDisplay-Bold.woff2", weight: "700", style: "normal" },
+  ],
 });
 
 export const metadata: Metadata = {
