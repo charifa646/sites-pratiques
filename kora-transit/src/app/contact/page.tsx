@@ -14,7 +14,7 @@ export default function ContactPage() {
       <PageHeader
         title={headers.contact.title}
         subtitle={headers.contact.subtitle}
-        image={images.scene.street}
+        image={images.pageHero.contact}
         bgWord="CONTACT"
       />
       <ContactSection />

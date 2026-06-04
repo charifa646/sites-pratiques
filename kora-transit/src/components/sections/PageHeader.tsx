@@ -1,7 +1,7 @@
 "use client";
 
+import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
-import { Duotone } from "@/components/ui/Duotone";
 import { WireGrid } from "@/components/ui/WireGrid";
 import { BracketLabel } from "@/components/ui/BracketLabel";
 import { staggerContainer, staggerItem } from "@/lib/animations";
@@ -38,11 +38,14 @@ export function PageHeader({
           }}
           className="absolute inset-0"
         >
-          <Duotone src={image} alt="" className="absolute inset-0" intensity="strong" priority />
+          <Image src={image} alt="" fill priority sizes="100vw" className="object-cover" />
         </motion.div>
       )}
-      <div className="absolute inset-0 bg-gradient-to-t from-navy-deep via-navy-deep/85 to-navy-deep/65" />
-      <div className="absolute inset-0 bg-gradient-to-r from-navy-deep via-navy-deep/55 to-transparent" />
+      {/* Light navy tint + scrims — photo stays visible, left text legible */}
+      <div className="absolute inset-0 bg-navy/25" />
+      <div className="absolute inset-0 bg-gradient-to-t from-navy-deep via-navy-deep/40 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-r from-navy-deep via-navy-deep/35 to-transparent" />
+      <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-navy-deep/80 to-transparent" />
       <WireGrid />
 
       {/* Headlight bloom (radial-gradient — cheap) */}

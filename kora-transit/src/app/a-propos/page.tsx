@@ -19,7 +19,7 @@ export default function AProposPage() {
       <PageHeader
         title={headers.apropos.title}
         subtitle={headers.apropos.subtitle}
-        image={images.about.story}
+        image={images.pageHero.apropos}
         bgWord="KORA"
       />
       <Story />

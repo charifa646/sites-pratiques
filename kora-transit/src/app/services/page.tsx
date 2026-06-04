@@ -16,7 +16,7 @@ export default function ServicesPage() {
       <PageHeader
         title={headers.services.title}
         subtitle={headers.services.subtitle}
-        image={images.highway}
+        image={images.pageHero.services}
         bgWord="SERVICES"
       />
       <section className="section">

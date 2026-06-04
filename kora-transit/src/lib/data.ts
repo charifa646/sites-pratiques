@@ -47,6 +47,14 @@ export const images = {
     terminalNight: unsplash("1584792224177-047beb05002a", 2000),
     street: unsplash("1738427436305-453325092968", 2000),
   },
+  // Dedicated, on-theme hero backgrounds per page (verified Unsplash).
+  pageHero: {
+    services: unsplash("1570125909517-53cb21c89ff2", 2000),
+    flotte: unsplash("1572675339312-3e8b094a544d", 2000),
+    reservation: unsplash("1685470883352-ba1ea87c937d", 2000),
+    apropos: unsplash("1682924755849-8bc69f5ec596", 2000),
+    contact: unsplash("1600206085398-f6ede93b06f8", 2000),
+  },
 } as const;
 
 /* -------------------------------------------------------------------------- */
