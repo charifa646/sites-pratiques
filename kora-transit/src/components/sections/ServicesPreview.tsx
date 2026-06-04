@@ -15,7 +15,7 @@ import { cn } from "@/lib/utils";
 export function ServicesPreview() {
   return (
     <section className="section cv-auto relative overflow-hidden bg-navy-deep">
-      <div className="pointer-events-none absolute right-0 top-1/3 h-[36rem] w-[36rem] rounded-full bg-gold/[0.05] blur-[150px]" />
+      <div className="pointer-events-none absolute right-0 top-1/3 h-[40rem] w-[40rem] rounded-full bg-[radial-gradient(closest-side,rgba(201,168,76,0.06),transparent)]" />
       <GiantText outline className="left-1/2 top-2 -translate-x-1/2 text-[17vw]">
         SERVICES
       </GiantText>

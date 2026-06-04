@@ -52,16 +52,17 @@ export function BusExperience() {
   const heroCopy = useBeat(p, 0.1, 0.3);
   const chapterTitle = useTransform(p, [0.34, 0.4, 0.97, 1], [0, 1, 1, 0]);
   const chapterSub = useBeat(p, 0.36, 0.46);
-  const c1 = useBeat(p, 0.46, 0.6);
-  const c2 = useBeat(p, 0.6, 0.72);
-  const c3 = useBeat(p, 0.72, 0.84);
-  const c4 = useBeat(p, 0.84, 0.96);
+  // Overlapping ranges → true crossfade (no blank gap), longer holds.
+  const c1 = useBeat(p, 0.4, 0.58);
+  const c2 = useBeat(p, 0.54, 0.72);
+  const c3 = useBeat(p, 0.68, 0.86);
+  const c4 = useBeat(p, 0.82, 0.99);
   const cueOpacity = useTransform(p, [0, 0.07], [1, 0]);
 
   const callouts = [c1, c2, c3, c4];
 
   return (
-    <section ref={runway} className="relative h-[680vh] bg-navy-deep">
+    <section ref={runway} className="relative h-[460vh] bg-navy-deep md:h-[680vh]">
       <div className="sticky top-0 h-[100svh] overflow-hidden">
         {/* Smooth entrance (no loader) */}
         <motion.div
@@ -73,7 +74,7 @@ export function BusExperience() {
           {/* Studio floor light */}
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_54%,#0E1B30_0%,#070F1C_58%)]" />
           <div className="absolute inset-x-0 top-[64%] h-px bg-gradient-to-r from-transparent via-ink/[0.06] to-transparent" />
-          <div className="pointer-events-none absolute inset-0 z-[6] bg-grain opacity-[0.05] mix-blend-overlay" />
+          <div className="pointer-events-none absolute inset-0 z-[6] hidden bg-grain opacity-[0.05] mix-blend-overlay md:block" />
 
           {/* Top micro-label (hero) */}
           <motion.div
@@ -110,8 +111,8 @@ export function BusExperience() {
             </motion.span>
           </motion.span>
 
-          {/* Gold halo */}
-          <div className="pointer-events-none absolute left-1/2 top-[52%] z-[1] h-[42vh] w-[60vw] -translate-x-1/2 -translate-y-1/2 rounded-full bg-gold/10 blur-[130px]" />
+          {/* Gold halo (radial-gradient — no blur filter, cheap on mobile) */}
+          <div className="pointer-events-none absolute left-1/2 top-[52%] z-[1] h-[64vh] w-[82vw] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(201,168,76,0.13),transparent)]" />
 
           {/* Bus */}
           <div className="absolute left-1/2 top-[50%] z-10 w-[94vw] -translate-x-1/2 -translate-y-1/2 sm:w-[80vw] lg:top-[55%] lg:w-[min(760px,60vw)]">
@@ -129,11 +130,12 @@ export function BusExperience() {
                 width={1091}
                 height={690}
                 priority
-                className="h-auto w-full object-contain drop-shadow-[0_40px_80px_rgba(0,0,0,0.7)]"
+                sizes="(max-width: 768px) 94vw, 60vw"
+                className="h-auto w-full object-contain"
               />
               <div
                 aria-hidden
-                className="absolute left-0 top-full w-full -scale-y-100 opacity-[0.14] [mask-image:linear-gradient(to_bottom,black,transparent_55%)]"
+                className="absolute left-0 top-full hidden w-full -scale-y-100 opacity-[0.14] [mask-image:linear-gradient(to_bottom,black,transparent_55%)] sm:block"
               >
                 <Image src="/bus-cutout.png" alt="" width={1091} height={690} className="h-auto w-full object-contain" />
               </div>
@@ -198,7 +200,7 @@ export function BusExperience() {
                   key={it.title}
                   style={{
                     opacity: callouts[i].opacity,
-                    x: reduce ? 0 : callouts[i].x,
+                    y: reduce ? 0 : callouts[i].y,
                   }}
                   className="glass edge-glow absolute inset-x-0 bottom-0 rounded-2xl p-6"
                 >
