@@ -56,6 +56,12 @@ const config: Config = {
           "30%": { opacity: "0.7" },
           "100%": { transform: "translateX(220%) skewX(-12deg)", opacity: "0" },
         },
+        "speed-line": {
+          "0%": { transform: "translateX(-110%)", opacity: "0" },
+          "12%": { opacity: "1" },
+          "85%": { opacity: "1" },
+          "100%": { transform: "translateX(120vw)", opacity: "0" },
+        },
       },
       animation: {
         "gradient-pan": "gradient-pan 12s ease infinite",
@@ -66,6 +72,8 @@ const config: Config = {
         aurora: "aurora 18s ease-in-out infinite",
         marquee: "marquee 30s linear infinite",
         "light-sweep": "light-sweep 7s ease-in-out infinite",
+        "speed-line": "speed-line 4.5s cubic-bezier(0.45,0,0.2,1) infinite",
+        "speed-line-slow": "speed-line 6.5s cubic-bezier(0.45,0,0.2,1) infinite",
       },
     },
   },
