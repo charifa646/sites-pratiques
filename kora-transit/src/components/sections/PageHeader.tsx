@@ -1,10 +1,12 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { Duotone } from "@/components/ui/Duotone";
 import { WireGrid } from "@/components/ui/WireGrid";
 import { BracketLabel } from "@/components/ui/BracketLabel";
 import { staggerContainer, staggerItem } from "@/lib/animations";
+
+const EASE = [0.22, 1, 0.36, 1] as const;
 
 export function PageHeader({
   title,
@@ -19,23 +21,32 @@ export function PageHeader({
   image?: string;
   bgWord?: string;
 }) {
+  const reduce = useReducedMotion();
   return (
     <section className="relative overflow-hidden pt-[72px]">
       {image && (
-        <Duotone
-          src={image}
-          alt=""
+        <motion.div
+          initial={{ opacity: 0, scale: 1.16 }}
+          animate={
+            reduce
+              ? { opacity: 1, scale: 1 }
+              : { opacity: 1, scale: [1.16, 1.04, 1.16] }
+          }
+          transition={{
+            opacity: { duration: 1.3, ease: EASE },
+            scale: { duration: 26, repeat: Infinity, ease: "easeInOut" },
+          }}
           className="absolute inset-0"
-          intensity="strong"
-          priority
-        />
+        >
+          <Duotone src={image} alt="" className="absolute inset-0" intensity="strong" priority />
+        </motion.div>
       )}
       <div className="absolute inset-0 bg-gradient-to-t from-navy-deep via-navy-deep/85 to-navy-deep/65" />
       <div className="absolute inset-0 bg-gradient-to-r from-navy-deep via-navy-deep/55 to-transparent" />
       <WireGrid />
 
-      {/* Headlight bloom */}
-      <div className="pointer-events-none absolute -right-20 top-0 h-[40vh] w-[40vh] animate-pulse-glow rounded-full bg-gold/15 blur-[150px]" />
+      {/* Headlight bloom (radial-gradient — cheap) */}
+      <div className="pointer-events-none absolute -right-20 top-0 h-[48vh] w-[48vh] rounded-full bg-[radial-gradient(closest-side,rgba(201,168,76,0.14),transparent)]" />
 
       {bgWord && (
         <span

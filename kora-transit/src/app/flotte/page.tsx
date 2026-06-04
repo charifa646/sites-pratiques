@@ -16,7 +16,8 @@ export default function FlottePage() {
         title={headers.flotte.title}
         subtitle={headers.flotte.subtitle}
         text={headers.flotte.text}
-        image={images.fleet.standard}
+        image={images.heroPoster}
+        bgWord="FLOTTE"
       />
       <FleetClasses />
       <FinalCta />

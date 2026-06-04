@@ -16,7 +16,8 @@ export default function ServicesPage() {
       <PageHeader
         title={headers.services.title}
         subtitle={headers.services.subtitle}
-        image={images.service.voyageurs}
+        image={images.highway}
+        bgWord="SERVICES"
       />
       <section className="section">
         <div className="shell flex flex-col gap-20 lg:gap-28">

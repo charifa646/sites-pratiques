@@ -14,7 +14,8 @@ export default function ReservationPage() {
       <PageHeader
         title={headers.reservation.title}
         subtitle={headers.reservation.subtitle}
-        image={images.scene.terminalNight}
+        image={images.scene.lightTrails}
+        bgWord="RÉSERVER"
       />
       <BookingForm />
     </>

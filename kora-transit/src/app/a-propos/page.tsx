@@ -20,6 +20,7 @@ export default function AProposPage() {
         title={headers.apropos.title}
         subtitle={headers.apropos.subtitle}
         image={images.about.story}
+        bgWord="KORA"
       />
       <Story />
       <MissionVision />

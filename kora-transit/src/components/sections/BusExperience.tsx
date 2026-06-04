@@ -19,6 +19,10 @@ import { hero, site, whyUs } from "@/lib/data";
 const SPRING = { stiffness: 70, damping: 26 } as const;
 const EASE = [0.22, 1, 0.36, 1] as const;
 
+// Tiny blurred preview so the coach fades up from blur instead of popping in.
+const BUS_BLUR =
+  "data:image/webp;base64,UklGRu4AAABXRUJQVlA4WAoAAAAQAAAADwAACQAAQUxQSJAAAAANuYzof8B1bNtKc8+7OHHrIP1X5H+4O1yiPURMQLiVg51ZJROLeAqKY81m2YjZCqmezuJysUqmQjSOJ12qYVKYwWKAQSnTu7BARgEgwJhBN2vVPGe92gwIIQCgU1jHcdIawJcQmGkIc2kGs58ZCDJTAAT5G4mBwlgHQKPMyERMRGumcxkmhJmACCEGomdxmBhWUDggOAAAABACAJ0BKhAACgADgFoliAJ0fwAVzZ8HmTgA/vGjx57+thW8L2vLqZkuiAu6OgaZkdrScGWynAAA";
+
 /** Crossfade + slide for a scroll sub-range (with generous fade margins). */
 function useBeat(p: MotionValue<number>, a: number, b: number) {
   const m = Math.min(0.05, (b - a) / 3);
@@ -125,19 +129,21 @@ export function BusExperience() {
               }}
             >
               <Image
-                src="/bus-cutout.png"
+                src="/bus-cutout.webp"
                 alt="Autocar KORA TRANSIT, phares allumés"
                 width={1091}
                 height={690}
                 priority
                 sizes="(max-width: 768px) 94vw, 60vw"
+                placeholder="blur"
+                blurDataURL={BUS_BLUR}
                 className="h-auto w-full object-contain"
               />
               <div
                 aria-hidden
                 className="absolute left-0 top-full hidden w-full -scale-y-100 opacity-[0.14] [mask-image:linear-gradient(to_bottom,black,transparent_55%)] sm:block"
               >
-                <Image src="/bus-cutout.png" alt="" width={1091} height={690} className="h-auto w-full object-contain" />
+                <Image src="/bus-cutout.webp" alt="" width={1091} height={690} className="h-auto w-full object-contain" />
               </div>
             </motion.div>
           </div>
