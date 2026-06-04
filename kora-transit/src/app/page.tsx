@@ -1,13 +1,21 @@
-export default function Home() {
+import { Hero } from "@/components/sections/Hero";
+import { Stats } from "@/components/sections/Stats";
+import { WhyUs } from "@/components/sections/WhyUs";
+import { ServicesPreview } from "@/components/sections/ServicesPreview";
+import { Routes } from "@/components/sections/Routes";
+import { Testimonials } from "@/components/sections/Testimonials";
+import { FinalCta } from "@/components/sections/FinalCta";
+
+export default function HomePage() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center gap-3 p-8 text-center">
-      <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
-        Kora Transit
-      </h1>
-      <p className="max-w-md text-sm text-neutral-500">
-        Structure de base prête. Next.js 14 · TypeScript · Tailwind CSS v3 ·
-        Framer Motion 11.
-      </p>
-    </main>
+    <>
+      <Hero />
+      <Stats />
+      <WhyUs />
+      <ServicesPreview />
+      <Routes />
+      <Testimonials />
+      <FinalCta />
+    </>
   );
 }

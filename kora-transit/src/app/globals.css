@@ -2,26 +2,94 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@layer base {
+  *,
+  ::before,
+  ::after {
+    border-color: theme("colors.line");
+  }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-navy text-ink font-sans antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-display tracking-tightest;
+  }
+
+  ::selection {
+    background: rgba(201, 168, 76, 0.28);
+    color: #fff;
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #070f1c;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #1e2e45;
+    border-radius: 9999px;
+    border: 2px solid #070f1c;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #2a3e5c;
   }
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: var(--font-geist-sans), system-ui, sans-serif;
+@layer components {
+  .shell {
+    @apply mx-auto w-full max-w-7xl px-5 sm:px-6 lg:px-8;
+  }
+  .section {
+    @apply py-20 md:py-28 lg:py-32;
+  }
+  .glass {
+    background: linear-gradient(
+      180deg,
+      rgba(17, 31, 53, 0.72),
+      rgba(11, 22, 40, 0.5)
+    );
+    @apply border border-line/80 backdrop-blur-xl;
+  }
 }
 
 @layer utilities {
-  .text-balance {
-    text-wrap: balance;
+  .text-gradient-gold {
+    background-image: linear-gradient(
+      120deg,
+      #e0c674 0%,
+      #c9a84c 45%,
+      #a8842f 100%
+    );
+    @apply bg-clip-text text-transparent;
+  }
+  .bg-radial-gold {
+    background: radial-gradient(
+      circle at center,
+      rgba(201, 168, 76, 0.22) 0%,
+      rgba(201, 168, 76, 0.06) 35%,
+      transparent 70%
+    );
+  }
+  .mask-fade-b {
+    -webkit-mask-image: linear-gradient(to bottom, black 55%, transparent 100%);
+    mask-image: linear-gradient(to bottom, black 55%, transparent 100%);
+  }
+  .text-shadow-navy {
+    text-shadow: 0 2px 40px rgba(7, 15, 28, 0.7);
+  }
+  .pause-anim {
+    animation-play-state: paused;
   }
 }
