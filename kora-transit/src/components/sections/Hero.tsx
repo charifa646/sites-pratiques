@@ -69,7 +69,7 @@ export function Hero() {
             scale: reduce ? 1 : wordScale,
             opacity: reduce ? 1 : wordOpacity,
           }}
-          className="absolute left-1/2 top-[14%] z-0 select-none whitespace-nowrap font-display text-[clamp(5rem,26vw,22rem)] font-bold leading-none tracking-tightest text-ink"
+          className="absolute left-1/2 top-[26%] z-0 select-none whitespace-nowrap font-display text-[34vw] font-bold leading-none tracking-tightest text-ink sm:top-[18%] sm:text-[28vw] lg:top-[14%] lg:text-[clamp(5rem,26vw,22rem)]"
         >
           KORA
         </motion.span>
@@ -78,7 +78,7 @@ export function Hero() {
         <div className="pointer-events-none absolute left-1/2 top-[52%] z-[1] h-[42vh] w-[60vw] -translate-x-1/2 -translate-y-1/2 rounded-full bg-gold/10 blur-[130px]" />
 
         {/* ── Product (cut-out bus) ── */}
-        <div className="absolute left-1/2 top-[57%] z-10 w-[min(780px,62vw)] -translate-x-1/2 -translate-y-1/2">
+        <div className="absolute left-1/2 top-[50%] z-10 w-[94vw] -translate-x-1/2 -translate-y-1/2 sm:w-[80vw] lg:top-[57%] lg:w-[min(780px,62vw)]">
           <motion.div style={{ scale: reduce ? 1 : busScale, y: reduce ? 0 : busY }}>
             <Image
               src="/bus-cutout.png"
