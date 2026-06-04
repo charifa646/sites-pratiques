@@ -12,7 +12,7 @@ export function BracketLabel({
   return (
     <span
       className={cn(
-        "font-mono text-[0.62rem] uppercase tracking-[0.25em] text-ink/45",
+        "font-mono text-[0.62rem] uppercase tracking-[0.25em] text-ink/60",
         className,
       )}
     >
