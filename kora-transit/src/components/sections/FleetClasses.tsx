@@ -4,7 +4,8 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { Check, Users, Star } from "lucide-react";
 import { fleet } from "@/lib/data";
-import { staggerContainer, staggerItem, VIEWPORT } from "@/lib/animations";
+import { staggerContainer, staggerItem } from "@/lib/animations";
+import { TiltCard } from "@/components/ui/TiltCard";
 import { cn } from "@/lib/utils";
 
 export function FleetClasses() {
@@ -15,15 +16,16 @@ export function FleetClasses() {
           variants={staggerContainer}
           initial="hidden"
           whileInView="visible"
-          viewport={VIEWPORT}
+          viewport={{ once: true, margin: "-80px" }}
           className="grid items-start gap-6 lg:grid-cols-3"
         >
           {fleet.map((f) => (
-            <motion.article
+            <TiltCard
               key={f.name}
               variants={staggerItem}
+              intensity={7}
               className={cn(
-                "group relative flex flex-col overflow-hidden rounded-2xl border bg-navy-light/30 transition-all duration-500 hover:-translate-y-1.5",
+                "group relative flex h-full flex-col overflow-hidden rounded-2xl border bg-navy-light/30",
                 f.featured
                   ? "border-gold/60 shadow-gold-sm lg:-mt-4"
                   : "border-line/70 hover:border-gold/40",
@@ -51,9 +53,7 @@ export function FleetClasses() {
                   {f.tier}
                 </span>
                 <h3 className="mt-2 font-display text-2xl font-bold">{f.name}</h3>
-                <p className="mt-3 text-sm leading-relaxed text-muted">
-                  {f.description}
-                </p>
+                <p className="mt-3 text-sm leading-relaxed text-muted">{f.description}</p>
 
                 <div className="mt-5 flex items-center gap-2 text-sm text-ink">
                   <Users className="h-4 w-4 text-gold" />
@@ -73,7 +73,7 @@ export function FleetClasses() {
                   ))}
                 </ul>
               </div>
-            </motion.article>
+            </TiltCard>
           ))}
         </motion.div>
       </div>

@@ -7,6 +7,7 @@ import { ArrowRight } from "lucide-react";
 import { SectionTitle } from "@/components/ui/SectionTitle";
 import { ButtonLink } from "@/components/ui/Button";
 import { AuroraBackground } from "@/components/ui/AuroraBackground";
+import { TiltCard } from "@/components/ui/TiltCard";
 import { servicesPreview } from "@/lib/data";
 import { staggerContainer, staggerItem, VIEWPORT } from "@/lib/animations";
 import { cn } from "@/lib/utils";
@@ -40,9 +41,10 @@ export function ServicesPreview() {
           {servicesPreview.items.map((it, i) => {
             const big = i === 0;
             return (
-              <motion.div
+              <TiltCard
                 key={it.title}
                 variants={staggerItem}
+                intensity={6}
                 className={cn(
                   "group relative overflow-hidden rounded-2xl border border-line/70",
                   big ? "lg:col-span-2 lg:row-span-2" : "lg:col-span-1",
@@ -75,7 +77,7 @@ export function ServicesPreview() {
                     </div>
                   </div>
                 </Link>
-              </motion.div>
+              </TiltCard>
             );
           })}
         </motion.div>
