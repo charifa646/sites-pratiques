@@ -3,7 +3,6 @@
 import { motion } from "framer-motion";
 import { Quote, Star } from "lucide-react";
 import { SectionTitle } from "@/components/ui/SectionTitle";
-import { GiantText } from "@/components/ui/GiantText";
 import { Duotone } from "@/components/ui/Duotone";
 import { testimonials, images } from "@/lib/data";
 import { staggerContainer, staggerItem, VIEWPORT } from "@/lib/animations";
@@ -19,7 +18,6 @@ export function Testimonials() {
         intensity="strong"
       />
       <div className="absolute inset-0 bg-navy-deep/80" />
-      <GiantText className="-left-[2%] bottom-2 text-[15vw]">CONFIANCE</GiantText>
 
       <div className="shell relative">
         <SectionTitle number="05" eyebrow="Témoignages" title={testimonials.title} />

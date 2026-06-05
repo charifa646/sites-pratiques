@@ -35,7 +35,9 @@ export function GiantText({
       style={{ y: reduce || !parallax ? 0 : y }}
       className={cn(
         "pointer-events-none absolute select-none whitespace-nowrap font-display font-bold leading-none tracking-tightest",
-        outline ? "text-stroke-ink" : "text-ink/[0.04]",
+        // Soft blend: gentle blur + radial mask so the word dissolves into the bg.
+        "blur-[1.5px] [mask-image:radial-gradient(125%_100%_at_50%_50%,#000_18%,transparent_78%)]",
+        outline ? "text-stroke-ink opacity-[0.65]" : "text-ink/[0.028]",
         className,
       )}
     >

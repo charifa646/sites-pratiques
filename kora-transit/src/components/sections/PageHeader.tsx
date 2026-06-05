@@ -54,7 +54,7 @@ export function PageHeader({
       {bgWord && (
         <span
           aria-hidden
-          className="text-stroke-ink pointer-events-none absolute -bottom-[10%] right-[-2%] select-none whitespace-nowrap font-display text-[20vw] font-bold leading-none tracking-tightest opacity-50"
+          className="text-stroke-ink pointer-events-none absolute -bottom-[10%] right-[-2%] select-none whitespace-nowrap font-display text-[20vw] font-bold leading-none tracking-tightest opacity-40 blur-[2px] [mask-image:radial-gradient(120%_120%_at_70%_60%,#000_20%,transparent_75%)]"
         >
           {bgWord}
         </span>
