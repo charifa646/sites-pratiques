@@ -139,7 +139,7 @@ export type Stat = {
 export const statsHome: Stat[] = [
   { value: 500000, suffix: "+", separator: true, label: "Voyageurs transportés" },
   { value: 15, label: "Destinations desservies" },
-  { value: 12, suffix: " ans", label: "D'excellence opérationnelle" },
+  { value: 12, suffix: " ans", label: "D'excellence opérationnelle" },
   { value: 98, suffix: "%", label: "Taux de ponctualité" },
 ];
 

@@ -52,6 +52,7 @@ export default function ScrollExpandMedia({
     const handleWheel = (e: WheelEvent) => {
       if (mediaFullyExpanded && e.deltaY < 0 && window.scrollY <= 5) {
         setMediaFullyExpanded(false);
+        setShowContent(false);
         e.preventDefault();
       } else if (!mediaFullyExpanded) {
         e.preventDefault();
@@ -72,6 +73,7 @@ export default function ScrollExpandMedia({
       const deltaY = touchStartY - touchY;
       if (mediaFullyExpanded && deltaY < -20 && window.scrollY <= 5) {
         setMediaFullyExpanded(false);
+        setShowContent(false);
         e.preventDefault();
       } else if (!mediaFullyExpanded) {
         e.preventDefault();
@@ -121,7 +123,13 @@ export default function ScrollExpandMedia({
   const restOfTitle = title ? title.split(" ").slice(1).join(" ") : "";
 
   return (
-    <div ref={sectionRef} className="overflow-x-hidden bg-navy-deep transition-colors duration-700 ease-in-out">
+    <motion.div
+      ref={sectionRef}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+      className="overflow-x-hidden bg-navy-deep transition-colors duration-700 ease-in-out"
+    >
       <section className="relative flex min-h-[100dvh] flex-col items-center justify-start">
         <div className="relative flex min-h-[100dvh] w-full flex-col items-center">
           {/* Background image — fades out as the media expands */}
@@ -136,8 +144,9 @@ export default function ScrollExpandMedia({
               alt=""
               width={1920}
               height={1080}
-              className="h-screen w-screen"
-              style={{ objectFit: "cover", objectPosition: "center" }}
+              sizes="100vw"
+              quality={55}
+              className="h-screen w-screen object-cover object-center"
               priority
             />
             <div className="absolute inset-0 bg-navy-deep/40" />
@@ -156,12 +165,14 @@ export default function ScrollExpandMedia({
                   boxShadow: "0 0 60px rgba(0,0,0,0.5), 0 0 40px -12px rgba(201,168,76,0.35)",
                 }}
               >
-                <div className="relative h-full w-full">
+                <div className="relative h-full w-full bg-navy-light">
                   <Image
                     src={mediaSrc}
                     alt={title || "Autocar KORA TRANSIT"}
                     width={1280}
                     height={720}
+                    sizes="(max-width: 768px) 95vw, 700px"
+                    quality={70}
                     className="h-full w-full rounded-2xl object-cover"
                     priority
                   />
@@ -222,6 +233,6 @@ export default function ScrollExpandMedia({
           </div>
         </div>
       </section>
-    </div>
+    </motion.div>
   );
 }

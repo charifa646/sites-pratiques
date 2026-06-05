@@ -43,7 +43,7 @@ export function Stats({
           whileInView="visible"
           viewport={VIEWPORT}
           className={cn(
-            "mt-9 grid gap-x-8 gap-y-12",
+            "mt-9 grid gap-x-6 gap-y-9 sm:gap-x-8 sm:gap-y-12",
             stats.length === 5
               ? "grid-cols-2 md:grid-cols-3 lg:grid-cols-5"
               : "grid-cols-2 md:grid-cols-4",
@@ -54,11 +54,16 @@ export function Stats({
               {i > 0 && (
                 <span className="absolute -left-4 top-1.5 hidden h-[78%] w-px bg-line/70 md:block" />
               )}
-              <div className="text-gradient-gold font-display text-[clamp(2.4rem,5vw,3.4rem)] font-bold leading-none tracking-tightest">
+              <div className="text-gradient-gold whitespace-nowrap font-display text-[clamp(1.75rem,8vw,3.4rem)] font-bold leading-none tracking-tightest">
                 <NumberTicker value={s.value} group={s.separator} className="text-gradient-gold" />
-                {s.suffix}
+                {s.suffix &&
+                  (s.suffix.startsWith(" ") ? (
+                    <span className="ml-2">{s.suffix.trim()}</span>
+                  ) : (
+                    s.suffix
+                  ))}
               </div>
-              <p className="mt-3 text-[0.8rem] uppercase tracking-[0.16em] text-muted">
+              <p className="mt-2.5 text-[0.7rem] uppercase tracking-[0.14em] text-muted sm:text-[0.8rem]">
                 {s.label}
               </p>
             </motion.div>
