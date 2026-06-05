@@ -52,7 +52,7 @@
     @apply mx-auto w-full max-w-7xl px-5 sm:px-6 lg:px-8;
   }
   .section {
-    @apply py-20 md:py-28 lg:py-32;
+    @apply py-24 md:py-36 lg:py-44;
   }
   .glass {
     background: linear-gradient(

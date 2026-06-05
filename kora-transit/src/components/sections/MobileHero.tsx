@@ -48,7 +48,7 @@ export function MobileHero() {
       </motion.div>
 
       {/* Pourquoi KORA — header + cards appearing in sequence */}
-      <div className="mx-auto mt-20 max-w-xl">
+      <div className="mx-auto mt-28 max-w-xl">
         <motion.div
           variants={fadeUp}
           initial="hidden"
@@ -73,13 +73,13 @@ export function MobileHero() {
           initial="hidden"
           whileInView="visible"
           viewport={VIEWPORT}
-          className="mt-6 grid gap-4"
+          className="mt-8 grid gap-5"
         >
           {whyUs.items.map((it) => (
             <motion.div
               key={it.title}
               variants={staggerItem}
-              className="group rounded-2xl border border-line/70 bg-navy-light/40 p-5 transition-colors duration-500 hover:border-gold/40"
+              className="group rounded-2xl border border-line/70 bg-navy-light/40 p-6 transition-colors duration-500 hover:border-gold/40"
             >
               <div className="mb-3 grid h-11 w-11 place-items-center rounded-xl border border-gold/30 bg-gold/10 text-gold">
                 <it.icon className="h-5 w-5" />

@@ -37,7 +37,7 @@ export function Routes() {
       <div className="shell relative">
         <SectionTitle number="04" eyebrow="Nos liaisons" title={liaisons.title} />
 
-        <div className="mt-12 grid items-center gap-12 lg:grid-cols-2">
+        <div className="mt-16 grid items-center gap-12 md:mt-20 lg:grid-cols-2">
           {/* Dotted map of the West-Africa network (magicui · svg-dotted-map) */}
           <div className="relative">
             <div className="pointer-events-none absolute inset-0 -z-10 scale-110 bg-radial-gold" />
