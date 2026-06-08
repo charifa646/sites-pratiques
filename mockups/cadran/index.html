@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Cadran — Maquette · Réservation & paiement de séances pour coachs & consultants</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F3F0E9; --surface:#FFFFFF; --surface2:#FBFAF6;
+    --ink:#181610; --ink2:#3A372E; --muted:#74705F; --faint:#9C9788;
+    --line:#E7E1D4; --line2:#EFEADF;
+    --green:#1C5A48; --green-d:#154236; --green-t:#EAF1ED;
+    --gold:#A9854F;
+    --wave:#19B6E8; --orange:#F07300;
+    --shadow:0 1px 2px rgba(24,22,16,.04), 0 18px 40px -12px rgba(24,22,16,.12);
+    --shadow-sm:0 1px 2px rgba(24,22,16,.05), 0 8px 20px -10px rgba(24,22,16,.10);
+    --serif:'Fraunces',Georgia,'Times New Roman',serif;
+    --sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--sans);background:var(--bg);color:var(--ink);
+    -webkit-font-smoothing:antialiased;line-height:1.5}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 28px}
+  .icon{width:1em;height:1em;display:inline-block;vertical-align:-.125em;fill:none;
+    stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+  .eyebrow{font-size:11.5px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--gold)}
+  .num{font-family:var(--serif);color:var(--faint);font-size:13px;font-weight:500}
+  h2.sec{font-family:var(--serif);font-weight:500;font-size:30px;letter-spacing:-.01em;margin:8px 0 4px}
+  .sec-sub{color:var(--muted);font-size:15px;max-width:560px}
+
+  /* Top bar */
+  .topbar{border-bottom:1px solid var(--line);background:rgba(243,240,233,.85);
+    backdrop-filter:blur(8px);position:sticky;top:0;z-index:10}
+  .topbar .wrap{display:flex;align-items:center;justify-content:space-between;height:64px}
+  .brand{display:flex;align-items:center;gap:11px}
+  .mark{width:30px;height:30px;border-radius:50%;border:1.5px solid var(--green);position:relative;display:grid;place-items:center}
+  .mark::after{content:"";position:absolute;width:2px;height:9px;background:var(--green);border-radius:2px;
+    transform-origin:bottom center;transform:translateY(-2px) rotate(38deg)}
+  .mark::before{content:"";position:absolute;width:2px;height:6.5px;background:var(--gold);border-radius:2px;
+    transform-origin:bottom center;transform:translateY(-1px) rotate(-70deg)}
+  .brand b{font-family:var(--serif);font-weight:600;font-size:20px;letter-spacing:.01em}
+  .tag{font-size:11.5px;color:var(--muted);border:1px solid var(--line);background:var(--surface);
+    padding:6px 12px;border-radius:999px;font-weight:500}
+
+  /* Hero */
+  .hero{padding:72px 0 30px}
+  .hero .eyebrow{margin-bottom:18px;display:block}
+  .hero h1{font-family:var(--serif);font-weight:400;font-size:54px;line-height:1.05;letter-spacing:-.02em;max-width:760px}
+  .hero h1 em{font-style:italic;color:var(--green)}
+  .hero h1 .u{position:relative;white-space:nowrap}
+  .hero h1 .u::after{content:"";position:absolute;left:0;right:0;bottom:.08em;height:2px;background:var(--gold);opacity:.55}
+  .hero p.lede{margin-top:22px;font-size:17px;color:var(--ink2);max-width:580px;line-height:1.6}
+  .hero-meta{margin-top:30px;display:flex;gap:30px;flex-wrap:wrap}
+  .hm{display:flex;align-items:center;gap:9px;font-size:13.5px;color:var(--ink2)}
+  .hm .ic{color:var(--green);font-size:17px}
+  .linkchip{margin-top:30px;display:inline-flex;align-items:center;gap:10px;background:var(--surface);
+    border:1px solid var(--line);border-radius:12px;padding:11px 15px;box-shadow:var(--shadow-sm);font-size:14px}
+  .linkchip .dot{width:7px;height:7px;border-radius:50%;background:var(--green)}
+  .linkchip .url{color:var(--muted)}.linkchip .url b{color:var(--ink);font-weight:600}
+  .linkchip .copy{margin-left:6px;color:var(--green);font-weight:600;font-size:12.5px;border-left:1px solid var(--line);padding-left:12px}
+
+  section.block{padding:40px 0}
+  .head{margin-bottom:26px}
+  .head .row{display:flex;align-items:baseline;gap:14px}
+
+  /* Booking card (client view) — the centerpiece */
+  .booking{display:grid;grid-template-columns:300px 1fr;background:var(--surface);
+    border:1px solid var(--line);border-radius:22px;overflow:hidden;box-shadow:var(--shadow)}
+  @media(max-width:760px){.booking{grid-template-columns:1fr}}
+  .b-side{padding:30px 26px;background:var(--surface2);border-right:1px solid var(--line2)}
+  @media(max-width:760px){.b-side{border-right:0;border-bottom:1px solid var(--line2)}}
+  .avatar{width:64px;height:64px;border-radius:50%;background:linear-gradient(150deg,#246b54,#163e33);color:#fff;display:grid;place-items:center;
+    font-family:var(--serif);font-size:24px;font-weight:500;box-shadow:0 6px 16px -6px rgba(21,66,54,.6)}
+  .coach-name{font-family:var(--serif);font-size:21px;font-weight:500;margin-top:16px;display:flex;align-items:center;gap:7px}
+  .vchk{color:var(--gold);font-size:15px}
+  .coach-role{color:var(--muted);font-size:13.5px;margin-top:3px}
+  .coach-loc{color:var(--faint);font-size:12.5px;margin-top:10px;display:flex;align-items:center;gap:6px}
+  .divider{height:1px;background:var(--line2);margin:20px 0}
+  .svc-label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);font-weight:600;margin-bottom:10px}
+  .svc{border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--surface);margin-bottom:9px;cursor:pointer}
+  .svc.on{border-color:var(--green);box-shadow:0 0 0 3px var(--green-t)}
+  .svc .t{font-weight:600;font-size:14px;display:flex;justify-content:space-between;align-items:center}
+  .svc .m{color:var(--muted);font-size:12.5px;margin-top:3px;display:flex;align-items:center;gap:6px}
+  .svc .px{font-family:var(--serif);font-size:15px;color:var(--green);font-weight:600}
+
+  .b-main{padding:30px 30px 26px}
+  .b-main .step{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);font-weight:600}
+  .b-main h3{font-family:var(--serif);font-weight:500;font-size:20px;margin:6px 0 20px}
+  .days{display:flex;gap:9px;overflow:auto;padding-bottom:4px}
+  .day{min-width:62px;border:1px solid var(--line);border-radius:12px;padding:10px 0;text-align:center;cursor:pointer;background:var(--surface)}
+  .day:hover{border-color:var(--green)}
+  .day.on{background:var(--green);border-color:var(--green);color:#fff}
+  .day.off{opacity:.4;cursor:not-allowed}
+  .day .dn{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+  .day.on .dn{color:#cfe3da}
+  .day .dd{font-family:var(--serif);font-size:19px;font-weight:500;margin-top:2px}
+  .slots-label{margin:22px 0 11px;font-size:13px;color:var(--ink2);font-weight:500;display:flex;align-items:center;gap:7px}
+  .slots-label .tz{margin-left:auto;color:var(--faint);font-size:12px;font-weight:400}
+  .slots{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}
+  @media(max-width:520px){.slots{grid-template-columns:repeat(3,1fr)}}
+  .slot{border:1px solid var(--line);border-radius:10px;padding:11px 0;text-align:center;font-size:14px;font-weight:500;cursor:pointer;background:var(--surface);font-variant-numeric:tabular-nums}
+  .slot:hover{border-color:var(--green);color:var(--green)}
+  .slot.on{background:var(--green);border-color:var(--green);color:#fff}
+  .slot.busy{color:var(--faint);text-decoration:line-through;background:var(--surface2);cursor:not-allowed;border-style:dashed}
+
+  .pay{margin-top:24px;border-top:1px solid var(--line2);padding-top:20px}
+  .pay-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+  .pay-row .l{font-size:13px;color:var(--muted)}
+  .pay-row .l b{display:block;color:var(--ink);font-size:14px;font-weight:600;margin-top:2px}
+  .pay-row .amt{font-family:var(--serif);font-size:26px;font-weight:600}
+  .pm-row{display:flex;gap:10px;margin-bottom:14px}
+  .pm{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--line);
+    border-radius:11px;padding:11px;font-size:13.5px;font-weight:600;cursor:pointer;background:var(--surface)}
+  .pm.on{border-color:var(--green);box-shadow:0 0 0 3px var(--green-t)}
+  .pm .pdot{width:9px;height:9px;border-radius:50%}
+  .btn-primary{width:100%;background:var(--green);color:#fff;border:none;border-radius:12px;padding:15px;
+    font-size:15px;font-weight:600;font-family:var(--sans);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:9px;
+    transition:.15s;box-shadow:0 10px 24px -10px rgba(28,90,72,.7)}
+  .btn-primary:hover{background:var(--green-d)}
+  .reassure{text-align:center;margin-top:12px;font-size:12px;color:var(--faint);display:flex;align-items:center;justify-content:center;gap:7px}
+
+  /* Dashboard */
+  .panel{background:var(--surface);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow)}
+  .dash-top{display:flex;align-items:center;justify-content:space-between;padding:22px 26px;border-bottom:1px solid var(--line2);flex-wrap:wrap;gap:12px}
+  .dash-top .who{display:flex;align-items:center;gap:13px}
+  .dash-top .who .a{width:42px;height:42px;border-radius:50%;background:linear-gradient(150deg,#246b54,#163e33);color:#fff;display:grid;place-items:center;font-family:var(--serif);font-weight:500}
+  .dash-top h3{font-family:var(--serif);font-weight:500;font-size:18px}
+  .dash-top .sub{font-size:12.5px;color:var(--muted)}
+  .seg{display:flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;font-size:12.5px}
+  .seg span{padding:8px 14px;color:var(--muted);font-weight:500;cursor:pointer}
+  .seg span.on{background:var(--ink);color:#fff}
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr)}
+  @media(max-width:720px){.kpis{grid-template-columns:repeat(2,1fr)}}
+  .kpi{padding:22px 26px;border-right:1px solid var(--line2);border-bottom:1px solid var(--line2)}
+  .kpi:nth-child(4n){border-right:0}
+  .kpi .kl{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:7px}
+  .kpi .kl .ic{color:var(--green);font-size:14px}
+  .kpi .kv{font-family:var(--serif);font-size:27px;font-weight:600;margin-top:9px;letter-spacing:-.01em}
+  .kpi .kv small{font-size:14px;color:var(--muted);font-weight:500}
+  .kpi .kd{font-size:11.5px;margin-top:4px;color:var(--green);font-weight:500}
+
+  .agenda{padding:8px 26px 22px}
+  .agenda .ah{display:flex;align-items:center;justify-content:space-between;padding:18px 0 12px}
+  .agenda .ah .d{font-family:var(--serif);font-size:15px;font-weight:500}
+  .agenda .ah .c{font-size:12px;color:var(--muted)}
+  .appt{display:grid;grid-template-columns:64px 1fr auto;gap:16px;align-items:center;padding:14px 0;border-top:1px solid var(--line2)}
+  .appt .time{font-variant-numeric:tabular-nums;font-weight:600;font-size:14px;color:var(--ink)}
+  .appt .time small{display:block;color:var(--faint);font-size:11px;font-weight:400}
+  .appt .cli{display:flex;align-items:center;gap:11px}
+  .appt .cli .ca{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:600;color:#fff}
+  .appt .cli .nm{font-weight:600;font-size:13.5px}
+  .appt .cli .sv{color:var(--muted);font-size:12px}
+  .appt .right{text-align:right}
+  .appt .amt2{font-family:var(--serif);font-weight:600;font-size:14px}
+  .pay-badge{font-size:11px;font-weight:600;padding:3px 9px;border-radius:999px;background:var(--green-t);color:var(--green);display:inline-flex;align-items:center;gap:5px;margin-top:4px}
+  .appt.free{opacity:.6}
+  .appt.free .cli .nm{color:var(--muted);font-weight:500;font-style:italic}
+  .free-slot{border:1px dashed var(--line);border-radius:8px;padding:6px 12px;font-size:12px;color:var(--faint)}
+
+  /* two-up: reminders + settings */
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+  @media(max-width:820px){.two{grid-template-columns:1fr}}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow-sm);padding:26px}
+  .card .ct{display:flex;align-items:center;gap:9px;font-family:var(--serif);font-size:17px;font-weight:500;margin-bottom:5px}
+  .card .cd{color:var(--muted);font-size:13.5px;margin-bottom:20px}
+
+  /* WhatsApp reminder (refined) */
+  .wa-note{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--surface2)}
+  .wa-bar{display:flex;align-items:center;gap:9px;padding:11px 14px;background:#fff;border-bottom:1px solid var(--line2)}
+  .wa-ic{width:24px;height:24px;border-radius:6px;background:#25d366;display:grid;place-items:center;color:#fff;font-size:13px}
+  .wa-bar .t{font-size:12.5px;font-weight:600}.wa-bar .s{font-size:11px;color:var(--faint);margin-left:auto}
+  .wa-msgs{padding:14px;display:flex;flex-direction:column;gap:10px}
+  .wa-b{background:#fff;border:1px solid var(--line2);border-radius:12px;border-top-left-radius:3px;padding:11px 13px;font-size:13px;line-height:1.5;max-width:90%}
+  .wa-b b{font-weight:600}
+  .wa-b .meta{display:block;font-size:10.5px;color:var(--faint);margin-top:6px}
+  .wa-pill{display:inline-block;margin-top:9px;border:1px solid var(--green);color:var(--green);border-radius:8px;padding:7px 12px;font-size:12px;font-weight:600}
+  .reduce{display:flex;align-items:center;gap:10px;margin-top:18px;background:var(--green-t);border-radius:12px;padding:13px 15px;font-size:13px;color:var(--green-d)}
+  .reduce b{font-weight:600}
+
+  /* Settings */
+  .set-row{display:flex;align-items:center;justify-content:space-between;padding:13px 0;border-top:1px solid var(--line2);font-size:14px}
+  .set-row:first-of-type{border-top:0}
+  .set-row .k{color:var(--muted);font-size:12.5px}
+  .set-row .v{font-weight:500;display:flex;align-items:center;gap:8px}
+  .svc-mini{display:flex;align-items:center;justify-content:space-between;padding:11px 13px;border:1px solid var(--line);border-radius:11px;margin-bottom:8px;font-size:13.5px}
+  .svc-mini .px2{font-family:var(--serif);color:var(--green);font-weight:600}
+  .chip{font-size:12px;border:1px solid var(--line);border-radius:999px;padding:5px 11px;display:inline-flex;align-items:center;gap:7px;font-weight:500}
+  .chip .pdot{width:8px;height:8px;border-radius:50%}
+  .pubLink{margin-top:6px;background:var(--ink);color:#F3F0E9;border-radius:12px;padding:13px 15px;display:flex;align-items:center;gap:10px;font-size:13.5px}
+  .pubLink .u b{color:#fff;font-weight:600}.pubLink .u{color:#b8b3a4}
+  .pubLink .act{margin-left:auto;color:#cde3d9;font-weight:600;font-size:12.5px}
+
+  footer{border-top:1px solid var(--line);margin-top:50px;padding:30px 0 60px;color:var(--faint);font-size:12.5px;text-align:center;line-height:1.8}
+  footer b{color:var(--muted)}
+</style>
+</head>
+<body>
+
+  <div class="topbar"><div class="wrap">
+    <div class="brand"><span class="mark"></span><b>Cadran</b></div>
+    <span class="tag">Maquette · données fictives</span>
+  </div></div>
+
+  <div class="wrap">
+
+    <!-- HERO -->
+    <section class="hero">
+      <span class="eyebrow">Pour coachs &amp; consultants francophones</span>
+      <h1>Vos séances, <em>réservées</em><br>et <span class="u">payées d'avance</span>.</h1>
+      <p class="lede">Cadran transforme votre lien en agenda qui encaisse. Le client choisit un créneau,
+        règle par <strong>Wave ou Orange Money</strong>, et reçoit ses rappels. Plus de relances, plus de lapins.</p>
+      <div class="hero-meta">
+        <div class="hm"><span class="ic"><svg class="icon" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span> Réglé avant la séance</div>
+        <div class="hm"><span class="ic"><svg class="icon" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span> Agenda &amp; rappels WhatsApp</div>
+        <div class="hm"><span class="ic"><svg class="icon" viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span> Encaissement mobile money</div>
+      </div>
+      <div class="linkchip">
+        <span class="dot"></span>
+        <span class="url">cadran.co/<b>mariam-toure</b></span>
+        <span class="copy">Copier le lien</span>
+      </div>
+    </section>
+
+    <!-- 01 — BOOKING (client view) -->
+    <section class="block">
+      <div class="head"><div class="row"><span class="num">01</span><span class="eyebrow">Ce que voit le client</span></div>
+        <h2 class="sec">Une page de réservation qui encaisse</h2>
+        <p class="sec-sub">Partagée en bio Instagram, LinkedIn ou statut WhatsApp. Choix du service, du créneau, paiement — en moins d'une minute.</p>
+      </div>
+
+      <div class="booking">
+        <div class="b-side">
+          <div class="avatar">MT</div>
+          <div class="coach-name">Mariam Touré <span class="vchk"><svg class="icon" viewBox="0 0 24 24"><path d="m9 12 2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg></span></div>
+          <div class="coach-role">Coach en leadership &amp; carrière</div>
+          <div class="coach-loc"><svg class="icon" viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg> Abidjan · en visio ou présentiel</div>
+          <div class="divider"></div>
+          <div class="svc-label">Prestation</div>
+          <div class="svc on">
+            <div class="t">Séance individuelle <span class="px">25 000 F</span></div>
+            <div class="m"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> 60 min · visio</div>
+          </div>
+          <div class="svc">
+            <div class="t">Consultation express <span class="px">12 000 F</span></div>
+            <div class="m"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> 30 min · visio</div>
+          </div>
+          <div class="svc">
+            <div class="t">Pack 4 séances <span class="px">90 000 F</span></div>
+            <div class="m"><svg class="icon" viewBox="0 0 24 24"><path d="M3 7h18M3 12h18M3 17h18"/></svg> 4 × 60 min</div>
+          </div>
+        </div>
+
+        <div class="b-main">
+          <div class="step">Choisir un créneau</div>
+          <h3>Juin 2026</h3>
+          <div class="days">
+            <div class="day off"><div class="dn">Lun</div><div class="dd">8</div></div>
+            <div class="day on"><div class="dn">Mar</div><div class="dd">9</div></div>
+            <div class="day"><div class="dn">Mer</div><div class="dd">10</div></div>
+            <div class="day"><div class="dn">Jeu</div><div class="dd">11</div></div>
+            <div class="day"><div class="dn">Ven</div><div class="dd">12</div></div>
+            <div class="day off"><div class="dn">Sam</div><div class="dd">13</div></div>
+            <div class="day off"><div class="dn">Dim</div><div class="dd">14</div></div>
+          </div>
+
+          <div class="slots-label"><svg class="icon" viewBox="0 0 24 24" style="color:var(--green)"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> Créneaux du mardi 9 juin <span class="tz">Fuseau GMT</span></div>
+          <div class="slots">
+            <div class="slot">09:00</div>
+            <div class="slot busy">10:30</div>
+            <div class="slot on">14:00</div>
+            <div class="slot">15:30</div>
+            <div class="slot">16:30</div>
+            <div class="slot busy">17:30</div>
+            <div class="slot">18:00</div>
+            <div class="slot">18:30</div>
+          </div>
+
+          <div class="pay">
+            <div class="pay-row">
+              <div class="l">Séance individuelle · mar. 9 juin · 14:00<b>Mariam Touré — 60 min en visio</b></div>
+              <div class="amt">25 000 <span style="font-size:14px;color:var(--muted)">F</span></div>
+            </div>
+            <div class="pm-row">
+              <div class="pm on"><span class="pdot" style="background:var(--wave)"></span> Wave</div>
+              <div class="pm"><span class="pdot" style="background:var(--orange)"></span> Orange Money</div>
+            </div>
+            <button class="btn-primary">
+              <svg class="icon" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+              Confirmer &amp; payer 25 000 F
+            </button>
+            <div class="reassure"><svg class="icon" viewBox="0 0 24 24"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg> Paiement sécurisé · confirmation immédiate · annulation gratuite 24 h avant</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 02 — DASHBOARD -->
+    <section class="block">
+      <div class="head"><div class="row"><span class="num">02</span><span class="eyebrow">Côté coach</span></div>
+        <h2 class="sec">Votre journée, déjà encaissée</h2>
+        <p class="sec-sub">Toutes vos séances à venir, qui a payé, et combien vous avez encaissé — d'un coup d'œil.</p>
+      </div>
+
+      <div class="panel">
+        <div class="dash-top">
+          <div class="who"><span class="a">MT</span><div><h3>Mariam Touré</h3><div class="sub">Espace coach · juin 2026</div></div></div>
+          <div class="seg"><span>Jour</span><span class="on">Semaine</span><span>Mois</span></div>
+        </div>
+        <div class="kpis">
+          <div class="kpi"><div class="kl"><span class="ic"><svg class="icon" viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span> Encaissé ce mois</div><div class="kv">1 240 000<small> F</small></div><div class="kd">+22 % vs mai</div></div>
+          <div class="kpi"><div class="kl"><span class="ic"><svg class="icon" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span> Séances à venir</div><div class="kv">12</div><div class="kd">cette semaine</div></div>
+          <div class="kpi"><div class="kl"><span class="ic"><svg class="icon" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 4-5"/></svg></span> Taux de remplissage</div><div class="kv">78<small> %</small></div><div class="kd">+6 pts</div></div>
+          <div class="kpi"><div class="kl"><span class="ic"><svg class="icon" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span> Réglées d'avance</div><div class="kv">100<small> %</small></div><div class="kd">zéro impayé</div></div>
+        </div>
+        <div class="agenda">
+          <div class="ah"><div class="d">Mardi 9 juin</div><div class="c">4 séances · 110 000 F encaissés</div></div>
+          <div class="appt">
+            <div class="time">09:00<small>60 min</small></div>
+            <div class="cli"><span class="ca" style="background:#246b54">AC</span><div><div class="nm">Awa Cissé</div><div class="sv">Coaching carrière · visio</div></div></div>
+            <div class="right"><div class="amt2">25 000 F</div><span class="pay-badge"><svg class="icon" viewBox="0 0 24 24"><path d="m9 12 2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg> Payé · Wave</span></div>
+          </div>
+          <div class="appt">
+            <div class="time">10:30<small>45 min</small></div>
+            <div class="cli"><span class="ca" style="background:#A9854F">IB</span><div><div class="nm">Ibrahim Bâ</div><div class="sv">Consultation stratégie · présentiel</div></div></div>
+            <div class="right"><div class="amt2">20 000 F</div><span class="pay-badge"><svg class="icon" viewBox="0 0 24 24"><path d="m9 12 2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg> Payé · Orange</span></div>
+          </div>
+          <div class="appt">
+            <div class="time">14:00<small>90 min</small></div>
+            <div class="cli"><span class="ca" style="background:#3A372E">NK</span><div><div class="nm">Nadia Koné</div><div class="sv">Bilan leadership · visio</div></div></div>
+            <div class="right"><div class="amt2">40 000 F</div><span class="pay-badge"><svg class="icon" viewBox="0 0 24 24"><path d="m9 12 2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg> Payé · Wave</span></div>
+          </div>
+          <div class="appt free">
+            <div class="time">16:30<small>—</small></div>
+            <div class="cli"><span class="ca" style="background:#cfc8b8;color:#6b6655">+</span><div><div class="nm">Créneau libre</div><div class="sv">Ouvert à la réservation</div></div></div>
+            <div class="right"><span class="free-slot">disponible</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 03 — reminders + settings -->
+    <section class="block">
+      <div class="head"><div class="row"><span class="num">03</span><span class="eyebrow">L'automatisation</span></div>
+        <h2 class="sec">Rappels &amp; réglages</h2>
+        <p class="sec-sub">Le client est relancé tout seul. Vous, vous réglez vos prestations une fois.</p>
+      </div>
+
+      <div class="two">
+        <div class="card">
+          <div class="ct"><svg class="icon" viewBox="0 0 24 24" style="color:#25d366"><path d="M21 11.5a8.5 8.5 0 0 1-12.5 7.5L3 21l2-5.5A8.5 8.5 0 1 1 21 11.5Z"/></svg> Rappels automatiques</div>
+          <div class="cd">Confirmation immédiate, puis rappel la veille et 2 h avant. Sur WhatsApp, là où le client lit vraiment.</div>
+          <div class="wa-note">
+            <div class="wa-bar"><span class="wa-ic"><svg class="icon" viewBox="0 0 24 24"><path d="M21 11.5a8.5 8.5 0 0 1-12.5 7.5L3 21l2-5.5A8.5 8.5 0 1 1 21 11.5Z"/></svg></span><span class="t">Cadran</span><span class="s">aujourd'hui</span></div>
+            <div class="wa-msgs">
+              <div class="wa-b">Bonjour Awa, votre séance avec <b>Mariam Touré</b> est confirmée pour <b>mar. 9 juin à 14:00</b> (visio). Paiement reçu ✓<span class="meta">09:12</span></div>
+              <div class="wa-b">Rappel : votre séance commence <b>dans 2 heures</b>. Lien de connexion 👇
+                <span class="wa-pill">Rejoindre la visio</span><span class="meta">12:00</span></div>
+            </div>
+          </div>
+          <div class="reduce"><svg class="icon" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg> <span>Les no-shows chutent quand la séance est <b>payée d'avance</b> et rappelée.</span></div>
+        </div>
+
+        <div class="card">
+          <div class="ct"><svg class="icon" viewBox="0 0 24 24"><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-2.9 1.2V21a2 2 0 1 1-4 0v-.1A1.7 1.7 0 0 0 7 19.4a1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0-1.2-2.9H1a2 2 0 1 1 0-4h.1A1.7 1.7 0 0 0 2.6 7a1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H7a1.7 1.7 0 0 0 1-1.5V1a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 2.9 1.2l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V7a1.7 1.7 0 0 0 1.5 1H23a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z"/></svg> Vos prestations</div>
+          <div class="cd">Définissez vos offres, vos tarifs, vos disponibilités et vos moyens de paiement.</div>
+          <div class="svc-mini"><span>Séance individuelle · 60 min</span><span class="px2">25 000 F</span></div>
+          <div class="svc-mini"><span>Consultation express · 30 min</span><span class="px2">12 000 F</span></div>
+          <div class="svc-mini"><span>Pack 4 séances</span><span class="px2">90 000 F</span></div>
+          <div class="set-row"><span class="k">Disponibilités</span><span class="v">Lun – Ven · 09:00 – 18:00</span></div>
+          <div class="set-row"><span class="k">Paiement</span><span class="v"><span class="chip"><span class="pdot" style="background:var(--wave)"></span>Wave</span><span class="chip"><span class="pdot" style="background:var(--orange)"></span>Orange Money</span></span></div>
+          <div class="pubLink"><svg class="icon" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg><span class="u">cadran.co/<b>mariam-toure</b></span><span class="act">Partager</span></div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <footer>
+    <div class="wrap">
+      <b>Cadran</b> — maquette statique, données fictives. Réservation · paiement mobile money · rappels WhatsApp · agenda coach.<br>
+      Prochaine étape : prototype fonctionnel (paiement Wave/Orange sandbox + agenda + rappels).
+    </div>
+  </footer>
+
+</body>
+</html>
