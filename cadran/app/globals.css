@@ -1,0 +1,135 @@
+@import "tailwindcss";
+
+/* ─── Design Tokens ────────────────────────────────────────────────────────── */
+:root {
+  /* Canvas & surfaces */
+  --canvas: #FAFAFA;
+  --surface: #FFFFFF;
+  --surface-subtle: #F4F4F5;
+
+  /* Ink */
+  --ink: #18181B;
+  --ink-body: #3F3F46;
+  --ink-muted: #71717A;
+  --ink-faint: #A1A1AA;
+
+  /* Borders */
+  --border: #E4E4E7;
+  --border-hairline: #F1F1F2;
+
+  /* Accent – deep emerald (locked) */
+  --accent: #047857;
+  --accent-hover: #065F46;
+  --accent-light: #10B981;
+  --accent-tint: #ECFDF5;
+  --accent-tint-border: #A7F3D0;
+
+  /* Status */
+  --warning-bg: #FEF3C7;
+  --warning-text: #B45309;
+
+  /* Shadows */
+  --shadow-card: 0 1px 2px rgba(24,24,27,.04), 0 12px 30px -14px rgba(24,24,27,.12);
+
+  /* Radius */
+  --radius-card: 16px;
+  --radius-btn: 10px;
+  --radius-pill: 9999px;
+
+  /* Typography */
+  --font-sans: var(--font-geist-sans, 'Geist', sans-serif);
+  --font-mono: var(--font-geist-mono, 'Geist Mono', monospace);
+}
+
+/* ─── Tailwind v4 theme extension ─────────────────────────────────────────── */
+@theme inline {
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-surface-subtle: var(--surface-subtle);
+
+  --color-ink: var(--ink);
+  --color-ink-body: var(--ink-body);
+  --color-ink-muted: var(--ink-muted);
+  --color-ink-faint: var(--ink-faint);
+
+  --color-border: var(--border);
+  --color-border-hairline: var(--border-hairline);
+
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-light: var(--accent-light);
+  --color-accent-tint: var(--accent-tint);
+  --color-accent-tint-border: var(--accent-tint-border);
+
+  --color-warning-bg: var(--warning-bg);
+  --color-warning-text: var(--warning-text);
+
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+
+  --shadow-card: var(--shadow-card);
+
+  --radius-card: var(--radius-card);
+  --radius-btn: var(--radius-btn);
+  --radius-pill: var(--radius-pill);
+}
+
+/* ─── Base ────────────────────────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background: var(--canvas);
+  color: var(--ink-body);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+/* ─── Focus rings (WCAG AA) ──────────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* ─── Tabular numerals for prices/times ──────────────────────────────────── */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+/* ─── Selection ─────────────────────────────────────────────────────────── */
+::selection {
+  background: var(--accent-tint);
+  color: var(--ink);
+}
+
+/* ─── Scrollbar (subtle) ─────────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--ink-faint);
+}
+
+/* ─── Reduced motion ────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
