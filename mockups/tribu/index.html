@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Tribu — Maquette · Communautés payantes WhatsApp + Mobile Money</title>
+<style>
+  :root{
+    --bg:#0e0b1f; --bg2:#141029; --card:#ffffff; --ink:#15131f; --muted:#6b6880;
+    --line:#e9e7f2; --primary:#7c3aed; --primary2:#9d5cff; --amber:#f59e0b;
+    --wa:#25d366; --wa-dark:#075e54; --wa-bg:#e5ddd5;
+    --green:#16a34a; --red:#e11d48; --soft:#f5f4fb;
+    --wave:#1dc3f0; --orange:#ff7900; --mtn:#ffcc00; --moov:#0a4ea2;
+    --shadow:0 18px 40px rgba(20,16,45,.16);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    color:var(--ink);background:radial-gradient(1200px 600px at 80% -10%,#2a1d5e 0%,var(--bg) 55%);min-height:100vh}
+  .wrap{max-width:1180px;margin:0 auto;padding:32px 20px 80px}
+
+  /* Header */
+  .top{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:8px}
+  .brand{display:flex;align-items:center;gap:12px}
+  .logo{width:44px;height:44px;border-radius:13px;background:linear-gradient(135deg,var(--primary),var(--primary2));
+    display:grid;place-items:center;color:#fff;font-weight:800;font-size:22px;box-shadow:var(--shadow)}
+  .brand h1{color:#fff;font-size:22px;margin:0;letter-spacing:.3px}
+  .brand p{color:#b6b0d6;margin:2px 0 0;font-size:13px}
+  .tag{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);color:#e8e4ff;
+    padding:7px 13px;border-radius:999px;font-size:12.5px;font-weight:600}
+  .hero{color:#cfc9ee;max-width:760px;margin:14px 0 26px;font-size:15px;line-height:1.6}
+  .hero b{color:#fff}
+
+  .section-title{color:#fff;font-size:15px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;
+    opacity:.85;margin:34px 0 14px;display:flex;align-items:center;gap:10px}
+  .section-title::before{content:"";width:22px;height:3px;border-radius:3px;background:var(--amber)}
+
+  /* Steps */
+  .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+  .step{background:linear-gradient(180deg,#1c1640,#171232);border:1px solid rgba(255,255,255,.08);
+    border-radius:18px;padding:18px;color:#e9e6fb}
+  .step .n{width:30px;height:30px;border-radius:9px;background:var(--primary);display:grid;place-items:center;
+    font-weight:800;margin-bottom:10px;color:#fff}
+  .step h3{margin:0 0 6px;font-size:15px}
+  .step p{margin:0;font-size:13px;color:#b3aed4;line-height:1.5}
+
+  /* Phones row */
+  .phones{display:flex;gap:34px;flex-wrap:wrap;justify-content:center;align-items:flex-start}
+  .phone-block{display:flex;flex-direction:column;align-items:center;gap:12px}
+  .phone-label{color:#cfc9ee;font-size:13px;font-weight:600;background:rgba(255,255,255,.07);
+    padding:6px 13px;border-radius:999px;border:1px solid rgba(255,255,255,.1)}
+  .phone{width:330px;background:#0a0a12;border-radius:42px;padding:12px;box-shadow:var(--shadow);
+    border:1px solid rgba(255,255,255,.08)}
+  .screen{background:#fff;border-radius:32px;overflow:hidden;height:660px;position:relative;display:flex;flex-direction:column}
+  .statusbar{display:flex;justify-content:space-between;align-items:center;padding:10px 20px 4px;font-size:12px;
+    font-weight:700;color:#15131f}
+  .statusbar .r{display:flex;gap:6px;align-items:center}
+
+  /* Checkout screen */
+  .co{flex:1;overflow:hidden;display:flex;flex-direction:column}
+  .co-cover{background:linear-gradient(135deg,#7c3aed,#b06bff);padding:18px 18px 22px;color:#fff;position:relative}
+  .co-back{font-size:18px;opacity:.9}
+  .creator{display:flex;align-items:center;gap:10px;margin-top:10px}
+  .av{width:46px;height:46px;border-radius:50%;background:#fff2;display:grid;place-items:center;font-weight:800;
+    border:2px solid #ffffff66}
+  .creator .nm{font-weight:700;font-size:14px;display:flex;align-items:center;gap:5px}
+  .verif{width:15px;height:15px;background:#fff;color:#7c3aed;border-radius:50%;display:inline-grid;place-items:center;
+    font-size:10px;font-weight:900}
+  .creator .sub{font-size:12px;opacity:.85}
+  .co-body{padding:16px 18px;flex:1;overflow:auto}
+  .co-body h2{margin:2px 0 4px;font-size:19px}
+  .pill-row{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 4px}
+  .mini{font-size:11.5px;background:var(--soft);color:#5b5775;padding:4px 9px;border-radius:999px;font-weight:600}
+  .price{display:flex;align-items:baseline;gap:6px;margin:14px 0 6px}
+  .price b{font-size:30px;color:#15131f}
+  .price span{color:var(--muted);font-size:13px}
+  .incl{list-style:none;padding:0;margin:12px 0 6px}
+  .incl li{display:flex;gap:9px;align-items:center;font-size:13.5px;padding:7px 0;border-bottom:1px dashed var(--line)}
+  .lbl{font-size:12px;font-weight:700;color:#5b5775;margin:14px 0 8px;text-transform:uppercase;letter-spacing:.4px}
+  .pay-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+  .pm{border:1.5px solid var(--line);border-radius:13px;padding:10px;display:flex;align-items:center;gap:9px;
+    font-size:13px;font-weight:600;cursor:pointer;background:#fff;transition:.15s}
+  .pm:hover{border-color:var(--primary)}
+  .pm.sel{border-color:var(--primary);background:#f6f1ff;box-shadow:0 0 0 3px #7c3aed22}
+  .dot{width:26px;height:26px;border-radius:8px;display:grid;place-items:center;color:#fff;font-size:10px;font-weight:800}
+  .co-foot{padding:12px 18px 18px;border-top:1px solid var(--line)}
+  .btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;background:var(--primary);color:#fff;
+    border:none;border-radius:14px;padding:15px;font-size:15px;font-weight:700;cursor:pointer;box-shadow:0 10px 22px #7c3aed44}
+  .secure{text-align:center;font-size:11.5px;color:var(--muted);margin-top:9px}
+
+  /* WhatsApp screen */
+  .wa-head{background:var(--wa-dark);color:#fff;padding:12px 16px;display:flex;align-items:center;gap:11px}
+  .wa-head .av{width:38px;height:38px;background:#ffffff22;border:0}
+  .wa-head .nm{font-weight:700;font-size:14px}
+  .wa-head .st{font-size:11px;opacity:.8}
+  .wa-body{flex:1;background:var(--wa-bg);
+    background-image:linear-gradient(rgba(229,221,213,.6),rgba(229,221,213,.6));padding:14px 12px;overflow:auto}
+  .msg{max-width:84%;padding:8px 11px;border-radius:10px;font-size:13px;line-height:1.45;margin-bottom:9px;
+    box-shadow:0 1px 1px rgba(0,0,0,.08);position:relative}
+  .in{background:#fff;border-top-left-radius:2px}
+  .out{background:#dcf8c6;margin-left:auto;border-top-right-radius:2px}
+  .msg .t{display:block;text-align:right;font-size:9.5px;color:#8a8a8a;margin-top:3px}
+  .msg b{color:#0a0a12}
+  .wabtn{display:block;margin-top:8px;background:#fff;border:1px solid #cfe9c2;color:#075e54;border-radius:9px;
+    padding:9px;text-align:center;font-weight:700;font-size:12.5px}
+  .wabtn.pay{background:#25d366;color:#fff;border:0}
+  .sysmsg{text-align:center;margin:4px auto 12px;background:#fff6d6;color:#7a6a2a;font-size:11px;
+    padding:5px 11px;border-radius:8px;width:fit-content}
+
+  /* Dashboard */
+  .dash{background:var(--card);border-radius:22px;box-shadow:var(--shadow);overflow:hidden}
+  .dash-head{display:flex;justify-content:space-between;align-items:center;padding:18px 22px;border-bottom:1px solid var(--line);flex-wrap:wrap;gap:10px}
+  .dash-head .l{display:flex;align-items:center;gap:11px}
+  .dash-head h2{margin:0;font-size:17px}
+  .dash-head .who{font-size:12.5px;color:var(--muted)}
+  .newbtn{background:var(--primary);color:#fff;border:0;border-radius:11px;padding:10px 15px;font-weight:700;font-size:13px;cursor:pointer}
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line)}
+  .kpi{background:#fff;padding:18px 20px}
+  .kpi .k{font-size:12px;color:var(--muted);font-weight:600;display:flex;align-items:center;gap:6px}
+  .kpi .v{font-size:24px;font-weight:800;margin-top:6px}
+  .kpi .d{font-size:11.5px;font-weight:700;margin-top:3px}
+  .up{color:var(--green)} .down{color:var(--red)} .warn{color:var(--amber)}
+  .dash-grid{display:grid;grid-template-columns:1.15fr 1fr;gap:0}
+  @media(max-width:820px){.dash-grid{grid-template-columns:1fr}}
+  .panel{padding:18px 22px}
+  .panel.bdr{border-right:1px solid var(--line)}
+  .panel h3{margin:0 0 14px;font-size:14px;display:flex;align-items:center;justify-content:space-between}
+  .panel h3 span{font-size:11.5px;color:var(--muted);font-weight:600}
+  /* chart */
+  .chart{display:flex;align-items:flex-end;gap:12px;height:150px;padding-top:8px}
+  .bar{flex:1;display:flex;flex-direction:column;align-items:center;gap:7px;height:100%;justify-content:flex-end}
+  .bar i{width:100%;border-radius:7px 7px 3px 3px;background:linear-gradient(180deg,#9d5cff,#7c3aed);display:block}
+  .bar.last i{background:linear-gradient(180deg,#fbbf24,#f59e0b)}
+  .bar small{font-size:10.5px;color:var(--muted);font-weight:600}
+  /* members table */
+  .tbl{width:100%;border-collapse:collapse;font-size:12.5px}
+  .tbl th{text-align:left;color:var(--muted);font-weight:600;padding:8px 6px;border-bottom:1px solid var(--line);font-size:11px;text-transform:uppercase;letter-spacing:.3px}
+  .tbl td{padding:10px 6px;border-bottom:1px solid var(--line)}
+  .mem{display:flex;align-items:center;gap:9px}
+  .mem .a{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;color:#fff;font-size:11px;font-weight:800}
+  .badge{font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px;white-space:nowrap}
+  .b-act{background:#dcfce7;color:#15803d}
+  .b-exp{background:#fef3c7;color:#b45309}
+  .b-end{background:#fee2e2;color:#b91c1c}
+  .mm{font-size:11px;font-weight:700;padding:2px 8px;border-radius:6px;color:#fff}
+
+  /* Create form + lifecycle */
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+  @media(max-width:820px){.two{grid-template-columns:1fr}}
+  .card2{background:#fff;border-radius:20px;box-shadow:var(--shadow);padding:22px}
+  .card2 h3{margin:0 0 4px;font-size:16px}
+  .card2 .desc{color:var(--muted);font-size:13px;margin:0 0 16px}
+  .field{margin-bottom:13px}
+  .field label{display:block;font-size:12px;font-weight:700;color:#4a4760;margin-bottom:6px}
+  .field input,.field textarea,.field select{width:100%;border:1.5px solid var(--line);border-radius:11px;padding:11px;font-size:13.5px;font-family:inherit;color:#15131f}
+  .field input:focus,.field textarea:focus{outline:none;border-color:var(--primary)}
+  .seg{display:flex;gap:8px}
+  .seg .opt{flex:1;border:1.5px solid var(--line);border-radius:11px;padding:10px;text-align:center;font-size:13px;font-weight:600;cursor:pointer}
+  .seg .opt.on{border-color:var(--primary);background:#f6f1ff;color:var(--primary)}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .checks{display:flex;flex-wrap:wrap;gap:8px}
+  .chk{display:flex;align-items:center;gap:7px;border:1.5px solid var(--line);border-radius:10px;padding:8px 11px;font-size:12.5px;font-weight:600;cursor:pointer}
+  .chk.on{border-color:var(--primary);background:#f6f1ff}
+  .life{list-style:none;padding:0;margin:0}
+  .life li{display:flex;gap:13px;padding:12px 0;border-bottom:1px solid var(--line)}
+  .life li:last-child{border:0}
+  .life .ic{width:38px;height:38px;border-radius:11px;background:#f6f1ff;color:var(--primary);display:grid;place-items:center;font-size:18px;flex-shrink:0}
+  .life h4{margin:0 0 3px;font-size:14px}
+  .life p{margin:0;font-size:12.5px;color:var(--muted);line-height:1.5}
+  .note{margin-top:16px;background:#fff7ed;border:1px solid #fed7aa;border-radius:13px;padding:13px;font-size:12.5px;color:#9a3412;line-height:1.55}
+  .note b{color:#7c2d12}
+
+  .foot{color:#9c97c4;font-size:12.5px;text-align:center;margin-top:40px;line-height:1.7}
+  .foot b{color:#cfc9ee}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <div class="brand">
+      <div class="logo">T</div>
+      <div>
+        <h1>Tribu</h1>
+        <p>Communautés payantes WhatsApp &amp; Telegram · encaissées en mobile money</p>
+      </div>
+    </div>
+    <div class="tag">🧪 Maquette · données fictives</div>
+  </div>
+
+  <p class="hero">
+    Le « <b>Whop africain</b> » : un coach ou créateur monétise un groupe <b>WhatsApp/Telegram</b> privé.
+    Le membre paie par <b>Wave, Orange Money ou MTN MoMo</b>, un <b>bot l'ajoute automatiquement</b>, puis le
+    <b>relance avant l'échéance</b> et <b>suspend l'accès</b> s'il ne renouvelle pas — parce que le prélèvement
+    automatique n'existe pas sur le mobile money. <b>Tribu prend 5 %</b>, le créateur garde 95 %.
+  </p>
+
+  <!-- HOW IT WORKS -->
+  <div class="section-title">Comment ça marche</div>
+  <div class="steps">
+    <div class="step"><div class="n">1</div><h3>Crée ta communauté</h3><p>Prix en FCFA, WhatsApp ou Telegram, ce qui est inclus. 2 min.</p></div>
+    <div class="step"><div class="n">2</div><h3>Partage ton lien</h3><p>Bio Insta/TikTok, statut WhatsApp, vidéos. Un seul lien Tribu.</p></div>
+    <div class="step"><div class="n">3</div><h3>Le membre paie</h3><p>Mobile money en 1 clic → le bot l'ajoute au groupe automatiquement.</p></div>
+    <div class="step"><div class="n">4</div><h3>Renouvellement géré</h3><p>Relance WhatsApp avant l'échéance. Pas payé = accès suspendu auto.</p></div>
+  </div>
+
+  <!-- PHONES -->
+  <div class="section-title">L'expérience du membre</div>
+  <div class="phones">
+
+    <!-- CHECKOUT -->
+    <div class="phone-block">
+      <div class="phone-label">① Page de paiement (lien Tribu)</div>
+      <div class="phone"><div class="screen">
+        <div class="statusbar"><span>9:41</span><div class="r"><span>5G</span><span>🔋</span></div></div>
+        <div class="co">
+          <div class="co-cover">
+            <div class="co-back">‹</div>
+            <div class="creator">
+              <div class="av">AD</div>
+              <div>
+                <div class="nm">Coach Awa Diallo <span class="verif">✓</span></div>
+                <div class="sub">Business &amp; Mindset · 🇸🇳 Dakar</div>
+              </div>
+            </div>
+          </div>
+          <div class="co-body">
+            <h2>Mastermind Business</h2>
+            <div class="pill-row">
+              <span class="mini">👥 342 membres</span>
+              <span class="mini">💬 WhatsApp privé</span>
+              <span class="mini">⭐ 4.9</span>
+            </div>
+            <div class="price"><b>5 000</b><span>FCFA / mois</span></div>
+            <ul class="incl">
+              <li>📞 2 lives coaching par mois</li>
+              <li>💬 Groupe privé &amp; entraide 24/7</li>
+              <li>📚 Templates &amp; ressources business</li>
+              <li>🎁 Accès à tous les replays</li>
+            </ul>
+            <div class="lbl">Moyen de paiement</div>
+            <div class="pay-grid">
+              <div class="pm sel"><span class="dot" style="background:var(--wave)">≈</span>Wave</div>
+              <div class="pm"><span class="dot" style="background:var(--orange)">OM</span>Orange Money</div>
+              <div class="pm"><span class="dot" style="background:var(--mtn);color:#15131f">MM</span>MTN MoMo</div>
+              <div class="pm"><span class="dot" style="background:var(--moov)">MV</span>Moov</div>
+            </div>
+          </div>
+          <div class="co-foot">
+            <button class="btn">Payer 5 000 FCFA &amp; rejoindre →</button>
+            <div class="secure">🔒 Paiement sécurisé · accès immédiat au groupe</div>
+          </div>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- WHATSAPP -->
+    <div class="phone-block">
+      <div class="phone-label">② Le bot Tribu sur WhatsApp</div>
+      <div class="phone"><div class="screen">
+        <div class="statusbar"><span>9:42</span><div class="r"><span>5G</span><span>🔋</span></div></div>
+        <div class="wa-head">
+          <div class="av">T</div>
+          <div><div class="nm">Tribu Bot</div><div class="st">en ligne</div></div>
+        </div>
+        <div class="wa-body">
+          <div class="sysmsg">Aujourd'hui</div>
+          <div class="msg in">✅ Paiement de <b>5 000 FCFA</b> reçu via <b>Wave</b>. Bienvenue dans <b>Mastermind Business</b> 🎉<span class="t">9:42</span></div>
+          <div class="msg in">Voici ton accès privé 👇
+            <a class="wabtn">🔗 Rejoindre le groupe WhatsApp</a><span class="t">9:42</span></div>
+          <div class="msg out">Merci ! 🙏<span class="t">9:43</span></div>
+          <div class="sysmsg">29 jours plus tard</div>
+          <div class="msg in">⏳ Salut Mamadou ! Ton accès à <b>Mastermind Business</b> expire dans <b>3 jours</b>.
+            Renouvelle en 1 clic pour rester dans le groupe 👇
+            <a class="wabtn pay">💳 Renouveler · 5 000 FCFA (Wave)</a><span class="t">10:15</span></div>
+          <div class="msg in">Tu peux aussi payer 3 mois (<b>13 500 FCFA</b>, -10%) 👇
+            <a class="wabtn">📦 Pack 3 mois</a><span class="t">10:15</span></div>
+        </div>
+      </div></div>
+    </div>
+
+  </div>
+
+  <!-- DASHBOARD -->
+  <div class="section-title">Le tableau de bord du créateur</div>
+  <div class="dash">
+    <div class="dash-head">
+      <div class="l">
+        <div class="av" style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#b06bff);color:#fff;display:grid;place-items:center;font-weight:800">AD</div>
+        <div><h2>Awa Diallo</h2><div class="who">2 communautés · membre depuis mars 2026</div></div>
+      </div>
+      <button class="newbtn">＋ Nouvelle communauté</button>
+    </div>
+
+    <div class="kpis">
+      <div class="kpi"><div class="k">💰 Revenu ce mois</div><div class="v">842 500 <small style="font-size:13px">FCFA</small></div><div class="d up">▲ +18 % vs mai</div></div>
+      <div class="kpi"><div class="k">👥 Membres actifs</div><div class="v">342</div><div class="d up">▲ +27 ce mois</div></div>
+      <div class="kpi"><div class="k">⏳ Expirent sous 7j</div><div class="v">18</div><div class="d warn">relances envoyées</div></div>
+      <div class="kpi"><div class="k">🔁 Taux de renouv.</div><div class="v">72 %</div><div class="d up">▲ +4 pts</div></div>
+    </div>
+
+    <div class="dash-grid">
+      <div class="panel bdr">
+        <h3>Revenu mensuel <span>FCFA · 6 mois</span></h3>
+        <div class="chart">
+          <div class="bar"><i style="height:38%"></i><small>Jan</small></div>
+          <div class="bar"><i style="height:52%"></i><small>Fév</small></div>
+          <div class="bar"><i style="height:60%"></i><small>Mar</small></div>
+          <div class="bar"><i style="height:72%"></i><small>Avr</small></div>
+          <div class="bar"><i style="height:84%"></i><small>Mai</small></div>
+          <div class="bar last"><i style="height:100%"></i><small>Juin</small></div>
+        </div>
+      </div>
+      <div class="panel">
+        <h3>Membres récents <span>statut d'accès</span></h3>
+        <table class="tbl">
+          <thead><tr><th>Membre</th><th>Statut</th><th>Renouv.</th><th>Paiement</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><div class="mem"><span class="a" style="background:#7c3aed">MS</span>Mamadou Sow</div></td>
+              <td><span class="badge b-act">Actif</span></td><td>12 juin</td>
+              <td><span class="mm" style="background:var(--wave)">Wave</span></td>
+            </tr>
+            <tr>
+              <td><div class="mem"><span class="a" style="background:#f59e0b">FN</span>Fatou Ndiaye</div></td>
+              <td><span class="badge b-exp">Expire 2j</span></td><td>10 juin</td>
+              <td><span class="mm" style="background:var(--orange)">Orange</span></td>
+            </tr>
+            <tr>
+              <td><div class="mem"><span class="a" style="background:#16a34a">AT</span>Aïcha Traoré</div></td>
+              <td><span class="badge b-act">Actif</span></td><td>28 juin</td>
+              <td><span class="mm" style="background:var(--wave)">Wave</span></td>
+            </tr>
+            <tr>
+              <td><div class="mem"><span class="a" style="background:#e11d48">KM</span>Kwame Mensah</div></td>
+              <td><span class="badge b-end">Suspendu</span></td><td>—</td>
+              <td><span class="mm" style="background:var(--mtn);color:#15131f">MoMo</span></td>
+            </tr>
+            <tr>
+              <td><div class="mem"><span class="a" style="background:#0a4ea2">JK</span>Jean Kouassi</div></td>
+              <td><span class="badge b-exp">Expire 5j</span></td><td>13 juin</td>
+              <td><span class="mm" style="background:var(--moov)">Moov</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- CREATE + LIFECYCLE -->
+  <div class="section-title">Créer une communauté &amp; cycle d'accès</div>
+  <div class="two">
+    <div class="card2">
+      <h3>Nouvelle communauté</h3>
+      <p class="desc">Ce que le créateur remplit pour générer son lien de paiement.</p>
+      <div class="field"><label>Nom de la communauté</label><input value="Mastermind Business" /></div>
+      <div class="field"><label>Description</label><textarea rows="2">Coaching business & mindset pour entrepreneurs francophones.</textarea></div>
+      <div class="field"><label>Plateforme</label>
+        <div class="seg"><div class="opt on">💬 WhatsApp</div><div class="opt">✈️ Telegram</div></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label>Prix</label><input value="5 000 FCFA" /></div>
+        <div class="field"><label>Périodicité</label>
+          <select><option>Mensuel</option><option>Trimestriel (-10%)</option><option>Annuel (-20%)</option><option>Prépayé / à vie</option></select>
+        </div>
+      </div>
+      <div class="field"><label>Lien du groupe privé</label><input value="https://chat.whatsapp.com/•••••" /></div>
+      <div class="field"><label>Moyens de paiement acceptés</label>
+        <div class="checks">
+          <div class="chk on"><span class="dot" style="background:var(--wave)">≈</span>Wave</div>
+          <div class="chk on"><span class="dot" style="background:var(--orange)">OM</span>Orange</div>
+          <div class="chk on"><span class="dot" style="background:var(--mtn);color:#15131f">MM</span>MTN</div>
+          <div class="chk"><span class="dot" style="background:var(--moov)">MV</span>Moov</div>
+        </div>
+      </div>
+      <button class="btn" style="margin-top:6px">Créer &amp; générer le lien de paiement</button>
+    </div>
+
+    <div class="card2">
+      <h3>Le cycle de vie d'un membre</h3>
+      <p class="desc">Ce que le bot automatise, de bout en bout.</p>
+      <ul class="life">
+        <li><div class="ic">💳</div><div><h4>Paiement mobile money</h4><p>Le membre paie via Wave/Orange/MTN sur la page Tribu. Webhook confirmé.</p></div></li>
+        <li><div class="ic">🤖</div><div><h4>Ajout automatique</h4><p>Le bot génère un lien d'invitation à usage unique et ajoute le membre au groupe.</p></div></li>
+        <li><div class="ic">🔔</div><div><h4>Relance avant échéance</h4><p>J-3 et J-1 : message WhatsApp avec bouton « Renouveler en 1 clic ».</p></div></li>
+        <li><div class="ic">🚫</div><div><h4>Suspension auto</h4><p>Non renouvelé à l'échéance → le bot retire le membre du groupe, proprement.</p></div></li>
+        <li><div class="ic">📊</div><div><h4>Tout est traçé</h4><p>Revenu, churn, renouvellements : le créateur voit tout dans son dashboard.</p></div></li>
+      </ul>
+      <div class="note">
+        ⚠️ <b>Pourquoi pas d'abonnement « auto » ?</b> Sur mobile money, le marchand ne peut pas
+        débiter tout seul (modèle « push »). Tribu contourne ça avec le <b>renouvellement 1-clic + relances WhatsApp</b>
+        et des <b>packs prépayés</b> (3/6/12 mois) — c'est ce qui fait la différence vs Whop/Circle, pensés pour la carte bancaire.
+      </div>
+    </div>
+  </div>
+
+  <div class="foot">
+    <b>Tribu</b> — maquette statique (aucune donnée réelle). Écrans : page de paiement membre · bot WhatsApp · dashboard créateur · création.<br>
+    Prochaine étape possible : prototype fonctionnel (paiement Wave sandbox + bot WhatsApp Cloud API).
+  </div>
+
+</div>
+</body>
+</html>
