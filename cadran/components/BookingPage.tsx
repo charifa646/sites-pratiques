@@ -66,7 +66,7 @@ export function BookingPage({ coach }: Props) {
       date: selectedDate,
       time: selectedTime,
     })
-    router.push(`/m/${coach.slug}/paiement?${params.toString()}`)
+    router.push(`/m/${coach.slug}/paiement/?${params.toString()}`)
   }
 
   return (

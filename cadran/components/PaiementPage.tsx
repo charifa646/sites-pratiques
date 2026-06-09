@@ -51,7 +51,7 @@ export function PaiementPage({ coach, service, date, time }: Props) {
       phone: telephone,
       method,
     })
-    router.push(`/m/${coach.slug}/confirmation?${params.toString()}`)
+    router.push(`/m/${coach.slug}/confirmation/?${params.toString()}`)
   }
 
   return (
