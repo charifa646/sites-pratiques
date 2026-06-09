@@ -223,10 +223,10 @@ export default function ScrollExpandMedia({
 
             {/* Revealed content */}
             <motion.section
-              className="flex w-full flex-col px-6 py-16 sm:py-24"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: showContent ? 1 : 0 }}
-              transition={{ duration: 0.7 }}
+              className="relative z-20 -mt-[16vh] flex w-full flex-col bg-gradient-to-b from-transparent via-navy-deep/85 to-navy-deep px-6 pb-20 pt-16 sm:-mt-[10vh] sm:py-24"
+              initial={{ opacity: 0, y: 80 }}
+              animate={{ opacity: showContent ? 1 : 0, y: showContent ? 0 : 80 }}
+              transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
             >
               {children}
             </motion.section>

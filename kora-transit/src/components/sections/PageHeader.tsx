@@ -68,10 +68,6 @@ export function PageHeader({
           className="max-w-3xl"
         >
           <motion.div variants={staggerItem} className="mb-6 flex items-center gap-4">
-            <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-gold/70" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-gold" />
-            </span>
             <span className="h-px w-10 bg-gold/40" />
             <BracketLabel className="text-ink/60">KORA TRANSIT</BracketLabel>
           </motion.div>

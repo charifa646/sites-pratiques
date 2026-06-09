@@ -62,7 +62,7 @@ export function ServicesPreview() {
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-navy-deep via-navy-deep/55 to-navy/10" />
                       <span className="absolute left-6 top-6 font-mono text-[0.62rem] uppercase tracking-[0.25em] text-ink/55">
-                        [ 0{i + 1} ]
+                        {null}
                       </span>
                       <div className="relative flex h-full flex-col justify-end p-7">
                         <div className="mb-4 grid h-11 w-11 place-items-center rounded-xl border border-gold/30 bg-navy/60 text-gold backdrop-blur">

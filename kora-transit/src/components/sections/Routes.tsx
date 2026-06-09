@@ -89,7 +89,7 @@ export function Routes() {
                 className="mx-5 flex items-center gap-3 text-sm font-medium uppercase tracking-[0.2em] text-muted"
               >
                 <span className="h-1.5 w-1.5 rounded-full bg-gold" />
-                {r.from} <span className="text-gold/70">—</span> {r.to}
+                {r.from} <span className="text-gold/70">→</span> {r.to}
               </span>
             ))}
           </ScrollVelocityRow>

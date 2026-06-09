@@ -85,8 +85,7 @@ export function BusExperience() {
             style={{ opacity: cueOpacity }}
             className="absolute left-0 right-0 top-24 z-20 mx-auto flex max-w-7xl items-center gap-4 px-6"
           >
-            <span className="font-display text-sm font-semibold text-gold">(01)</span>
-            <span className="h-px w-12 bg-gold/40" />
+            <span className="h-px w-10 bg-gold/40" />
             <span className="text-[0.7rem] font-medium uppercase tracking-[0.24em] text-ink/70">
               {site.baseline}
             </span>
@@ -181,8 +180,7 @@ export function BusExperience() {
             className="absolute left-0 right-0 top-[24%] z-20 mx-auto max-w-7xl px-6 lg:top-[30%]"
           >
             <div className="flex items-center gap-4">
-              <span className="font-display text-sm font-semibold text-gold">(02)</span>
-              <span className="h-px w-12 bg-gold/40" />
+              <span className="h-px w-10 bg-gold/40" />
               <span className="text-[0.7rem] font-medium uppercase tracking-[0.24em] text-muted">
                 Pourquoi KORA TRANSIT
               </span>
@@ -228,16 +226,7 @@ export function BusExperience() {
             style={{ opacity: cueOpacity }}
             className="absolute bottom-7 left-1/2 z-20 -translate-x-1/2"
           >
-            <div className="flex flex-col items-center gap-2">
-              <span className="text-[0.65rem] uppercase tracking-[0.3em] text-muted">Défiler</span>
-              <span className="relative flex h-9 w-5 justify-center rounded-full border border-ink/25">
-                <motion.span
-                  animate={reduce ? {} : { y: [3, 14, 3], opacity: [1, 0.2, 1] }}
-                  transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
-                  className="mt-1.5 h-1.5 w-1 rounded-full bg-gold"
-                />
-              </span>
-            </div>
+            <div aria-hidden />
           </motion.div>
         </motion.div>
       </div>

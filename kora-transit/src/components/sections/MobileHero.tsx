@@ -56,7 +56,6 @@ export function MobileHero() {
           viewport={VIEWPORT}
         >
           <div className="flex items-center gap-3">
-            <span className="font-display text-sm font-semibold text-gold">(02)</span>
             <span className="h-px w-10 bg-gold/40" />
             <span className="text-[0.7rem] font-medium uppercase tracking-[0.24em] text-muted">
               Pourquoi KORA TRANSIT

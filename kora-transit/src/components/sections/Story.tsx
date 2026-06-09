@@ -21,7 +21,6 @@ export function Story() {
           viewport={VIEWPORT}
         >
           <motion.div variants={staggerItem} className="flex items-center gap-4">
-            <span className="font-display text-sm font-semibold text-gold">(01)</span>
             <span className="h-px w-10 bg-gold/40" />
             <span className="text-[0.72rem] font-medium uppercase tracking-[0.24em] text-muted">
               Depuis 2012
