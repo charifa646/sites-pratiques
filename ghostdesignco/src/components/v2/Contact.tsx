@@ -5,6 +5,7 @@ import { whatsappDirect } from "@/lib/brief";
 import { site } from "@/lib/site";
 import { BriefForm } from "@/components/sections/BriefForm";
 import { Rise } from "@/components/ui/motion";
+import { Spotlight } from "./Extras";
 
 const pill =
   "inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.04] px-4 py-2.5 text-bone transition-colors duration-300 hover:border-acid/60 hover:text-acid";
@@ -12,9 +13,10 @@ const pill =
 /** Dark closing band: the same brief form as the main site, on flat black. */
 export function V2Contact() {
   return (
-    <section id="contact" aria-labelledby="v2-contact-title" className="bg-white">
-      <div className="rounded-t-[40px] bg-[#0B0B0C] text-bone">
-        <div className="mx-auto grid max-w-[1240px] items-start gap-12 px-5 py-20 sm:px-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,560px)] lg:gap-16 lg:py-28">
+    <section id="contact" aria-labelledby="v2-contact-title" data-ghost-dark className="bg-white">
+      <div className="relative overflow-hidden rounded-t-[40px] bg-[#0B0B0C] text-bone">
+        <Spotlight />
+        <div className="relative mx-auto grid max-w-[1240px] items-start gap-12 px-5 py-20 sm:px-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,560px)] lg:gap-16 lg:py-28">
           <div className="lg:pt-6">
             <Rise className="flex items-center gap-2.5 text-[12px] font-medium uppercase tracking-[0.22em] text-fog">
               <span className="h-1.5 w-1.5 rounded-full bg-acid" />
@@ -44,9 +46,12 @@ export function V2Contact() {
               )}
             </Rise>
           </div>
-          <Rise delay={0.1} blur={false}>
-            <BriefForm />
-          </Rise>
+          {/* the companion ends its trip peeking over the form */}
+          <div data-ghost="tr" data-ghost-x="-0.6" data-ghost-y="-0.06" data-ghost-m="tr" data-ghost-mx="-0.55" data-ghost-my="-0.08" data-ghost-clip="top">
+            <Rise delay={0.1} blur={false}>
+              <BriefForm />
+            </Rise>
+          </div>
         </div>
       </div>
     </section>

@@ -10,11 +10,11 @@ import { cx } from "@/components/ui/motion";
 const frame =
   "overflow-hidden border border-line bg-white shadow-[0_1px_2px_rgba(12,12,13,0.05),0_30px_70px_-30px_rgba(12,12,13,0.32)]";
 
-function Bar({ className }: { className: string }) {
+export function Bar({ className }: { className: string }) {
   return <span className={cx("block rounded-full", className)} />;
 }
 
-function Photo({ className, tone = "green" }: { className?: string; tone?: "green" | "warm" | "stone" }) {
+export function Photo({ className, tone = "green" }: { className?: string; tone?: "green" | "warm" | "stone" }) {
   const tones = {
     green: "bg-[linear-gradient(135deg,#E9E6DC_0%,#D8E6C1_55%,#C2E383_100%)]",
     warm: "bg-[linear-gradient(135deg,#EFE9DF_0%,#E5D8C5_60%,#D4C3A9_100%)]",
@@ -28,7 +28,7 @@ function Photo({ className, tone = "green" }: { className?: string; tone?: "gree
   );
 }
 
-function WindowBar() {
+export function WindowBar() {
   return (
     <div className="flex items-center gap-[0.9cqw] border-b border-line bg-[#FAF9F6] px-[2.2cqw] py-[1.5cqw]">
       {[0, 1, 2].map((i) => (
@@ -40,7 +40,7 @@ function WindowBar() {
   );
 }
 
-function Arrowhead({ className }: { className?: string }) {
+export function Arrowhead({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 20 20" className={className} fill="none" stroke="currentColor" strokeWidth="2.2">
       <path d="M4 10h11M11 5.5 15.5 10 11 14.5" strokeLinecap="round" strokeLinejoin="round" />

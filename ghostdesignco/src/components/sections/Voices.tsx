@@ -34,7 +34,7 @@ function Slot({ i }: { i: number }) {
  * the visitor presses play: the page stays light and no third-party cookie is
  * set before that. Files from /public play in a native player.
  */
-function VideoCard({ t }: { t: Testimonial }) {
+export function VideoCard({ t }: { t: Testimonial }) {
   const [on, setOn] = useState(false);
   const aspect = t.aspect ?? 9 / 16;
   const wide = aspect > 1;

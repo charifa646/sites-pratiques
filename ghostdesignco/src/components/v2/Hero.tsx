@@ -3,14 +3,15 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { cta, hero, proof } from "@/lib/copy";
-import { EXPO, Rise } from "@/components/ui/motion";
+import { Counter, EXPO, Rise } from "@/components/ui/motion";
 import { BrowserMock, PhoneMock, PriceCard } from "./Mockups";
 import { Check, Eyebrow, HEADER_H, PrimaryButton, SecondaryButton, goTo } from "./ui";
 
 // the facts under the collage, from the same copy as the main site
-const facts = [
-  ...proof.stats.map((s) => ({ value: `${s.value}${s.suffix}`, label: s.label })),
-  { value: "5 à 15 jours", label: "pour être en ligne" },
+type Fact = { to?: number; suffix?: string; text?: string; label: string };
+const facts: Fact[] = [
+  ...proof.stats.map((s) => ({ to: s.value, suffix: s.suffix, label: s.label })),
+  { text: "5 à 15 jours", label: "pour être en ligne" },
 ];
 
 /** Three kinds of pages we build, with the guide peeking over the window. */
@@ -23,14 +24,26 @@ function Collage() {
       className="relative mx-auto mt-16 max-w-[1080px] lg:mt-20"
     >
       <div className="relative mx-auto w-[88%] sm:w-[76%] lg:w-[68%]">
-        <div className="absolute right-[7%] top-0 z-0 w-[18%] -translate-y-[58%] sm:w-[15%]">
+        <div className="v2-ghost-still absolute right-[7%] top-0 z-0 w-[18%] -translate-y-[58%] sm:w-[15%]">
           <span
             aria-hidden
             className="absolute inset-[-30%] rounded-full bg-[radial-gradient(closest-side,rgba(182,255,59,0.4),rgba(182,255,59,0))]"
           />
           <Image src="/v2/ghost.webp" alt="" width={582} height={821} priority sizes="(min-width: 1024px) 120px, 18vw" className="v2-float relative h-auto w-full" />
         </div>
-        <BrowserMock className="relative z-10" />
+        {/* the companion peeks from behind this window, then climbs out */}
+        <div
+          data-ghost="tr"
+          data-ghost-x="-0.68"
+          data-ghost-y="-0.08"
+          data-ghost-m="tr"
+          data-ghost-mx="-0.62"
+          data-ghost-my="-0.12"
+          data-ghost-clip="top"
+          className="relative z-10"
+        >
+          <BrowserMock />
+        </div>
         <PhoneMock className="v2-float-late absolute -bottom-[12%] -right-[6%] z-20 w-[24%] sm:-right-[9%] sm:w-[20%]" />
         <PriceCard className="v2-float absolute -bottom-[10%] -left-[11%] z-20 hidden w-[27%] sm:block" />
       </div>
@@ -90,7 +103,16 @@ export function V2Hero() {
         <Rise delay={0.1} className="mx-auto mt-24 grid max-w-[900px] grid-cols-3 divide-x divide-line border-y border-line sm:mt-28">
           {facts.map((f) => (
             <div key={f.label} className="px-1 py-6 text-center sm:px-2 sm:py-7">
-              <div className="whitespace-nowrap font-display text-[clamp(1.05rem,4.1vw,2.3rem)] font-semibold tracking-[-0.03em]">{f.value}</div>
+              <div className="whitespace-nowrap font-display text-[clamp(1.05rem,4.1vw,2.3rem)] font-semibold tracking-[-0.03em]">
+                {f.to !== undefined ? (
+                  <>
+                    <Counter to={f.to} />
+                    {f.suffix}
+                  </>
+                ) : (
+                  f.text
+                )}
+              </div>
               <div className="mt-1 text-[11.5px] leading-snug text-ink-mute sm:text-[14px]">{f.label}</div>
             </div>
           ))}
