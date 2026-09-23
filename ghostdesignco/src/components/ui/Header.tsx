@@ -69,14 +69,14 @@ export function Header() {
 
   return (
     <>
-      <header className="fixed inset-x-0 top-0 z-50 px-4 pt-[max(env(safe-area-inset-top),12px)] sm:px-6">
+      <header className="fixed inset-x-0 top-0 z-50 px-3 pt-[max(env(safe-area-inset-top),12px)] sm:px-6">
         <div
           className={cx(
-            "mx-auto flex max-w-[1400px] items-center justify-between gap-4 rounded-full py-2 pl-4 pr-2 transition-[background-color,box-shadow,backdrop-filter] duration-700",
+            "mx-auto flex max-w-[1400px] items-center justify-between gap-3 rounded-full py-2 pl-3.5 pr-1.5 transition-[background-color,box-shadow,backdrop-filter] duration-700 sm:gap-4 sm:pl-4 sm:pr-2",
             solid || open ? "bg-black/45 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.08)] backdrop-blur-xl" : "bg-transparent",
           )}
         >
-          <a href="#top" onClick={go("#top")} className="text-[15px] sm:text-base" aria-label="Ghostdesignco, retour en haut">
+          <a href="#top" onClick={go("#top")} className="text-[14px] sm:text-base" aria-label="Ghostdesignco, retour en haut">
             <Logo />
           </a>
           <nav className="hidden items-center gap-7 lg:flex" aria-label="Sections">
@@ -102,17 +102,18 @@ export function Header() {
               );
             })}
           </nav>
-          <div className="flex items-center gap-2 sm:gap-4">
+          <div className="flex items-center gap-1.5 sm:gap-4">
             <TourButton className="hidden xl:inline-flex" />
-            <TourButton compact className="hidden sm:inline-flex xl:hidden" />
+            <TourButton compact className="xl:hidden max-[339px]:hidden" />
             <a
               href="#contact"
               onClick={go("#contact")}
-              className="group inline-flex items-center gap-2 rounded-full bg-acid px-4 py-2 text-[13px] font-medium text-acid-ink shadow-[0_8px_24px_-10px_rgba(182,255,59,0.45)] transition-shadow duration-500 hover:shadow-[0_10px_32px_-10px_rgba(182,255,59,0.6)] sm:px-5 sm:py-2.5 sm:text-sm"
+              className="group inline-flex items-center gap-2 rounded-full bg-acid px-3.5 py-2 text-[13px] font-medium text-acid-ink shadow-[0_8px_24px_-10px_rgba(182,255,59,0.45)] transition-shadow duration-500 hover:shadow-[0_10px_32px_-10px_rgba(182,255,59,0.6)] sm:px-5 sm:py-2.5 sm:text-sm"
             >
               <span className="hidden sm:inline">{cta.quote}</span>
               <span className="sm:hidden">{cta.quoteShort}</span>
-              <Arrow className="h-4 w-4 transition-transform duration-500 ease-expo group-hover:translate-x-0.5" />
+              {/* narrowest phones: the arrow gives way so everything fits */}
+              <Arrow className="h-4 w-4 transition-transform duration-500 ease-expo group-hover:translate-x-0.5 max-[374px]:hidden" />
             </a>
             <button
               ref={toggle}
