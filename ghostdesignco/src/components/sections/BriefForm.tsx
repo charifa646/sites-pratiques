@@ -3,7 +3,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useId, useState, type FormEvent, type ReactNode } from "react";
 import { contact } from "@/lib/copy";
-import { composeBrief, isEmail, mailHref, whatsappHref, type Brief } from "@/lib/brief";
+import { composeBrief, isEmail, mailHref, whatsappTarget, type Brief } from "@/lib/brief";
 import { useIntent } from "@/components/ui/Providers";
 import { Arrow } from "@/components/ui/Button";
 import { EXPO, cx } from "@/components/ui/motion";
@@ -60,6 +60,21 @@ export function BriefForm() {
   const [errors, setErrors] = useState<Partial<Record<keyof Brief, string>>>({});
   const [step, setStep] = useState<"form" | "review">("form");
   const [message, setMessage] = useState("");
+  const [copied, setCopied] = useState(false);
+  const wa = whatsappTarget(message);
+
+  // Business links cannot carry text: put the brief on the clipboard first.
+  const toWhatsApp = async () => {
+    if (wa.prefilled) return;
+    try {
+      await navigator.clipboard.writeText(message);
+    } catch {
+      const area = document.getElementById(`${uid}-msg`) as HTMLTextAreaElement | null;
+      area?.select();
+      document.execCommand?.("copy");
+    }
+    setCopied(true);
+  };
 
   // A service card picked earlier pre-selects the need.
   useEffect(() => {
@@ -208,7 +223,8 @@ export function BriefForm() {
             />
             <div className="mt-5 grid gap-3 sm:grid-cols-2">
               <a
-                href={whatsappHref(message)}
+                href={wa.href}
+                onClick={toWhatsApp}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="group flex items-center justify-between rounded-full bg-acid px-5 py-3.5 text-[15px] font-medium text-acid-ink shadow-[0_12px_50px_-10px_rgba(182,255,59,0.7)]"
@@ -224,9 +240,15 @@ export function BriefForm() {
                 <Arrow className="h-5 w-5 -rotate-45 transition-transform duration-500 ease-expo group-hover:rotate-0" />
               </a>
             </div>
+            <p role="status" className={cx("mt-3 text-[13px] leading-relaxed text-acid", !copied && "sr-only")}>
+              {copied ? contact.review.copied : ""}
+            </p>
             <button
               type="button"
-              onClick={() => setStep("form")}
+              onClick={() => {
+                setCopied(false);
+                setStep("form");
+              }}
               className="mt-4 text-[13px] text-fog underline-offset-4 transition-colors hover:text-bone hover:underline"
             >
               ← {contact.review.edit}

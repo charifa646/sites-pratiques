@@ -19,7 +19,12 @@ const WIDE: Record<string, Pose> = {
   "offer-1": { cam: [0, 0.3, -63], look: [0, 0.3, -75], ghost: [0.35, -0.6, -71], gs: 0.62 },
   "offer-2": { cam: [0, 0.3, -83], look: [0, 0.3, -95], ghost: [-0.35, 1.35, -91], gs: 0.6 },
   "offer-3": { cam: [0, 0.3, -103], look: [0, 0.3, -115], ghost: [0.35, -0.6, -111], gs: 0.62 },
-  contact: { cam: [0, 0.6, -123], look: [0, 0.3, -140], ghost: [-3.5, -0.78, -133.5], gs: 0.6 },
+  work: { cam: [0, 0.35, -125], look: [0.4, 0.25, -137], ghost: [0.4, -0.72, -131.5], gs: 0.46 },
+  voices: { cam: [0, 0.45, -147], look: [0, 0.1, -159], ghost: [-3.35, -0.8, -156.5], gs: 0.44 },
+  method: { cam: [0, 0.25, -169], look: [0, 0.2, -181], ghost: [1.05, 1.55, -179.6], gs: 0.46 },
+  pricing: { cam: [0, 0.3, -191], look: [0, 0.25, -203], ghost: [0.55, -0.85, -198.5], gs: 0.52 },
+  faq: { cam: [0, 0.35, -211], look: [0, 0.3, -223], ghost: [3.7, 0.15, -221], gs: 0.72 },
+  contact: { cam: [0, 0.6, -231], look: [0, 0.3, -248], ghost: [-3.5, -0.9, -241.5], gs: 0.5 },
 };
 
 // Portrait and small screens: 3D in the upper part, text below.
@@ -31,8 +36,14 @@ const TALL: Record<string, Pose> = {
   "offer-1": { cam: [0, 0.3, -62], look: [0, 0.3, -75], ghost: [0.35, 5.3, -75.8], gs: 0.5 },
   "offer-2": { cam: [0, 0.3, -82], look: [0, 0.3, -95], ghost: [-1.95, 2.5, -94.4], gs: 0.5 },
   "offer-3": { cam: [0, 0.3, -102], look: [0, 0.3, -115], ghost: [1.95, 2.5, -114.4], gs: 0.5 },
+  work: { cam: [0, 0.3, -124], look: [0, 0.3, -137], ghost: [1.7, 5.45, -135.4], gs: 0.4 },
+  voices: { cam: [0, 0.4, -146], look: [0, 0.4, -159], ghost: [0, 3.64, -156], gs: 0.5 },
+  method: { cam: [0, 0.25, -168], look: [0, 0.25, -181], ghost: [-0.9, 5.4, -180.8], gs: 0.55 },
+  pricing: { cam: [0, 0.3, -190], look: [0, 0.3, -203], ghost: [1.75, 2.6, -199.5], gs: 0.45 },
+  // the FAQ scrolls over the whole screen: the guide goes ahead to the form
+  faq: { cam: [0, 0.35, -210], look: [0, 0.35, -223], ghost: [0, 2.2, -246], gs: 0.6 },
   // on phones the guide follows the form (see Ghost), this is where it waits
-  contact: { cam: [0, 0.6, -122], look: [0, 0.6, -140], ghost: [1.2, 3.2, -128], gs: 0.32 },
+  contact: { cam: [0, 0.6, -230], look: [0, 0.6, -248], ghost: [1.2, 3.2, -236], gs: 0.32 },
 };
 
 /** Where the set pieces stand, per layout (the portal only uses its depth: it follows the form). */
@@ -46,7 +57,13 @@ export const PROPS = {
       [3.35, 0.2, -114.5],
     ] as V3[],
     mockupScale: [1, 1, 1],
-    portal: [0, 0, -130] as V3,
+    gallery: [2.85, 0.35, -137.5] as V3,
+    galleryScale: 1,
+    method: [3.0, 0.0, -180] as V3,
+    methodScale: 1,
+    quote: [3.35, 0.25, -202.5] as V3,
+    quoteScale: 1,
+    portal: [0, 0, -238] as V3,
   },
   tall: {
     browser: [0, 4.15, -52] as V3,
@@ -57,18 +74,29 @@ export const PROPS = {
       [0, 3.0, -115],
     ] as V3[],
     mockupScale: [1.08, 1.28, 1.24],
-    portal: [0, 0, -127] as V3,
+    gallery: [0, 3.85, -137] as V3,
+    galleryScale: 1,
+    method: [0, 4.15, -180] as V3,
+    methodScale: 0.78,
+    quote: [0, 3.6, -202] as V3,
+    quoteScale: 0.85,
+    portal: [0, 0, -235] as V3,
   },
 };
 
 /** Gates: Figma frames the camera flies through just before each station. */
 export const GATES = [
-  { z: -16, label: "02 · Preuves" },
+  { z: -16, label: "02 · En chiffres" },
   { z: -38, label: "03 · Le constat" },
   { z: -60, label: "04 · Sites vitrines" },
   { z: -80, label: "05 · Landing pages" },
   { z: -100, label: "06 · Pages de vente" },
-  { z: -120, label: "07 · Contact" },
+  { z: -122, label: "07 · Réalisations" },
+  { z: -144, label: "08 · Témoignages" },
+  { z: -166, label: "09 · Méthode" },
+  { z: -188, label: "10 · Tarifs" },
+  { z: -208, label: "11 · Questions" },
+  { z: -228, label: "12 · Contact" },
 ];
 
 const easeInOut = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);

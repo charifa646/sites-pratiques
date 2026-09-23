@@ -15,8 +15,13 @@ import { Dust } from "./Dust";
 import { Floor } from "./Floor";
 import { Gates } from "./Gates";
 import { Ghost } from "./Ghost";
+import { Gallery } from "./Gallery";
+import { Method3D } from "./Method3D";
 import { Offers } from "./Offers";
 import { Portal } from "./Portal";
+import { Questions } from "./Questions";
+import { Quote } from "./Quote";
+import { Stage } from "./Stage";
 import { FLOOR_Y, baseFov as fovFor, createSample, sampleDive, worldState } from "./stations";
 
 /** Camera on the dive path, with pointer parallax, idle drift and a speed kick. */
@@ -171,6 +176,11 @@ function Scene({ flags, selectionRef, onReady }: { flags: Omit<WorldFlags, "tall
       <Constellation />
       <Browser />
       <Offers />
+      <Gallery />
+      <Stage />
+      <Method3D />
+      <Quote />
+      <Questions />
       <Portal />
       <Ghost selectionRef={selectionRef} />
       {flags.hi && <Effects />}

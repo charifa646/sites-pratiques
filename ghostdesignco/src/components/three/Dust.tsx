@@ -15,7 +15,7 @@ import { ACID_LIN, useWorld } from "./context";
 export function Dust() {
   const { hi, reduced } = useWorld();
   const dpr = useThree((s) => s.viewport.dpr);
-  const count = hi ? 1600 : 700;
+  const count = hi ? 2600 : 1100;
 
   const geo = useMemo(() => {
     const r = rng(11);
@@ -26,7 +26,7 @@ export function Dust() {
     for (let i = 0; i < count; i++) {
       pos[i * 3] = (r() * 2 - 1) * 15;
       pos[i * 3 + 1] = -1.45 + Math.pow(r(), 1.4) * 10;
-      pos[i * 3 + 2] = 14 - r() * 170;
+      pos[i * 3 + 2] = 14 - r() * 304;
       size[i] = 0.6 + Math.pow(r(), 3) * 2.6;
       phase[i] = r();
       acid[i] = r() < 0.22 ? 1 : 0;

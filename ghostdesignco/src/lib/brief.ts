@@ -24,11 +24,19 @@ export function composeBrief(b: Brief) {
   return lines.join("\n");
 }
 
-export function whatsappHref(message: string) {
+/**
+ * Where the WhatsApp button goes. With a number the brief travels in the
+ * link; with a Business link (no text parameter) it has to be pasted.
+ */
+export function whatsappTarget(message: string): { href: string; prefilled: boolean } {
   const number = site.whatsapp.replace(/\D/g, "");
-  const base = number ? `https://wa.me/${number}` : "https://wa.me/";
-  return `${base}?text=${encodeURIComponent(message)}`;
+  if (number) return { href: `https://wa.me/${number}?text=${encodeURIComponent(message)}`, prefilled: true };
+  if (site.whatsappLink) return { href: site.whatsappLink, prefilled: false };
+  return { href: `https://wa.me/?text=${encodeURIComponent(message)}`, prefilled: true };
 }
+
+/** Direct chat, without a brief (contact shortcuts, footer). */
+export const whatsappDirect = () => (site.whatsapp ? `https://wa.me/${site.whatsapp.replace(/\D/g, "")}` : site.whatsappLink);
 
 export function mailHref(message: string, need: string) {
   const subject = `Nouveau projet : ${need}`;

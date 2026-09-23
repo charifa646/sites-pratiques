@@ -3,6 +3,7 @@
 import { cta, hero } from "@/lib/copy";
 import { diveTo } from "@/lib/scroll";
 import { Button } from "@/components/ui/Button";
+import { TourButton } from "@/components/ui/Tour";
 import { Mask, Rise } from "@/components/ui/motion";
 
 export function Hero() {
@@ -36,9 +37,20 @@ export function Hero() {
           </Rise>
           <Rise delay={0.5} className="mt-9 flex flex-wrap items-center gap-3">
             <Button onClick={() => diveTo("contact")}>{cta.primary}</Button>
-            <Button variant="ghost" onClick={() => diveTo("offre")}>
+            <Button variant="ghost" className="hidden sm:inline-flex" onClick={() => diveTo("services")}>
               {cta.secondary}
             </Button>
+          </Rise>
+          <Rise delay={0.62} className="mt-7 flex flex-wrap items-center gap-x-6 gap-y-3 text-[13px] text-fog">
+            {hero.reassurance.map((r) => (
+              <span key={r} className="inline-flex items-center gap-2">
+                <svg viewBox="0 0 16 16" className="h-3.5 w-3.5 text-acid" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+                  <path d="m3.5 8.5 3 3 6-7" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+                {r}
+              </span>
+            ))}
+            <TourButton label="Lancer la visite guidée" className="-my-1 hidden sm:inline-flex" />
           </Rise>
         </div>
       </div>

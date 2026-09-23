@@ -1,8 +1,8 @@
 "use client";
 
-import { contact, footer, nav } from "@/lib/copy";
-import { diveTo } from "@/lib/scroll";
-import { Logo } from "@/components/ui/Logo";
+import { contact } from "@/lib/copy";
+import { whatsappDirect } from "@/lib/brief";
+import { site } from "@/lib/site";
 import { Mask, Rise } from "@/components/ui/motion";
 import { BriefForm } from "./BriefForm";
 
@@ -27,36 +27,33 @@ export function Contact() {
           <Rise as="p" delay={0.25} className="mt-6 max-w-[26rem] text-[17px] leading-relaxed text-fog">
             {contact.text}
           </Rise>
+          <Rise delay={0.32} className="mt-8 flex flex-wrap items-center gap-3 text-[14px]">
+            <span className="w-full text-fog">{contact.direct}</span>
+            <a
+              href={whatsappDirect()}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.04] px-4 py-2.5 text-bone transition-colors duration-300 hover:border-acid/60 hover:text-acid"
+            >
+              <svg viewBox="0 0 24 24" className="h-4 w-4 text-acid" fill="currentColor" aria-hidden>
+                <path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.8 11.9 11.9 0 0 0 4.6 4c1.7.7 2.4.8 3.2.7.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.2-.2-.4-.3Z" />
+              </svg>
+              WhatsApp
+            </a>
+            {site.email && (
+              <a
+                href={`mailto:${site.email}`}
+                className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.04] px-4 py-2.5 text-bone transition-colors duration-300 hover:border-acid/60 hover:text-acid"
+              >
+                E-mail
+              </a>
+            )}
+          </Rise>
         </div>
         <Rise delay={0.15} blur={false}>
           <BriefForm />
         </Rise>
       </div>
-
-      <footer className="relative border-t border-white/10">
-        <div className="mx-auto flex max-w-[1400px] flex-col gap-6 px-5 py-10 text-[13px] text-fog sm:flex-row sm:items-center sm:justify-between sm:px-10">
-          <div className="flex flex-col gap-2">
-            <Logo className="text-[15px]" />
-            <p>{footer.line}</p>
-          </div>
-          <nav className="flex gap-6" aria-label="Pied de page">
-            {nav.map((n) => (
-              <a
-                key={n.href}
-                href={n.href}
-                onClick={(e) => {
-                  e.preventDefault();
-                  diveTo(n.href.slice(1));
-                }}
-                className="transition-colors hover:text-bone"
-              >
-                {n.label}
-              </a>
-            ))}
-          </nav>
-          <p>© {new Date().getFullYear()} Ghostdesignco</p>
-        </div>
-      </footer>
     </section>
   );
 }

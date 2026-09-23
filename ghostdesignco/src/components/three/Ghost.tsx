@@ -4,9 +4,10 @@ import { MeshTransmissionMaterial } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
 import { useLayoutEffect, useMemo, useRef, type RefObject } from "react";
 import * as THREE from "three";
+import { guideState } from "@/lib/guide";
 import { scrollState } from "@/lib/scroll";
 import { glowTexture, useWorld } from "./context";
-import { createSample, sampleDive, stationPresence, worldState } from "./stations";
+import { createSample, sampleDive, stationPresence, stationReach, worldState } from "./stations";
 
 /**
  * The guide: a frosted-glass sheet ghost that travels with the visitor.
@@ -90,6 +91,7 @@ const BOUNDS = { x: 1.2, bottom: -1.3, top: 1.62 };
 const corners = Array.from({ length: 4 }, () => new THREE.Vector3());
 const tmp = new THREE.Vector3();
 const peek = new THREE.Vector3();
+const head = new THREE.Vector3();
 
 export function Ghost({ selectionRef }: { selectionRef: RefObject<HTMLDivElement> }) {
   const { hi, tall, reduced } = useWorld();
@@ -171,11 +173,11 @@ export function Ghost({ selectionRef }: { selectionRef: RefObject<HTMLDivElement
 
     sampleDive(sample, tall, reduced);
     const target = sample.ghost;
-    // on phones the guide ends up peeking over the frame of the form, and rides along with it
-    const end = stationPresence("contact");
-    if (tall && end > 0 && worldState.portalReady) {
+    // at the end the guide peeks over the frame of the form, and rides along with it
+    const end = stationReach("contact");
+    if (end > 0 && worldState.portalReady) {
       const c = worldState.portalCorner;
-      target.lerp(peek.set(c.x - 0.6, c.y - 0.12, c.z - 0.8), end);
+      target.lerp(peek.set(c.x - (tall ? 0.6 : 0.95), c.y - (tall ? 0.12 : 0.1), c.z - 0.8), end);
     }
     if (!pos.current) pos.current = target.clone();
     if (reduced) {
@@ -199,17 +201,15 @@ export function Ghost({ selectionRef }: { selectionRef: RefObject<HTMLDivElement
     worldState.ghost.copy(group.current.position);
     worldState.ghostScale = gs;
 
-    // face the camera, look at the pointer in the hero, turn to the form at the end
+    // face the camera, look at the pointer in the hero
     const p = worldState.pointer;
     const hero = stationPresence("hero");
-    const turn = tall ? 0 : end;
     let yaw = Math.atan2(camera.position.x - pos.current.x, camera.position.z - pos.current.z) * 0.85;
     let pitch = THREE.MathUtils.clamp(vel.current.z * 0.02, -0.35, 0.35);
     if (!reduced) {
       yaw += Math.sin(t * 0.6) * 0.1 * (1 - hero) + p.x * 0.42 * hero;
       pitch += p.y * 0.16 * hero;
     }
-    yaw += 0.95 * turn;
     body.current.rotation.y = THREE.MathUtils.damp(body.current.rotation.y, yaw, 4, dt);
     body.current.rotation.x = THREE.MathUtils.damp(body.current.rotation.x, pitch, 5, dt);
     body.current.rotation.z = THREE.MathUtils.damp(
@@ -224,6 +224,13 @@ export function Ghost({ selectionRef }: { selectionRef: RefObject<HTMLDivElement
     const pulse = reduced ? 1 : 1 + Math.sin(t * 2.1) * 0.12;
     light.current.intensity = 7 * pulse * intro;
     core.current.material.opacity = 0.8 * pulse * intro;
+
+    // where the head is on screen, for the guided tour's speech bubble
+    group.current.updateWorldMatrix(true, true);
+    head.set(0, BOUNDS.top, 0).applyMatrix4(body.current.matrixWorld).project(camera);
+    guideState.x = (head.x * 0.5 + 0.5) * size.width;
+    guideState.y = (0.5 - head.y * 0.5) * size.height;
+    guideState.visible = intro > 0.9 && head.z < 1 && Math.abs(head.x) < 1.05 && Math.abs(head.y) < 1.05;
 
     // Figma selection frame, only while the hero holds the stage
     const el = selectionRef.current;

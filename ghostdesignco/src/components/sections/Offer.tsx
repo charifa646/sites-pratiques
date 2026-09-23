@@ -14,11 +14,11 @@ export function Offer() {
   const { setNeed } = useIntent();
 
   return (
-    <section id="offre" aria-labelledby="offre-title" className="relative">
+    <section id="services" aria-labelledby="services-title" className="relative">
       {offer.items.map((item, i) => {
         const right = i % 2 === 1;
         return (
-          <div key={item.id} data-station={`offer-${i + 1}`} className="relative h-[160vh]">
+          <div key={item.id} id={item.anchor} data-station={`offer-${i + 1}`} className="relative h-[150vh]">
             <div className="sticky top-0 flex h-[100svh] items-end pb-[6svh] lg:items-center lg:pb-0">
               <div className="mx-auto w-full max-w-[1400px] px-5 sm:px-10">
                 <div className={cx("max-w-[560px]", right && "lg:ml-auto")}>
@@ -29,7 +29,7 @@ export function Offer() {
                         {offer.eyebrow}
                       </Rise>
                       <h2
-                        id="offre-title"
+                        id="services-title"
                         className="mt-4 font-display text-[clamp(2.2rem,4.8vw,4.4rem)] font-semibold leading-[1] tracking-[-0.035em] text-bone"
                       >
                         <Mask className="pb-[0.06em]">

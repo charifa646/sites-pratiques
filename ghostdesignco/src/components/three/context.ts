@@ -1,4 +1,4 @@
-import { createContext, useContext } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import * as THREE from "three";
 
 /** Rendering tier and layout of the world, shared by every piece of it. */
@@ -82,4 +82,19 @@ export function screenMaterial(map: THREE.Texture, opts: { reveal?: number; gain
     fog: true,
   });
   return m;
+}
+
+/** True once the page fonts are loaded, so text painted on canvases uses them. */
+export function useFontsReady() {
+  const [ready, setReady] = useState(false);
+  useEffect(() => {
+    let alive = true;
+    const done = () => alive && setReady(true);
+    if (!document.fonts) done();
+    else document.fonts.ready.then(done, done);
+    return () => {
+      alive = false;
+    };
+  }, []);
+  return ready;
 }

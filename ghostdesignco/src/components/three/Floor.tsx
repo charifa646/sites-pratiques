@@ -12,9 +12,9 @@ import { FLOOR_Y, worldState } from "./stations";
  * the shader blurs it lightly, ripples it under the ghost and draws the grid.
  * Elsewhere the same shader runs without the reflection.
  */
-const LENGTH = 230;
+const LENGTH = 340;
 const WIDTH = 70;
-const CENTER_Z = -90;
+const CENTER_Z = -140;
 
 export function Floor() {
   const { hi, reduced } = useWorld();

@@ -337,3 +337,225 @@ export function salesPage() {
   }
   return toTexture(el);
 }
+
+/** A desktop screenshot-like page for the gallery (preview until real captures arrive). */
+export function projectShot(seed: number, type: string) {
+  const r = rng(seed);
+  const W = 1280;
+  const H = 800;
+  const { el, c } = canvas(W, H);
+  const top = chrome(c, W, H, 48);
+  const pad = 56;
+  fillRR(c, pad, top + 30, 110, 18, 9, "rgba(255,255,255,0.85)");
+  for (let i = 0; i < 4; i++) fillRR(c, W - pad - 470 + i * 96, top + 34, 70, 10, 5, "rgba(255,255,255,0.32)");
+  fillRR(c, W - pad - 96, top + 24, 96, 32, 16, ACID);
+  if (type === "Landing page") {
+    textLines(c, W / 2 - 330, top + 110, 660, 2, 64, "rgba(255,255,255,0.95)", r, 0.62);
+    textLines(c, W / 2 - 250, top + 260, 500, 2, 26, "rgba(255,255,255,0.35)", r);
+    const g = c.createLinearGradient(W / 2 - 150, 0, W / 2 + 150, 0);
+    g.addColorStop(0, ACID);
+    g.addColorStop(1, "#7ed321");
+    fillRR(c, W / 2 - 150, top + 330, 300, 60, 30, g);
+    fillRR(c, W / 2 - 80, top + 354, 160, 12, 6, "rgba(11,20,0,0.85)");
+    for (let i = 0; i < 3; i++) image(c, pad + i * 396, top + 440, 372, 250, 22, r, i === 1);
+  } else if (type === "Page de vente") {
+    image(c, pad, top + 90, 520, 470, 24, r);
+    textLines(c, pad + 580, top + 100, 560, 3, 54, "rgba(255,255,255,0.95)", r, 0.6);
+    for (let i = 0; i < 4; i++) {
+      const y = top + 300 + i * 44;
+      c.beginPath();
+      c.arc(pad + 596, y + 12, 9, 0, Math.PI * 2);
+      c.fillStyle = ACID;
+      c.fill();
+      textLines(c, pad + 620, y + 2, 420, 1, 26, "rgba(255,255,255,0.45)", r, 0.8);
+    }
+    fillRR(c, pad + 580, top + 500, 560, 130, 24, "rgba(182,255,59,0.08)");
+    strokeRR(c, pad + 580, top + 500, 560, 130, 24, ACID_DIM, 2);
+    fillRR(c, pad + 612, top + 540, 170, 48, 10, "rgba(255,255,255,0.9)");
+    fillRR(c, pad + 890, top + 536, 220, 58, 29, ACID);
+  } else {
+    image(c, pad, top + 90, W - pad * 2, 330, 26, r);
+    textLines(c, pad + 44, top + 250, 560, 2, 58, "rgba(255,255,255,0.96)", r, 0.62);
+    fillRR(c, pad + 44, top + 372, 170, 44, 22, ACID);
+    for (let i = 0; i < 3; i++) {
+      const x = pad + i * 396;
+      fillRR(c, x, top + 470, 372, 220, 20, "rgba(255,255,255,0.05)");
+      fillRR(c, x + 26, top + 498, 52, 52, 16, "rgba(182,255,59,0.22)");
+      textLines(c, x + 26, top + 574, 300, 3, 28, "rgba(255,255,255,0.35)", r);
+    }
+  }
+  return toTexture(el);
+}
+
+/** The gallery's last slot: an empty frame waiting for the next project. */
+export function nextSlot() {
+  const W = 1280;
+  const H = 800;
+  const { el, c } = canvas(W, H);
+  fillRR(c, 0, 0, W, H, 26, "rgba(10,14,6,0.72)");
+  c.setLineDash([18, 14]);
+  strokeRR(c, 6, 6, W - 12, H - 12, 24, ACID, 4);
+  c.setLineDash([]);
+  c.strokeStyle = ACID;
+  c.lineWidth = 10;
+  c.lineCap = "round";
+  c.beginPath();
+  c.moveTo(W / 2 - 46, H / 2);
+  c.lineTo(W / 2 + 46, H / 2);
+  c.moveTo(W / 2, H / 2 - 46);
+  c.lineTo(W / 2, H / 2 + 46);
+  c.stroke();
+  return toTexture(el);
+}
+
+/**
+ * Méthode: one browser in four layers, base then the three steps:
+ * brief (notes of the call), design (the page), live (address bar, online).
+ */
+export function methodLayers() {
+  const W = 1024;
+  const H = 700;
+  const r = rng(41);
+
+  const base = canvas(W, H);
+  chrome(base.c, W, H);
+
+  const brief = canvas(W, H);
+  {
+    const c = brief.c;
+    const notes: [number, number, number, string][] = [
+      [70, 110, -0.05, "Objectifs"],
+      [390, 96, 0.04, "Clients"],
+      [700, 120, -0.03, "Style"],
+      [180, 390, 0.03, "Pages"],
+      [540, 380, -0.04, "Ton"],
+    ];
+    const family = typeof document !== "undefined" ? getComputedStyle(document.body).fontFamily : "sans-serif";
+    for (const [x, y, a, label] of notes) {
+      c.save();
+      c.translate(x + 120, y + 100);
+      c.rotate(a);
+      fillRR(c, -120, -100, 240, 200, 18, "rgba(255,255,255,0.06)");
+      strokeRR(c, -120, -100, 240, 200, 18, "rgba(182,255,59,0.45)", 2);
+      c.fillStyle = ACID;
+      c.font = `600 26px ${family}`;
+      c.fillText(label, -96, -52);
+      textLines(c, -96, -20, 190, 3, 30, "rgba(255,255,255,0.4)", r);
+      c.restore();
+    }
+  }
+
+  const design = canvas(W, H);
+  {
+    const c = design.c;
+    fillRR(c, 48, 44 + 34, 90, 20, 10, "rgba(255,255,255,0.85)");
+    for (let i = 0; i < 4; i++) fillRR(c, W - 420 + i * 92, 44 + 40, 64, 10, 5, "rgba(255,255,255,0.4)");
+    fillRR(c, W - 150, 44 + 28, 102, 32, 16, ACID);
+    textLines(c, 48, 44 + 118, 450, 3, 56, "rgba(255,255,255,0.92)", r, 0.62);
+    textLines(c, 48, 44 + 300, 400, 2, 26, "rgba(255,255,255,0.38)", r, 0.45);
+    fillRR(c, 48, 44 + 370, 200, 52, 26, ACID);
+    image(c, 560, 44 + 110, W - 608, 300, 20, r);
+    for (let i = 0; i < 3; i++) image(c, 48 + i * 318, 44 + 460, 290, 150, 16, r, i === 0);
+  }
+
+  const live = canvas(W, H);
+  {
+    const c = live.c;
+    const family = typeof document !== "undefined" ? getComputedStyle(document.body).fontFamily : "sans-serif";
+    // address bar replaced by a real-looking one
+    fillRR(c, W / 2 - 230, 10, 460, 26, 13, "rgba(255,255,255,0.1)");
+    c.fillStyle = "rgba(255,255,255,0.75)";
+    c.font = `500 15px ${family}`;
+    c.fillText("https://votre-site.fr", W / 2 - 200, 28);
+    c.beginPath();
+    c.arc(W / 2 - 214, 23, 5, 0, Math.PI * 2);
+    c.fillStyle = ACID;
+    c.fill();
+    // "online" badge
+    fillRR(c, W - 250, 560, 190, 56, 28, "rgba(11,20,0,0.9)");
+    strokeRR(c, W - 250, 560, 190, 56, 28, ACID, 2);
+    c.beginPath();
+    c.arc(W - 220, 588, 8, 0, Math.PI * 2);
+    c.fillStyle = ACID;
+    c.fill();
+    c.fillStyle = ACID;
+    c.font = `600 22px ${family}`;
+    c.fillText("En ligne", W - 200, 596);
+  }
+
+  return {
+    base: toTexture(base.el),
+    brief: toTexture(brief.el),
+    design: toTexture(design.el),
+    live: toTexture(live.el),
+    aspect: W / H,
+  };
+}
+
+/** Tarifs: a quote sheet (lines fill in, then the "sur mesure" stamp lands). */
+export function quoteSheet() {
+  const W = 760;
+  const H = 1000;
+  const r = rng(53);
+  const family = typeof document !== "undefined" ? getComputedStyle(document.body).fontFamily : "sans-serif";
+
+  const sheet = canvas(W, H);
+  {
+    const c = sheet.c;
+    fillRR(c, 0, 0, W, H, 30, "rgba(14,14,14,0.95)");
+    strokeRR(c, 1, 1, W - 2, H - 2, 30, "rgba(255,255,255,0.16)", 2);
+    c.fillStyle = "rgba(255,255,255,0.92)";
+    c.font = `600 54px ${family}`;
+    c.fillText("Devis", 64, 118);
+    fillRR(c, 64, 150, 220, 12, 6, "rgba(255,255,255,0.3)");
+    fillRR(c, W - 64 - 120, 86, 120, 40, 20, "rgba(182,255,59,0.16)");
+    c.fillStyle = "rgba(255,255,255,0.08)";
+    c.fillRect(64, 210, W - 128, 2);
+  }
+
+  const lines = canvas(W, H);
+  {
+    const c = lines.c;
+    for (let i = 0; i < 5; i++) {
+      const y = 262 + i * 104;
+      fillRR(c, 64, y, 40, 40, 12, "rgba(182,255,59,0.22)");
+      textLines(c, 128, y + 4, 340, 2, 22, "rgba(255,255,255,0.5)", r);
+      fillRR(c, W - 64 - 120, y + 8, 120, 16, 8, "rgba(255,255,255,0.28)");
+    }
+    c.fillStyle = "rgba(255,255,255,0.08)";
+    c.fillRect(64, 800, W - 128, 2);
+    fillRR(c, 64, 846, 180, 18, 9, "rgba(255,255,255,0.45)");
+  }
+
+  const stamp = canvas(W, H);
+  {
+    const c = stamp.c;
+    c.save();
+    c.translate(W / 2 + 40, 860);
+    c.rotate(-0.12);
+    strokeRR(c, -230, -56, 460, 112, 20, ACID, 6);
+    c.fillStyle = ACID;
+    c.font = `700 56px ${family}`;
+    c.textAlign = "center";
+    c.textBaseline = "middle";
+    c.fillText("SUR MESURE", 0, 4);
+    c.restore();
+  }
+
+  return { sheet: toTexture(sheet.el), lines: toTexture(lines.el), stamp: toTexture(stamp.el), aspect: W / H };
+}
+
+/** A glowing question mark (serif italic), for the FAQ station. */
+export function questionMark() {
+  const S = 256;
+  const { el, c } = canvas(S, S);
+  const serif = typeof document !== "undefined" ? getComputedStyle(document.documentElement).getPropertyValue("--font-serif") : "";
+  c.shadowColor = "rgba(182,255,59,0.9)";
+  c.shadowBlur = 28;
+  c.fillStyle = ACID;
+  c.font = `italic 400 200px ${serif || "Georgia"}, Georgia, serif`;
+  c.textAlign = "center";
+  c.textBaseline = "middle";
+  c.fillText("?", S / 2, S / 2 + 12);
+  return toTexture(el);
+}

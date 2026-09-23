@@ -2,12 +2,19 @@
 
 import dynamic from "next/dynamic";
 import { useRef } from "react";
+import { Footer } from "@/components/ui/Footer";
 import { Header } from "@/components/ui/Header";
 import { SelectionFrame } from "@/components/ui/SelectionFrame";
+import { Tour } from "@/components/ui/Tour";
 import { Hero } from "@/components/sections/Hero";
 import { Proof } from "@/components/sections/Proof";
 import { Problem } from "@/components/sections/Problem";
 import { Offer } from "@/components/sections/Offer";
+import { Work } from "@/components/sections/Work";
+import { Voices } from "@/components/sections/Voices";
+import { Method } from "@/components/sections/Method";
+import { Pricing } from "@/components/sections/Pricing";
+import { Faq } from "@/components/sections/Faq";
 import { Contact } from "@/components/sections/Contact";
 
 const World = dynamic(() => import("@/components/three/World"), { ssr: false });
@@ -28,8 +35,15 @@ export function Experience() {
         <Proof />
         <Problem />
         <Offer />
+        <Work />
+        <Voices />
+        <Method />
+        <Pricing />
+        <Faq />
         <Contact />
       </main>
+      <Footer />
+      <Tour />
       <div aria-hidden className="veil pointer-events-none fixed inset-0 z-[70] bg-void" />
     </>
   );

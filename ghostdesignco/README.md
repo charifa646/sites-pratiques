@@ -12,7 +12,11 @@ npm run build && npm start
 
 ## À compléter avant la mise en ligne
 
-`src/lib/site.ts` : numéro WhatsApp (format international, chiffres seuls, ex. `33612345678`) et adresse e-mail qui reçoivent les briefs. Tant qu'ils sont vides, WhatsApp s'ouvre avec le message prêt et laisse choisir le destinataire, et la messagerie s'ouvre avec le champ « À » vide.
+- `src/lib/site.ts` : l'adresse e-mail qui reçoit les briefs. Le lien WhatsApp Business est en place : le brief est copié dans le presse-papiers puis la conversation s'ouvre. Avec le numéro (format international, chiffres seuls, ex. `33612345678`), le message arrive déjà écrit.
+- `src/lib/projects.ts` : tes réalisations. Dépose les captures dans `public/projects/` (1600 × 1000 idéalement) et renseigne titre, type, phrase, lien. Tant qu'un projet n'a pas d'image, la galerie affiche une maquette dessinée.
+- `src/lib/testimonials.ts` : les témoignages vidéo. Dépose les vidéos (et une image d'aperçu) dans `public/temoignages/`, puis une ligne par vidéo : nom, fonction, fichier. Tant que la liste est vide, trois emplacements sont réservés.
+- `src/app/mentions-legales/page.tsx` : identité de l'éditeur (nom ou raison sociale, statut, SIRET, adresse, contact).
+- `src/lib/copy.ts` : tous les textes du site, au même endroit.
 
 ## Le parcours
 
@@ -21,10 +25,17 @@ npm run build && npm start
 | Accueil | Le fantôme sort du sol miroir, encadré par une sélection façon Figma (nom du calque, poignées, dimensions en direct). Il suit le pointeur du regard. |
 | En chiffres | Quinze maquettes de sites s'allument une à une en arche au-dessus des chiffres, puis s'alignent en tunnel que la caméra traverse. |
 | Le constat | Un site en fil de fer se construit pendant le défilement : clarté, confiance, envie apparaissent au même moment que les mots. Le fantôme regarde par-dessus. |
-| L'offre | Sites vitrines (trois pages en éventail), landing pages (téléphone qui défile jusqu'au bouton d'action), pages de vente (sections qui s'assemblent). |
-| Contact | Un cadre de lumière épouse le formulaire (il suit sa position à l'écran) et se reflète dans le sol. |
+| Services | Sites vitrines (trois pages en éventail), landing pages (téléphone qui défile jusqu'au bouton d'action), pages de vente (sections qui s'assemblent). |
+| Réalisations | Les projets défilent sur un mur d'écrans, la fiche suit. Le dernier cadre est vide : « Le prochain, c'est le vôtre ? ». |
+| Témoignages | Le fantôme sous un projecteur, les vidéos des clients dans la page. |
+| Méthode | Le même navigateur passe des notes du premier appel, au design, puis au site en ligne (adresse, pastille « En ligne »). |
+| Tarifs | Un devis se remplit, puis le tampon « SUR MESURE » se pose dessus. |
+| Questions fréquentes | Des points d'interrogation tournent autour du fantôme. |
+| Contact | Un cadre de lumière épouse le formulaire (il suit sa position à l'écran) et se reflète dans le sol ; le fantôme regarde par-dessus. |
 
-Entre deux étapes, la caméra franchit un cadre Figma nommé comme la section suivante. Les boutons « Parlons de votre projet » et « Discutons de votre projet » déclenchent une plongée animée jusqu'au formulaire, en présélectionnant le besoin choisi.
+Entre deux étapes, la caméra franchit un cadre Figma nommé comme la section suivante. Tous les boutons de devis déclenchent une plongée animée jusqu'au formulaire ; ceux des services présélectionnent le besoin.
+
+**Visite guidée** : bouton dans l'en-tête (et sous l'accueil sur ordinateur). Le fantôme fait visiter le site tout seul, une phrase par étape dans une bulle qui le suit, avec pause, étape suivante et sortie. Le moindre défilement du visiteur met la visite en pause ; elle se termine sur le formulaire, prêt à être rempli.
 
 Le formulaire compose un brief relisible et modifiable, puis l'envoie par WhatsApp ou par e-mail (aucun serveur, aucune donnée stockée).
 

@@ -100,6 +100,11 @@ html.lenis body {
   transition-delay: 0.6s;
 }
 
+/* Guided tour: the bubble's tail only shows while it points at the ghost */
+.tour-bubble[data-tail="off"] .tour-tail {
+  display: none;
+}
+
 /* Entrance veil: CSS only, never waits on JS */
 .veil {
   animation: veil-out 1.8s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards;
