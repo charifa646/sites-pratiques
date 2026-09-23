@@ -10,6 +10,12 @@ npm run dev      # http://localhost:3000
 npm run build && npm start
 ```
 
+## Mise en ligne
+
+- Adresse : https://ghostdesignco.vercel.app
+- Projet Vercel « sites-pratiques », réglé sur le dossier `ghostdesignco` (Root Directory), déployé depuis la branche `claude/zealous-euler-Nyz19`.
+- Kora Transit a son propre projet Vercel (« kora ») : https://kora-navy.vercel.app
+
 ## À compléter avant la mise en ligne
 
 - `src/lib/site.ts` : numéro WhatsApp et e-mail qui reçoivent les briefs (renseignés). Le brief arrive déjà écrit dans WhatsApp ou dans la messagerie.
