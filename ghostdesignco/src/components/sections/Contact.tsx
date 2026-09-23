@@ -12,7 +12,7 @@ export function Contact() {
       <div className="relative mx-auto grid min-h-[100svh] max-w-[1400px] items-center gap-10 px-5 pb-16 pt-28 sm:px-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,600px)] lg:gap-16 lg:py-28">
         <div className="lg:self-start lg:pt-[8vh]">
           <Rise className="flex items-center gap-2.5 text-[12px] font-medium uppercase tracking-[0.22em] text-fog">
-            <span className="h-1.5 w-1.5 rounded-full bg-acid shadow-[0_0_12px_2px_rgba(182,255,59,0.7)]" />
+            <span className="h-1.5 w-1.5 rounded-full bg-acid shadow-[0_0_8px_1px_rgba(182,255,59,0.4)]" />
             {contact.eyebrow}
           </Rise>
           <h2

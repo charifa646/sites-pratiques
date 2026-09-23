@@ -126,12 +126,12 @@ export function Floor() {
             // pool of light under the guide, with slow rings
             float pool = exp(-d * d * 0.3);
             float rings = smoothstep(0.1, 0.0, abs(fract(d * 0.42 - uTime * 0.22) - 0.5)) * near;
-            col += uAcid * (pool * 0.07 + rings * 0.035);
+            col += uAcid * (pool * 0.05 + rings * 0.025);
 
             // blueprint grid: minor every 2 units, major every 10
             float side = 1.0 - smoothstep(10.0, 20.0, abs(xz.x));
-            float g = grid(xz, 2.0, 1.0) * 0.055 + grid(xz, 10.0, 1.3) * 0.1;
-            col += uAcid * g * side * (0.6 + 0.4 * F);
+            float g = grid(xz, 2.0, 1.0) * 0.04 + grid(xz, 10.0, 1.3) * 0.075;
+            col += mix(uAcid, vec3(0.62, 0.68, 0.6), 0.4) * g * side * (0.6 + 0.4 * F);
 
             float fog = smoothstep(uFogNear, uFogFar, vDepth);
             gl_FragColor = vec4(mix(col, uFogColor, fog), 1.0);

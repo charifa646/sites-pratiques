@@ -17,7 +17,7 @@ export function Hero() {
       <div className="relative mx-auto flex min-h-[100svh] max-w-[1400px] flex-col justify-end px-5 pb-[9svh] pt-28 sm:px-10 lg:justify-center lg:pb-0">
         <div className="max-w-[860px]">
           <Rise className="flex items-center gap-2.5 text-[12px] font-medium uppercase tracking-[0.22em] text-fog">
-            <span className="h-1.5 w-1.5 rounded-full bg-acid shadow-[0_0_12px_2px_rgba(182,255,59,0.7)]" />
+            <span className="h-1.5 w-1.5 rounded-full bg-acid shadow-[0_0_8px_1px_rgba(182,255,59,0.4)]" />
             {hero.eyebrow}
           </Rise>
           <h1
@@ -25,18 +25,20 @@ export function Hero() {
             className="mt-6 font-display text-[clamp(2.7rem,7.4vw,7rem)] font-semibold leading-[0.93] tracking-[-0.04em] text-bone"
           >
             <Mask className="pb-[0.04em]">Des sites qui</Mask>
+            {/* below lg: "donnent envie de / rester."; lg and up: "donnent envie / de rester." */}
             <Mask delay={0.08} className="pb-[0.04em]">
-              donnent envie de
+              donnent envie<span className="lg:hidden"> de</span>
             </Mask>
-            <Mask delay={0.16} className="pb-[0.1em]" innerClassName="glow pr-[0.1em] font-serif font-normal italic tracking-[-0.01em] text-acid">
-              {hero.title.accent}
+            <Mask delay={0.16} className="pb-[0.1em]">
+              <span className="hidden lg:inline">de </span>
+              <span className="glow pr-[0.1em] font-serif font-normal italic tracking-[-0.01em] text-acid">{hero.title.accent}</span>
             </Mask>
           </h1>
           <Rise as="p" delay={0.35} className="mt-7 max-w-[34rem] text-[16px] leading-relaxed text-fog sm:text-[18px]">
             {hero.text}
           </Rise>
           <Rise delay={0.5} className="mt-9 flex flex-wrap items-center gap-3">
-            <Button onClick={() => diveTo("contact")}>{cta.primary}</Button>
+            <Button onClick={() => diveTo("contact")}>{cta.quote}</Button>
             <Button variant="ghost" className="hidden sm:inline-flex" onClick={() => diveTo("services")}>
               {cta.secondary}
             </Button>

@@ -101,7 +101,7 @@ function Horizon() {
         depthWrite: false,
         depthTest: false,
         transparent: true,
-        opacity: 0.32,
+        opacity: 0.2,
         fog: false,
       }),
     [],
@@ -123,7 +123,7 @@ function Effects() {
   });
   return (
     <EffectComposer multisampling={4} enableNormalPass={false}>
-      <Bloom mipmapBlur intensity={0.95} luminanceThreshold={1} luminanceSmoothing={0.3} radius={0.72} />
+      <Bloom mipmapBlur intensity={0.8} luminanceThreshold={1} luminanceSmoothing={0.3} radius={0.7} />
       <ChromaticAberration ref={ca as never} offset={offset} radialModulation modulationOffset={0.35} />
       <Vignette offset={0.28} darkness={0.72} />
     </EffectComposer>

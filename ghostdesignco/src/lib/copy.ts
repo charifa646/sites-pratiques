@@ -17,12 +17,21 @@ export const nav = [
   { label: "Tarifs", href: "#tarifs" },
 ];
 
+/** Full list for the mobile menu (the desktop bar keeps the four above). */
+export const menu = [
+  { label: "Services", href: "#services" },
+  { label: "Réalisations", href: "#realisations" },
+  { label: "Témoignages", href: "#temoignages" },
+  { label: "Méthode", href: "#methode" },
+  { label: "Tarifs", href: "#tarifs" },
+  { label: "Questions fréquentes", href: "#questions" },
+];
+
+/** One name for the main action everywhere, a quieter one for exploring. */
 export const cta = {
-  primary: "Parlons de votre projet",
-  secondary: "Découvrir nos services",
   quote: "Demander un devis",
   quoteShort: "Devis",
-  service: "Discutons de votre projet",
+  secondary: "Découvrir nos services",
 };
 
 export const hero = {
@@ -163,11 +172,10 @@ export const contact = {
     name: { label: "Votre nom", placeholder: "Alex Martin" },
     email: { label: "Votre e-mail", placeholder: "alex@entreprise.fr" },
     need: { label: "Votre besoin" },
-    budget: { label: "Budget envisagé" },
+    budget: { label: "Votre budget", optional: "facultatif", placeholder: "Ex. : 2 000 € ou 1 000 000 FCFA" },
     idea: { label: "Racontez-nous votre idée", placeholder: "Votre marque, vos ambitions, ce que vous imaginez…" },
   },
   needs: ["Site vitrine", "Landing page", "Page de vente", "Je ne sais pas encore"],
-  budgets: ["Moins de 1 500 €", "1 500 – 3 000 €", "3 000 – 5 000 €", "Plus de 5 000 €", "À définir ensemble"],
   submit: "Préparer mon message",
   note: "Simple et sans engagement. Vous pourrez relire votre brief avant de l'envoyer depuis votre messagerie.",
   review: {

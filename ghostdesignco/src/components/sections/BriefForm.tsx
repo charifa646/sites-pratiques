@@ -9,7 +9,7 @@ import { Arrow } from "@/components/ui/Button";
 import { EXPO, cx } from "@/components/ui/motion";
 
 const field =
-  "w-full rounded-2xl border border-white/10 bg-white/[0.035] px-4 py-3.5 text-[15px] text-bone placeholder:text-white/30 outline-none transition-[border-color,background-color,box-shadow] duration-300 focus:border-acid/70 focus:bg-white/[0.06] focus:shadow-[0_0_0_4px_rgba(182,255,59,0.12)]";
+  "w-full rounded-2xl border border-white/10 bg-white/[0.035] px-4 py-3.5 text-[15px] text-bone placeholder:text-white/35 outline-none transition-[border-color,background-color,box-shadow] duration-300 focus:border-white/35 focus:bg-white/[0.06] focus:shadow-[0_0_0_3px_rgba(237,237,234,0.07)]";
 
 function Label({ htmlFor, children }: { htmlFor: string; children: ReactNode }) {
   return (
@@ -54,7 +54,7 @@ export function BriefForm() {
     name: "",
     email: "",
     need: contact.needs[0],
-    budget: contact.budgets[2],
+    budget: "",
     idea: "",
   });
   const [errors, setErrors] = useState<Partial<Record<keyof Brief, string>>>({});
@@ -106,10 +106,6 @@ export function BriefForm() {
 
   return (
     <div data-portal className="glass relative overflow-hidden rounded-[32px] p-6 sm:p-9">
-      <span
-        aria-hidden
-        className="pointer-events-none absolute -right-24 -top-24 h-64 w-64 rounded-full bg-[radial-gradient(circle,rgba(182,255,59,0.22),transparent_65%)]"
-      />
       <AnimatePresence mode="wait" initial={false}>
         {step === "form" ? (
           <motion.form
@@ -135,7 +131,7 @@ export function BriefForm() {
                 aria-describedby={errors.name ? id("name-err") : undefined}
               />
               {errors.name && (
-                <p id={id("name-err")} className="mt-1.5 text-[12px] text-acid">
+                <p id={id("name-err")} className="mt-1.5 text-[12px] text-[#F2A58E]">
                   {errors.name}
                 </p>
               )}
@@ -155,7 +151,7 @@ export function BriefForm() {
                 aria-describedby={errors.email ? id("email-err") : undefined}
               />
               {errors.email && (
-                <p id={id("email-err")} className="mt-1.5 text-[12px] text-acid">
+                <p id={id("email-err")} className="mt-1.5 text-[12px] text-[#F2A58E]">
                   {errors.email}
                 </p>
               )}
@@ -165,8 +161,16 @@ export function BriefForm() {
               <Select id={id("need")} value={brief.need} onChange={set("need")} options={contact.needs} />
             </div>
             <div>
-              <Label htmlFor={id("budget")}>{f.budget.label}</Label>
-              <Select id={id("budget")} value={brief.budget} onChange={set("budget")} options={contact.budgets} />
+              <Label htmlFor={id("budget")}>
+                {f.budget.label} <span className="font-normal text-fog">({f.budget.optional})</span>
+              </Label>
+              <input
+                id={id("budget")}
+                className={field}
+                placeholder={f.budget.placeholder}
+                value={brief.budget}
+                onChange={(e) => set("budget")(e.target.value)}
+              />
             </div>
             <div className="sm:col-span-2">
               <Label htmlFor={id("idea")}>{f.idea.label}</Label>
@@ -181,7 +185,7 @@ export function BriefForm() {
                 aria-describedby={errors.idea ? id("idea-err") : undefined}
               />
               {errors.idea && (
-                <p id={id("idea-err")} className="mt-1.5 text-[12px] text-acid">
+                <p id={id("idea-err")} className="mt-1.5 text-[12px] text-[#F2A58E]">
                   {errors.idea}
                 </p>
               )}
@@ -189,7 +193,7 @@ export function BriefForm() {
             <div className="sm:col-span-2">
               <button
                 type="submit"
-                className="group flex w-full items-center justify-between rounded-full bg-acid px-6 py-4 text-[15px] font-medium text-acid-ink shadow-[0_12px_50px_-10px_rgba(182,255,59,0.7)] transition-shadow duration-500 hover:shadow-[0_16px_70px_-8px_rgba(182,255,59,0.95)]"
+                className="group flex w-full items-center justify-between rounded-full bg-acid px-6 py-4 text-[15px] font-medium text-acid-ink shadow-[0_10px_30px_-14px_rgba(182,255,59,0.5)] transition-shadow duration-500 hover:shadow-[0_12px_36px_-12px_rgba(182,255,59,0.65)]"
               >
                 {contact.submit}
                 <Arrow className="h-5 w-5 -rotate-45 transition-transform duration-500 ease-expo group-hover:rotate-0" />
@@ -206,8 +210,8 @@ export function BriefForm() {
             transition={{ duration: 0.5, ease: EXPO }}
             className="relative"
           >
-            <p className="flex items-center gap-2 text-[12px] font-medium uppercase tracking-[0.2em] text-acid">
-              <span className="h-1.5 w-1.5 rounded-full bg-acid shadow-[0_0_12px_2px_rgba(182,255,59,0.7)]" />
+            <p className="flex items-center gap-2 text-[12px] font-medium uppercase tracking-[0.2em] text-fog">
+              <span className="h-1.5 w-1.5 rounded-full bg-acid" />
               {contact.review.title}
             </p>
             <p className="mt-3 text-[15px] text-fog">{contact.review.text}</p>
@@ -227,7 +231,7 @@ export function BriefForm() {
                 onClick={toWhatsApp}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group flex items-center justify-between rounded-full bg-acid px-5 py-3.5 text-[15px] font-medium text-acid-ink shadow-[0_12px_50px_-10px_rgba(182,255,59,0.7)]"
+                className="group flex items-center justify-between rounded-full bg-acid px-5 py-3.5 text-[15px] font-medium text-acid-ink shadow-[0_10px_30px_-14px_rgba(182,255,59,0.5)]"
               >
                 {contact.review.whatsapp}
                 <Arrow className="h-5 w-5 -rotate-45 transition-transform duration-500 ease-expo group-hover:rotate-0" />
@@ -240,7 +244,7 @@ export function BriefForm() {
                 <Arrow className="h-5 w-5 -rotate-45 transition-transform duration-500 ease-expo group-hover:rotate-0" />
               </a>
             </div>
-            <p role="status" className={cx("mt-3 text-[13px] leading-relaxed text-acid", !copied && "sr-only")}>
+            <p role="status" className={cx("mt-3 text-[13px] leading-relaxed text-bone", !copied && "sr-only")}>
               {copied ? contact.review.copied : ""}
             </p>
             <button

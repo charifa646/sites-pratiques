@@ -29,7 +29,7 @@ export function Dust() {
       pos[i * 3 + 2] = 14 - r() * 304;
       size[i] = 0.6 + Math.pow(r(), 3) * 2.6;
       phase[i] = r();
-      acid[i] = r() < 0.22 ? 1 : 0;
+      acid[i] = r() < 0.12 ? 1 : 0;
     }
     const g = new THREE.BufferGeometry();
     g.setAttribute("position", new THREE.BufferAttribute(pos, 3));

@@ -65,22 +65,23 @@ export function Portal() {
             float d = box(vP, uSize * 0.5, uRadius);
             float ad = abs(d);
             float px = fwidth(d);
-            // neon tube: bright core, soft falloff both sides
-            float core = 1.0 - smoothstep(0.0, 0.028 + px, ad);
-            float glow = exp(-ad * 5.5) * 0.55 + exp(-ad * 1.6) * 0.18;
+            // light tube: thin core, the glow spills outward only
+            float core = 1.0 - smoothstep(0.0, 0.02 + px, ad);
+            float glow = d > 0.0 ? exp(-ad * 8.0) * 0.3 + exp(-ad * 2.4) * 0.05 : exp(-ad * 30.0) * 0.2;
             // a spark travelling along the frame
             float ang = atan(vP.y / uSize.y, vP.x / uSize.x);
             float spark = pow(0.5 + 0.5 * cos(ang - uTime * 0.9), 24.0) * (1.0 - smoothstep(0.0, 0.2, ad));
-            vec3 col = uAcid * (core * 2.1 + glow + spark * 1.8);
+            vec3 tube = mix(vec3(0.86, 0.9, 0.84), uAcid, 0.35);
+            vec3 col = tube * core * 1.15 + uAcid * (glow + spark * 1.1);
             float a = clamp(core + glow + spark, 0.0, 1.0);
-            // liquid glass inside the doorway
+            // dark liquid glass inside the doorway
             if (d < 0.0) {
               vec2 q = vP * 1.2;
               float n = noise(q + vec2(uTime * 0.12, uTime * 0.08)) + 0.5 * noise(q * 2.2 - vec2(uTime * 0.1, -uTime * 0.16));
               float caustic = pow(1.0 - abs(n - 0.75) * 2.0, 6.0);
               float inner = exp(d * 2.2);
-              col += uAcid * (caustic * 0.035 + inner * 0.06);
-              a = max(a, 0.82);
+              col += vec3(0.75, 0.8, 0.72) * (caustic * 0.012 + inner * 0.01);
+              a = max(a, 0.86);
             }
             gl_FragColor = vec4(col, a * uOpacity);
             #include <colorspace_fragment>
@@ -151,7 +152,7 @@ export function Portal() {
     const flicker = reduced ? 1 : 0.95 + Math.sin(t * 2.3) * 0.03 + Math.sin(t * 7.1) * 0.02;
     material.uniforms.uOpacity.value = here * flicker;
     material.uniforms.uTime.value = t;
-    haloMat.opacity = (tall ? 0.1 : 0.22) * here * flicker;
+    haloMat.opacity = (tall ? 0.03 : 0.07) * here * flicker;
     halo.current.scale.set(w * 1.7, h * 1.35, 1);
   });
 

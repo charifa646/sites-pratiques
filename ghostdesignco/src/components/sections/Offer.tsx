@@ -57,7 +57,7 @@ export function Offer() {
                         diveTo("contact");
                       }}
                     >
-                      {cta.service}
+                      {cta.quote}
                     </Button>
                   </Rise>
                 </div>

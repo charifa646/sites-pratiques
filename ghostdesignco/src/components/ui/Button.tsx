@@ -43,7 +43,7 @@ export function Button({ children, onClick, href, variant = "acid", className, t
     "group relative inline-flex items-center justify-center gap-3 rounded-full px-6 py-3.5 text-[15px] font-medium transition-[transform,background-color,color,box-shadow] duration-500 ease-expo will-change-transform";
   const skin =
     variant === "acid"
-      ? "bg-acid text-acid-ink shadow-[0_0_0_1px_rgba(182,255,59,0.6),0_10px_40px_-8px_rgba(182,255,59,0.55)] hover:shadow-[0_0_0_1px_rgba(182,255,59,0.9),0_16px_60px_-6px_rgba(182,255,59,0.8)]"
+      ? "bg-acid text-acid-ink shadow-[0_0_0_1px_rgba(182,255,59,0.5),0_10px_30px_-14px_rgba(182,255,59,0.45)] hover:shadow-[0_0_0_1px_rgba(182,255,59,0.8),0_14px_40px_-12px_rgba(182,255,59,0.6)]"
       : "border border-white/15 bg-white/[0.03] text-bone backdrop-blur-md hover:border-acid/60 hover:text-acid";
   const content = (
     <>

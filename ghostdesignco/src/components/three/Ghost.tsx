@@ -136,7 +136,7 @@ export function Ghost({ selectionRef }: { selectionRef: RefObject<HTMLDivElement
   );
   const halo = useMemo(
     () =>
-      new THREE.SpriteMaterial({ map: glowTexture(), blending: THREE.AdditiveBlending, depthWrite: false, transparent: true, opacity: 0.22 }),
+      new THREE.SpriteMaterial({ map: glowTexture(), blending: THREE.AdditiveBlending, depthWrite: false, transparent: true, opacity: 0.15 }),
     [],
   );
   const coreMat = useMemo(

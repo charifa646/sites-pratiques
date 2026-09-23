@@ -16,7 +16,7 @@ export function composeBrief(b: Brief) {
     `Je m'appelle ${b.name.trim()}${b.email.trim() ? ` (${b.email.trim()})` : ""}.`,
     "",
     `Besoin : ${b.need}`,
-    `Budget envisagé : ${b.budget}`,
+    ...(b.budget.trim() ? [`Budget envisagé : ${b.budget.trim()}`] : []),
     "",
     "Mon projet :",
     b.idea.trim(),

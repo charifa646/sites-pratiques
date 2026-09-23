@@ -106,7 +106,7 @@ function Landing() {
     screen.uniforms.uUvScale.value.set(1, rep, 0, (1 - rep) * (1 - scroll));
     screen.uniforms.uOpacity.value = here;
     screen.uniforms.uGain.value = 1 + smooth(0.9, 1, scroll) * 0.35;
-    halo.opacity = 0.5 * here;
+    halo.opacity = 0.3 * here;
     // tap ripple on the call to action once the page reached it
     const tap = smooth(0.92, 1, scroll);
     const cycle = reduced ? 0.5 : (t * 0.6) % 1;

@@ -44,7 +44,7 @@ export function Stage() {
             float edge = pow(abs(dot(vN, vView)), 1.6);
             float fall = smoothstep(1.0, 0.55, vH) * (0.45 + 0.55 * vH);
             float shimmer = 0.9 + 0.1 * sin(uTime * 1.3 + vH * 9.0);
-            vec3 col = mix(vec3(0.85, 0.9, 0.8), uAcid, 0.55) * edge * fall * shimmer;
+            vec3 col = mix(vec3(0.85, 0.88, 0.82), uAcid, 0.3) * edge * fall * shimmer;
             gl_FragColor = vec4(col * 0.42 * uOpacity, 1.0);
             #include <colorspace_fragment>
           }
@@ -75,7 +75,7 @@ export function Stage() {
             float d = length(vUv - 0.5) * 2.0;
             float a = smoothstep(1.0, 0.0, d);
             float rim = smoothstep(0.12, 0.0, abs(d - 0.92));
-            vec3 col = mix(vec3(0.8, 0.85, 0.75), uAcid, 0.6) * (a * a * 0.5 + rim * 0.35);
+            vec3 col = mix(vec3(0.8, 0.83, 0.78), uAcid, 0.35) * (a * a * 0.5 + rim * 0.35);
             gl_FragColor = vec4(col * uOpacity, 1.0);
             #include <colorspace_fragment>
           }
