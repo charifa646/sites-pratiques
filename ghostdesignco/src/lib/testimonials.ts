@@ -4,7 +4,8 @@
  * YouTube, Vimeo, Instagram, TikTok and others work. A file placed in
  * /public/temoignages/ goes in `video`. `aspect` is width / height (9/16 by
  * default for vertical videos).
- * TODO(client): add each client's name and role (shown under the video).
+ * `name` is optional (none for now, by choice): `role` is then shown alone
+ * under the video.
  */
 export type Testimonial = {
   name?: string;

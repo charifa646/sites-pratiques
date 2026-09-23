@@ -14,7 +14,7 @@ npm run build && npm start
 
 - `src/lib/site.ts` : numéro WhatsApp et e-mail qui reçoivent les briefs (renseignés). Le brief arrive déjà écrit dans WhatsApp ou dans la messagerie.
 - `src/lib/projects.ts` : tes réalisations. Dépose les captures dans `public/projects/` (1600 × 1000 idéalement) et renseigne titre, type, phrase, lien. Tant qu'un projet n'a pas d'image, la galerie affiche une maquette dessinée.
-- `src/lib/testimonials.ts` : les témoignages vidéo, une ligne par vidéo : nom, fonction, et le code d'intégration (ou le lien) de la plateforme (YouTube, Vimeo, Instagram, TikTok…) ; `ratio: "16:9"` pour une vidéo horizontale. Les lecteurs ne se chargent qu'au clic sur lecture. Tant que la liste est vide, trois emplacements sont réservés.
+- `src/lib/testimonials.ts` : les témoignages vidéo (quatre en ligne), une entrée par vidéo : le code d'intégration ou le lien de la plateforme (Wistia, YouTube, Vimeo, Instagram, TikTok…) ou un fichier déposé dans `public/temoignages/`, la durée, et `aspect` (largeur / hauteur, `16 / 9` pour une vidéo horizontale). Le nom du client est facultatif : sans nom, la carte affiche « Témoignage client ». Les lecteurs ne se chargent qu'au clic sur lecture. Si la liste est vide, trois emplacements sont réservés.
 - `src/app/mentions-legales/page.tsx` : identité de l'éditeur (nom ou raison sociale, statut, SIRET, adresse).
 - `src/lib/copy.ts` : tous les textes du site, au même endroit.
 
