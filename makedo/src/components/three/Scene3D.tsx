@@ -1,5 +1,6 @@
 "use client";
 
+import { PerformanceMonitor } from "@react-three/drei";
 import { Canvas, useThree } from "@react-three/fiber";
 import {
   Suspense,
@@ -16,7 +17,8 @@ import * as THREE from "three";
  * Lazy WebGL stage:
  *  - the <Canvas> mounts only when its box approaches the viewport,
  *  - the render loop runs only while it is on screen,
- *  - it fades in once the scene content has resolved (no loader UI).
+ *  - it fades in once the scene content has resolved (no loader UI),
+ *  - its pixel ratio adapts to the device and drops if frames get slow.
  * Scenes read visibility / timing / pointer from `useStage()`.
  */
 
@@ -77,6 +79,8 @@ export function Scene3D({
   const [mounted, setMounted] = useState(false);
   const [running, setRunning] = useState(false);
   const [ready, setReady] = useState(false);
+  const [dpr, setDpr] = useState(1);
+  const maxDpr = useRef(1.75);
   const stateRef = useRef<StageState>({
     enteredAt: { current: -1 },
     visible: { current: false },
@@ -89,6 +93,10 @@ export function Scene3D({
     const el = box.current;
     if (!el) return;
     stateRef.current.reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    // phones: cap the pixel ratio lower, the GPU budget is smaller
+    const coarse = window.matchMedia("(pointer: coarse)").matches;
+    maxDpr.current = Math.min(window.devicePixelRatio || 1, coarse ? 1.5 : 1.75);
+    setDpr(maxDpr.current);
     const near = new IntersectionObserver(
       ([e]) => {
         if (e.isIntersecting) setMounted(true);
@@ -130,11 +138,17 @@ export function Scene3D({
         <StageCtx.Provider value={stateRef.current}>
           <Canvas
             frameloop={running ? "always" : "never"}
-            dpr={[1, 1.75]}
+            dpr={dpr}
             gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
             camera={{ fov, position: [0, 0, distance], near: 0.1, far: 100 }}
             style={{ pointerEvents: "none" }}
           >
+            <PerformanceMonitor
+              flipflops={3}
+              onDecline={() => setDpr((d) => Math.max(1, d - 0.25))}
+              onIncline={() => setDpr((d) => Math.min(maxDpr.current, d + 0.25))}
+              onFallback={() => setDpr(1)}
+            />
             <Suspense fallback={null}>
               {children}
               <Ready onReady={() => setReady(true)} />
@@ -144,10 +158,4 @@ export function Scene3D({
       )}
     </div>
   );
-}
-
-/** Map a point given in fractions of the canvas box to the z=0 world plane. */
-export function useFrameToWorld() {
-  const viewport = useThree((s) => s.viewport);
-  return (fx: number, fy: number) => new THREE.Vector3((fx - 0.5) * viewport.width, (0.5 - fy) * viewport.height, 0);
 }
