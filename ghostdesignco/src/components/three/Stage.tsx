@@ -14,7 +14,7 @@ export function Stage() {
   const { tall, reduced } = useWorld();
   const group = useRef<THREE.Group>(null!);
   // on phones the guide floats high above the floor: the stage floats with it
-  const HEIGHT = tall ? 3.2 : 7.5;
+  const HEIGHT = tall ? 3.2 : 4.4;
 
   const cone = useMemo(
     () =>
@@ -40,9 +40,9 @@ export function Stage() {
           varying vec3 vN;
           varying vec3 vView;
           void main() {
-            // bright near the lamp, fading toward the floor; soft at the silhouette
+            // a beam coming out of the dark: fades in from the top, soft at the silhouette
             float edge = pow(abs(dot(vN, vView)), 1.6);
-            float fall = pow(vH, 1.4) * 0.8 + 0.2 * smoothstep(0.0, 0.2, vH);
+            float fall = smoothstep(1.0, 0.55, vH) * (0.45 + 0.55 * vH);
             float shimmer = 0.9 + 0.1 * sin(uTime * 1.3 + vH * 9.0);
             vec3 col = mix(vec3(0.85, 0.9, 0.8), uAcid, 0.55) * edge * fall * shimmer;
             gl_FragColor = vec4(col * 0.42 * uOpacity, 1.0);
@@ -103,10 +103,10 @@ export function Stage() {
   return (
     <group ref={group}>
       <mesh position={[0, HEIGHT / 2, 0]} material={cone}>
-        <cylinderGeometry args={[0.18, tall ? 1.2 : 2.1, HEIGHT, 48, 1, true]} />
+        <cylinderGeometry args={[tall ? 0.18 : 0.35, tall ? 1.2 : 1.6, HEIGHT, 48, 1, true]} />
       </mesh>
       <mesh rotation-x={-Math.PI / 2} position={[0, 0.01, 0]} material={pool}>
-        <planeGeometry args={tall ? [3, 3] : [5, 5]} />
+        <planeGeometry args={tall ? [3, 3] : [4, 4]} />
       </mesh>
     </group>
   );

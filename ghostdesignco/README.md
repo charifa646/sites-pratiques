@@ -12,10 +12,10 @@ npm run build && npm start
 
 ## À compléter avant la mise en ligne
 
-- `src/lib/site.ts` : l'adresse e-mail qui reçoit les briefs. Le lien WhatsApp Business est en place : le brief est copié dans le presse-papiers puis la conversation s'ouvre. Avec le numéro (format international, chiffres seuls, ex. `33612345678`), le message arrive déjà écrit.
+- `src/lib/site.ts` : numéro WhatsApp et e-mail qui reçoivent les briefs (renseignés). Le brief arrive déjà écrit dans WhatsApp ou dans la messagerie.
 - `src/lib/projects.ts` : tes réalisations. Dépose les captures dans `public/projects/` (1600 × 1000 idéalement) et renseigne titre, type, phrase, lien. Tant qu'un projet n'a pas d'image, la galerie affiche une maquette dessinée.
-- `src/lib/testimonials.ts` : les témoignages vidéo. Dépose les vidéos (et une image d'aperçu) dans `public/temoignages/`, puis une ligne par vidéo : nom, fonction, fichier. Tant que la liste est vide, trois emplacements sont réservés.
-- `src/app/mentions-legales/page.tsx` : identité de l'éditeur (nom ou raison sociale, statut, SIRET, adresse, contact).
+- `src/lib/testimonials.ts` : les témoignages vidéo, une ligne par vidéo : nom, fonction, et le code d'intégration (ou le lien) de la plateforme (YouTube, Vimeo, Instagram, TikTok…) ; `ratio: "16:9"` pour une vidéo horizontale. Les lecteurs ne se chargent qu'au clic sur lecture. Tant que la liste est vide, trois emplacements sont réservés.
+- `src/app/mentions-legales/page.tsx` : identité de l'éditeur (nom ou raison sociale, statut, SIRET, adresse).
 - `src/lib/copy.ts` : tous les textes du site, au même endroit.
 
 ## Le parcours
