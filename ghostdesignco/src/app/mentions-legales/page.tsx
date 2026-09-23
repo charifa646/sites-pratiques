@@ -69,8 +69,8 @@ export default function Legal() {
         <Block title="Cookies">
           <p>Ce site n&apos;utilise aucun cookie publicitaire ni de mesure d&apos;audience.</p>
           <p>
-            Les témoignages vidéo sont hébergés par des plateformes tierces. Ils ne se chargent que lorsque vous appuyez sur lecture ;
-            la plateforme concernée peut alors déposer ses propres cookies, selon sa politique de confidentialité.
+            Certains témoignages vidéo sont hébergés par une plateforme tierce (Wistia). Ils ne se chargent que lorsque vous appuyez
+            sur lecture ; la plateforme peut alors déposer ses propres cookies, selon sa politique de confidentialité.
           </p>
         </Block>
       </main>

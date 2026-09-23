@@ -37,7 +37,7 @@ const TALL: Record<string, Pose> = {
   "offer-2": { cam: [0, 0.3, -82], look: [0, 0.3, -95], ghost: [-1.95, 2.5, -94.4], gs: 0.5 },
   "offer-3": { cam: [0, 0.3, -102], look: [0, 0.3, -115], ghost: [1.95, 2.5, -114.4], gs: 0.5 },
   work: { cam: [0, 0.3, -124], look: [0, 0.3, -137], ghost: [1.7, 5.45, -135.4], gs: 0.4 },
-  voices: { cam: [0, 0.4, -146], look: [0, 0.4, -159], ghost: [0, 3.64, -156], gs: 0.5 },
+  voices: { cam: [0, 0.4, -146], look: [0, 0.4, -159], ghost: [0, 4.4, -156], gs: 0.42 },
   method: { cam: [0, 0.25, -168], look: [0, 0.25, -181], ghost: [-0.9, 5.4, -180.8], gs: 0.55 },
   pricing: { cam: [0, 0.3, -190], look: [0, 0.3, -203], ghost: [1.75, 2.6, -199.5], gs: 0.45 },
   // the FAQ scrolls over the whole screen: the guide goes ahead to the form

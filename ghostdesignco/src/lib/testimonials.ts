@@ -1,24 +1,52 @@
 /**
  * Video testimonials, in order.
- * TODO(client): one entry per video. Paste the platform's embed code (or the
- * video link) in `embed`: YouTube, Vimeo, Instagram, TikTok and others work.
- * `ratio` is "9:16" for vertical videos (default) or "16:9" for horizontal ones.
- * A video file placed in /public/temoignages/ also works with `video`.
- * While the list is empty, the section shows three reserved slots.
- *
- * Example:
- * { name: "Awa K.", role: "Fondatrice, Studio Nova", embed: '<iframe src="https://www.youtube.com/embed/…"></iframe>' }
+ * Paste the platform's embed code (or the video link) in `embed`: Wistia,
+ * YouTube, Vimeo, Instagram, TikTok and others work. A file placed in
+ * /public/temoignages/ goes in `video`. `aspect` is width / height (9/16 by
+ * default for vertical videos).
+ * TODO(client): add each client's name and role (shown under the video).
  */
 export type Testimonial = {
-  name: string;
+  name?: string;
   role?: string;
+  /** shown under the video, e.g. "2 min 33" */
+  duration?: string;
   embed?: string;
   video?: string;
   poster?: string;
-  ratio?: "9:16" | "16:9";
+  aspect?: number;
 };
 
-export const testimonials: Testimonial[] = [];
+export const testimonials: Testimonial[] = [
+  {
+    role: "Témoignage client",
+    duration: "2 min 33",
+    video: "/temoignages/temoignage-client.mp4",
+    poster: "/temoignages/temoignage-client.jpg",
+    aspect: 720 / 1024,
+  },
+  {
+    role: "Témoignage client",
+    duration: "3 min 34",
+    embed: '<wistia-player media-id="7htowttuil" aspect="0.575"></wistia-player>',
+    poster: "https://embed-ssl.wistia.com/deliveries/1a63017058b21ba4f2c6dff43e87049f19d73a41.jpg?image_crop_resized=368x640",
+    aspect: 0.575,
+  },
+  {
+    role: "Témoignage client",
+    duration: "1 min 47",
+    embed: '<wistia-player media-id="mz1v0wtjgg" aspect="0.575"></wistia-player>',
+    poster: "https://embed-ssl.wistia.com/deliveries/6f83c73bd8d652511fd01064410d264c8daafea3.jpg?image_crop_resized=368x640",
+    aspect: 0.575,
+  },
+  {
+    role: "Retours clients en visio",
+    duration: "27 min",
+    embed: '<wistia-player media-id="52noyw8oi1" aspect="1.7777777777777777"></wistia-player>',
+    poster: "https://embed-ssl.wistia.com/deliveries/ee10d098e2538f16ea75916315738a97b46fd075.jpg?image_crop_resized=960x540",
+    aspect: 16 / 9,
+  },
+];
 
 const youtubeId = (url: string) =>
   url.match(/(?:youtube(?:-nocookie)?\.com\/(?:embed\/|shorts\/|watch\?(?:.*&)?v=)|youtu\.be\/)([\w-]{11})/)?.[1];
@@ -28,6 +56,11 @@ const youtubeId = (url: string) =>
  * platform provides one. Videos only load when the visitor presses play.
  */
 export function embedPlayer(embed: string): { src: string; poster?: string } {
+  const wistia = embed.match(/media-id=["']([\w]+)["']|wistia\.(?:com|net)\/(?:embed\/(?:iframe|medias)|medias)\/([\w]+)/);
+  if (wistia) {
+    const id = wistia[1] ?? wistia[2];
+    return { src: `https://fast.wistia.net/embed/iframe/${id}?autoPlay=true&playerColor=b6ff3b&fitStrategy=contain` };
+  }
   const fromIframe = embed.match(/src=["']([^"']+)["']/i)?.[1];
   const url = (fromIframe ?? embed).trim().replace(/&amp;/g, "&");
   const yt = youtubeId(url);
