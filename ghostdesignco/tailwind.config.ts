@@ -14,6 +14,10 @@ const config: Config = {
         bone: "#EDEDEA",
         fog: { DEFAULT: "#9A9A96", dim: "#6E6E6A" },
         acid: { DEFAULT: "#B6FF3B", deep: "#7ED321", ink: "#0B1400" },
+        // V2 (light): warm paper, near-black ink, hairline borders
+        paper: "#F4F3EE",
+        ink: { DEFAULT: "#0C0C0D", soft: "#55544F", mute: "#8A8881" },
+        line: "#E3E1D9",
       },
       fontFamily: {
         sans: ["var(--font-dm)", "system-ui", "sans-serif"],

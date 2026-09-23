@@ -1,0 +1,63 @@
+/*
+ * V2: a calm, light take on the site. Every rule is scoped to the V2 page
+ * so the main (3D) site keeps its dark theme untouched.
+ */
+html:has(.v2) {
+  background: #f4f3ee;
+  color-scheme: light;
+}
+
+body:has(.v2) {
+  background: #f4f3ee;
+  color: #0c0c0d;
+}
+
+/* no film grain on paper */
+body:has(.v2)::after {
+  display: none;
+}
+
+.v2 :focus-visible {
+  outline-color: #0c0c0d;
+}
+
+/* design-canvas dots behind the hero */
+.v2-dots {
+  background-image: radial-gradient(rgba(12, 12, 13, 0.1) 1px, transparent 1.3px);
+  background-size: 22px 22px;
+}
+
+/* mockups drift very slowly */
+@keyframes v2-float {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -8px, 0);
+  }
+}
+.v2-float {
+  animation: v2-float 7s ease-in-out infinite;
+}
+.v2-float-late {
+  animation: v2-float 9s ease-in-out -3s infinite;
+}
+
+/* the phone's landing page scrolls down to its single action, then back */
+@keyframes v2-scroll {
+  0%,
+  14% {
+    transform: translate3d(0, 0, 0);
+  }
+  52%,
+  78% {
+    transform: translate3d(0, var(--v2-scroll), 0);
+  }
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+}
+.v2-scroll {
+  animation: v2-scroll 10s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
