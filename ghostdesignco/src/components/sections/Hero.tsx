@@ -1,0 +1,47 @@
+"use client";
+
+import { cta, hero } from "@/lib/copy";
+import { diveTo } from "@/lib/scroll";
+import { Button } from "@/components/ui/Button";
+import { Mask, Rise } from "@/components/ui/motion";
+
+export function Hero() {
+  return (
+    <section id="top" data-station="hero" aria-labelledby="hero-title" className="relative min-h-[100svh]">
+      {/* readability scrim on the text side */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(70%_60%_at_18%_62%,rgba(5,5,5,0.78),transparent_70%)] lg:bg-[radial-gradient(52%_70%_at_20%_55%,rgba(5,5,5,0.72),transparent_70%)]"
+      />
+      <div className="relative mx-auto flex min-h-[100svh] max-w-[1400px] flex-col justify-end px-5 pb-[9svh] pt-28 sm:px-10 lg:justify-center lg:pb-0">
+        <div className="max-w-[860px]">
+          <Rise className="flex items-center gap-2.5 text-[12px] font-medium uppercase tracking-[0.22em] text-fog">
+            <span className="h-1.5 w-1.5 rounded-full bg-acid shadow-[0_0_12px_2px_rgba(182,255,59,0.7)]" />
+            {hero.eyebrow}
+          </Rise>
+          <h1
+            id="hero-title"
+            className="mt-6 font-display text-[clamp(2.7rem,7.4vw,7rem)] font-semibold leading-[0.93] tracking-[-0.04em] text-bone"
+          >
+            <Mask className="pb-[0.04em]">Des sites qui</Mask>
+            <Mask delay={0.08} className="pb-[0.04em]">
+              donnent envie de
+            </Mask>
+            <Mask delay={0.16} className="pb-[0.1em]" innerClassName="glow pr-[0.1em] font-serif font-normal italic tracking-[-0.01em] text-acid">
+              {hero.title.accent}
+            </Mask>
+          </h1>
+          <Rise as="p" delay={0.35} className="mt-7 max-w-[34rem] text-[16px] leading-relaxed text-fog sm:text-[18px]">
+            {hero.text}
+          </Rise>
+          <Rise delay={0.5} className="mt-9 flex flex-wrap items-center gap-3">
+            <Button onClick={() => diveTo("contact")}>{cta.primary}</Button>
+            <Button variant="ghost" onClick={() => diveTo("offre")}>
+              {cta.secondary}
+            </Button>
+          </Rise>
+        </div>
+      </div>
+    </section>
+  );
+}
