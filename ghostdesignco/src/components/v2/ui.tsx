@@ -28,27 +28,14 @@ export function V2Logo() {
   );
 }
 
-export function Eyebrow({ children, className }: { children: ReactNode; className?: string }) {
+/** Section marker: its number, a hairline, its name (left aligned, no badge). */
+export function Label({ n, children, dark = false, className }: { n?: string; children: ReactNode; dark?: boolean; className?: string }) {
   return (
-    <span
-      className={cx(
-        "inline-flex items-center gap-2 rounded-full border border-line bg-white px-3.5 py-1.5 text-[12px] font-medium uppercase tracking-[0.16em] text-ink-soft",
-        className,
-      )}
-    >
-      <span className="h-1.5 w-1.5 rounded-full bg-acid-deep" />
+    <p className={cx("flex items-center gap-3 text-[13px] font-medium tracking-[0.01em]", dark ? "text-fog" : "text-ink-soft", className)}>
+      {n && <span className={cx("font-display tabular-nums", dark ? "text-acid" : "text-ink")}>{n}</span>}
+      {n && <span aria-hidden className="h-px w-10 bg-current opacity-40" />}
       {children}
-    </span>
-  );
-}
-
-export function Check() {
-  return (
-    <span className="grid h-5 w-5 place-items-center rounded-full bg-acid">
-      <svg viewBox="0 0 16 16" className="h-3 w-3 text-acid-ink" fill="none" stroke="currentColor" strokeWidth="2.4" aria-hidden>
-        <path d="m3.5 8.5 3 3 6-7" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
-    </span>
+    </p>
   );
 }
 
@@ -71,13 +58,15 @@ export function PrimaryButton({ children, onClick, className }: { children: Reac
   );
 }
 
-export function SecondaryButton({ children, onClick, className }: { children: ReactNode; onClick?: () => void; className?: string }) {
+/** The quiet alternative: an underlined text link, not a second pill. */
+export function TextLink({ children, onClick, className, dark = false }: { children: ReactNode; onClick?: () => void; className?: string; dark?: boolean }) {
   return (
     <button
       type="button"
       onClick={onClick}
       className={cx(
-        "inline-flex items-center rounded-full border border-line bg-white px-6 py-[14px] text-[15px] font-medium text-ink transition-colors duration-300 hover:border-ink/25",
+        "text-[15px] font-medium underline decoration-1 underline-offset-[6px] transition-colors duration-300",
+        dark ? "text-bone decoration-white/30 hover:decoration-acid" : "text-ink decoration-ink/25 hover:decoration-ink",
         className,
       )}
     >

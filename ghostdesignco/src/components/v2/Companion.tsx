@@ -4,8 +4,10 @@ import { Environment, Lightformer, MeshTransmissionMaterial } from "@react-three
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Component, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import * as THREE from "three";
+import { guideState } from "@/lib/guide";
 import { scrollState } from "@/lib/scroll";
 import { ghostGeometry, patchGhost, type GhostUniforms } from "@/components/three/ghostShape";
+import { heroGhost } from "./handoff";
 import { HEADER_H } from "./ui";
 
 /**
@@ -21,8 +23,11 @@ import { HEADER_H } from "./ui";
  * - data-ghost-clip="top": hide what falls below the element's top edge,
  *   so the ghost peeks from behind it
  * - data-ghost-dark on a dark section: the glass then refracts dark
- * The element nearest the middle of the screen wins; a damped spring flies
- * the ghost from one to the next and lets it lag a little when you scroll.
+ * - data-ghost="none" (or data-ghost-m="none"): no spot on that layout
+ * A spot where the ghost would hide words or controls is skipped. Of the
+ * others, the one nearest the middle of the screen wins; a damped spring
+ * flies the ghost from one to the next and lets it lag a little when you
+ * scroll. With no spot free it waits at the right edge, at a free height.
  */
 
 type Tier = "hi" | "lo";
@@ -51,6 +56,37 @@ const clamp = (v: number, a: number, b: number) => Math.min(b, Math.max(a, v));
 function num(v: string | undefined, fallback = 0) {
   const n = v === undefined ? NaN : parseFloat(v);
   return Number.isFinite(n) ? n : fallback;
+}
+
+// what the ghost must never stand on: words and controls
+const WORDY = new Set(["P", "H1", "H2", "H3", "H4", "H5", "H6", "LI", "LABEL", "INPUT", "TEXTAREA", "SELECT", "BUTTON", "A", "FIGCAPTION", "BLOCKQUOTE", "DT", "DD"]);
+
+function wordy(el: Element | null) {
+  for (let e = el, i = 0; e && i < 5; e = e.parentElement, i++) {
+    if (WORDY.has(e.tagName)) return true;
+    if (e.tagName === "SECTION" || e.tagName === "MAIN" || e === document.body) return false;
+    for (const n of Array.from(e.childNodes)) if (n.nodeType === Node.TEXT_NODE && n.textContent?.trim()) return true;
+  }
+  return false;
+}
+
+/**
+ * Would the ghost's body, standing at (x, y), hide words or controls? The
+ * body fills about 66 % of the box's width and 80 % of its height; what falls
+ * below `clip` is hidden anyway. Sampled on a 5 × 6 grid, edges included.
+ */
+function covers(x: number, y: number, W: number, H: number, clip: number, xs = [-0.3, -0.15, 0, 0.15, 0.3]) {
+  const top = y - H * 0.42;
+  const bottom = Math.min(y + H * 0.38, clip);
+  if (bottom - top < 8) return false;
+  for (const f of xs) {
+    const px = x + W * f;
+    if (px < 1 || px > window.innerWidth - 1) continue;
+    for (let j = 0; j < 6; j++) {
+      if (wordy(document.elementFromPoint(px, top + ((bottom - top) * j) / 5))) return true;
+    }
+  }
+  return false;
 }
 
 function GhostBody({ tier, box, size }: { tier: Tier; box: React.RefObject<HTMLDivElement>; size: number }) {
@@ -115,6 +151,10 @@ function GhostBody({ tier, box, size }: { tier: Tier; box: React.RefObject<HTMLD
   const travel = useRef<Travel>({ x: 0, y: 0, vx: 0, vy: 0, clip: 1e5, dark: 0, look: 0, anchor: null, glide: false, started: false });
   const pointer = useRef({ x: 0, y: 0, active: false });
   const blink = useRef({ next: 2.5, t: 0 });
+  // is a spot free of words? asked a few times a second, not every frame
+  const verdicts = useRef(new WeakMap<Element, { x: number; y: number; t: number; hit: boolean }>());
+  // where it waits at the edge when no spot is free (off screen if nowhere)
+  const rest = useRef({ y: 0, t: -1e4, away: false });
 
   useEffect(() => {
     const onMove = (e: PointerEvent) => {
@@ -125,7 +165,15 @@ function GhostBody({ tier, box, size }: { tier: Tier; box: React.RefObject<HTMLD
     return () => window.removeEventListener("pointermove", onMove);
   }, []);
 
+  // The glass refracts what the scene holds behind it, eyes included: seen
+  // through the dome they made a dark smudge. They step out of that pass
+  // (this runs first) and come back for the main render (below).
+  useFrame(() => {
+    if (tier === "hi") eyesRef.current.visible = false;
+  }, -1);
+
   useFrame((state, delta) => {
+    eyesRef.current.visible = true;
     const dt = Math.min(delta, 0.05);
     const t = state.clock.elapsedTime;
     const el = box.current;
@@ -137,17 +185,35 @@ function GhostBody({ tier, box, size }: { tier: Tier; box: React.RefObject<HTMLD
     const H = S * 1.25;
     const m = travel.current;
 
-    // 1. candidate spots: only those where the whole ghost fits on screen
+    // the hero scene holds the ghost: stay hidden, ready to take over from its spot
+    if (heroGhost.active) {
+      el.style.visibility = "hidden";
+      m.x = heroGhost.x;
+      m.y = heroGhost.y;
+      m.vx = 0;
+      m.vy = -260;
+      m.clip = window.innerHeight * 3;
+      m.anchor = null;
+      m.glide = false;
+      m.started = true;
+      return;
+    }
+    el.style.visibility = "visible";
+
+    // 1. candidate spots: only those where the whole ghost fits on screen and
+    //    hides no words or controls ("none" leaves a layout out)
     const small = vw < 640;
     const line = vh * 0.45;
     const minY = HEADER_H + H * 0.34;
     const maxY = vh - H * 0.4;
+    const now = performance.now();
     type Spot = { el: HTMLElement; tx: number; ty: number; clip: number; dark: number; look: number };
     const spots: Spot[] = [];
     for (const a of Array.from(document.querySelectorAll<HTMLElement>("[data-ghost]"))) {
       const r = a.getBoundingClientRect();
       if (r.height === 0 || r.bottom < 0 || r.top > vh) continue;
       const spec = (small && a.dataset.ghostM) || a.dataset.ghost || "tr";
+      if (spec === "none") continue;
       const dx = small && a.dataset.ghostMx !== undefined ? num(a.dataset.ghostMx) : num(a.dataset.ghostX);
       const dy = small && a.dataset.ghostMy !== undefined ? num(a.dataset.ghostMy) : num(a.dataset.ghostY);
       const edge = spec.startsWith("edge");
@@ -156,11 +222,19 @@ function GhostBody({ tier, box, size }: { tier: Tier; box: React.RefObject<HTMLD
       if (!edge) x = clamp(x + dx * S, W * 0.45, vw - W * 0.45);
       y += dy * S;
       if (y < minY || y > maxY) continue;
+      const clip = ((small && a.dataset.ghostMclip) || a.dataset.ghostClip) === "top" ? r.top : vh + H;
+      const seen = verdicts.current.get(a);
+      let hit = seen?.hit ?? false;
+      if (!seen || Math.abs(seen.x - x) > 12 || Math.abs(seen.y - y) > 12 || now - seen.t > 400) {
+        hit = covers(x, y, W, H, clip);
+        verdicts.current.set(a, { x, y, t: now, hit });
+      }
+      if (hit) continue;
       spots.push({
         el: a,
         tx: x,
         ty: y,
-        clip: ((small && a.dataset.ghostMclip) || a.dataset.ghostClip) === "top" ? r.top : vh + H,
+        clip,
         dark: a.closest("[data-ghost-dark]") ? 1 : 0,
         look: edge ? -1 : clamp(((r.left + r.right) / 2 - x) / (vw * 0.4), -1, 1),
       });
@@ -171,14 +245,27 @@ function GhostBody({ tier, box, size }: { tier: Tier; box: React.RefObject<HTMLD
       if (!spot || Math.abs(sp.ty - line) + 140 < Math.abs(spot.ty - line)) spot = sp;
     }
     const best = spot?.el ?? null;
-    // nowhere to stand: wait half hidden at the right edge, looking into the page
-    const tx = spot ? spot.tx : vw + W * 0.08;
-    let ty = spot ? spot.ty : vh * 0.52;
+    // nowhere to stand: wait half hidden at the right edge, looking into the
+    // page, at a height where it hides nothing; slip out of view if there is none
+    const edgeX = vw + W * 0.08;
+    const wait = rest.current;
+    if (!spot && now - wait.t > 300) {
+      wait.t = now;
+      const sliver = [-0.3, -0.22, -0.15];
+      const free = (yy: number) => yy >= minY && yy <= maxY && !covers(edgeX, yy, W, H, vh + H, sliver);
+      if (wait.away || !free(wait.y)) {
+        const found = [0.52, 0.42, 0.62, 0.32, 0.72, 0.24, 0.82].map((f) => vh * f).find(free);
+        wait.away = found === undefined;
+        if (found !== undefined) wait.y = found;
+      }
+    }
+    const tx = spot ? spot.tx : wait.away ? vw + W * 0.9 : edgeX;
+    let ty = spot ? spot.ty : wait.y || vh * 0.52;
     const clipTo = spot ? spot.clip : vh + H;
     const dark = spot ? spot.dark : m.dark;
     let look = spot ? spot.look : -1;
     if (!spot) {
-      const under = document.elementFromPoint(Math.max(0, vw - 4), vh * 0.52);
+      const under = document.elementFromPoint(Math.max(0, vw - 4), ty);
       if (under) m.dark = THREE.MathUtils.damp(m.dark, under.closest("[data-ghost-dark]") ? 1 : 0, 4, dt);
     }
     ty = clamp(ty, minY, maxY);
@@ -213,6 +300,10 @@ function GhostBody({ tier, box, size }: { tier: Tier; box: React.RefObject<HTMLD
 
     const left = m.x - W / 2;
     const top = m.y - H / 2;
+    // head position for the guided tour's speech bubble
+    guideState.x = m.x;
+    guideState.y = top + H * 0.1;
+    guideState.visible = !!spot && m.x > W * 0.3 && m.x < vw - W * 0.3 && top + H * 0.1 < m.clip;
     el.style.transform = `translate3d(${left.toFixed(1)}px, ${top.toFixed(1)}px, 0)`;
     const cut = Math.max(0, top + H - m.clip);
     el.style.clipPath = cut > 0 ? `inset(0 0 ${Math.min(H, cut).toFixed(1)}px 0)` : "none";
@@ -257,12 +348,12 @@ function GhostBody({ tier, box, size }: { tier: Tier; box: React.RefObject<HTMLD
             <MeshTransmissionMaterial
               ref={mtm as never}
               background={background}
-              resolution={384}
-              samples={8}
+              resolution={512}
+              samples={10}
               backside={false}
               thickness={1.1}
               roughness={0.3}
-              anisotropicBlur={0.3}
+              anisotropicBlur={0.15}
               chromaticAberration={0.06}
               distortion={0.2}
               distortionScale={0.35}

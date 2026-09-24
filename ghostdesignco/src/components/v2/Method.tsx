@@ -4,14 +4,14 @@ import { motion, useMotionValueEvent, useScroll, useTransform } from "framer-mot
 import { useRef, useState } from "react";
 import { method } from "@/lib/copy";
 import { Rise, cx } from "@/components/ui/motion";
-import { Eyebrow } from "./ui";
+import { Label } from "./ui";
 
 /**
  * De l'idée au site en ligne: a line draws itself from step to step as you
  * scroll, each step lights up when the line reaches it, and the ghost rides
  * the tip of the line (it is the anchor there).
  */
-export function V2Method() {
+export function V2Method({ n }: { n?: string }) {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress: p } = useScroll({ target: ref, offset: ["start 0.75", "end 0.55"] });
   const size = useTransform(p, [0, 1], ["0%", "100%"]);
@@ -24,16 +24,18 @@ export function V2Method() {
   return (
     <section id="methode" aria-labelledby="v2-method-title" className="bg-paper py-24 lg:py-32">
       <div className="mx-auto max-w-[1240px] px-5 sm:px-8">
-        <div className="mx-auto max-w-[760px] text-center">
-          <Rise>
-            <Eyebrow>{method.eyebrow}</Eyebrow>
-          </Rise>
-          <Rise delay={0.05}>
-            <h2 id="v2-method-title" className="mt-5 font-display text-[clamp(2.2rem,4.6vw,4rem)] font-semibold leading-[1] tracking-[-0.04em]">
-              {method.title}
-            </h2>
-          </Rise>
-          <Rise as="p" delay={0.1} className="mt-5 text-[17px] text-ink-soft sm:text-[19px]">
+        <div className="grid items-end gap-6 lg:grid-cols-[1fr_auto]">
+          <div>
+            <Rise>
+              <Label n={n}>{method.eyebrow}</Label>
+            </Rise>
+            <Rise delay={0.05}>
+              <h2 id="v2-method-title" className="mt-5 font-display text-[clamp(2.2rem,4.6vw,4rem)] font-semibold leading-[1] tracking-[-0.04em]">
+                {method.title}
+              </h2>
+            </Rise>
+          </div>
+          <Rise as="p" delay={0.1} className="max-w-[24rem] text-[17px] leading-relaxed text-ink-soft sm:text-[19px]">
             {method.lead}
           </Rise>
         </div>

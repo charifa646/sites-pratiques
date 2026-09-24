@@ -1,11 +1,12 @@
 "use client";
 
 import { motion, useMotionValueEvent, useScroll, useTransform, type MotionValue } from "framer-motion";
+import Image from "next/image";
 import { useRef, useState } from "react";
 import { problem } from "@/lib/copy";
 import { cx } from "@/components/ui/motion";
 import { Arrowhead, Bar, Photo, WindowBar } from "./Mockups";
-import { Eyebrow, HEADER_H } from "./ui";
+import { HEADER_H, Label } from "./ui";
 
 /**
  * "Votre site ne devrait pas simplement exister." — told by a page that
@@ -50,7 +51,7 @@ function Screen({ p, stage }: { p: MotionValue<number>; stage: number }) {
   // the cursor comes in, reaches the button, clicks
   const curX = useTransform(p, [0.74, 0.86], ["94%", "22%"]);
   const curY = useTransform(p, [0.74, 0.86], ["98%", "61%"]);
-  const curO = useTransform(p, [0.72, 0.76, 0.97, 1], [0, 1, 1, 0]);
+  const curO = useTransform(p, [0.72, 0.76, 0.88, 0.92], [0, 1, 1, 0]);
   const ring = useTransform(p, [0.86, 0.94], [0.4, 2.2]);
   const ringO = useTransform(p, [0.86, 0.94], [0.9, 0]);
   // selection frame: headline, then proof, then the button
@@ -59,7 +60,10 @@ function Screen({ p, stage }: { p: MotionValue<number>; stage: number }) {
   const selT = useTransform(p, k, ["15%", "15%", "66%", "66%", "53%", "53%"]);
   const selW = useTransform(p, k, ["48%", "48%", "93%", "93%", "28%", "28%"]);
   const selH = useTransform(p, k, ["25%", "25%", "30%", "30%", "11%", "11%"]);
-  const selO = useTransform(p, [0.13, 0.18], [0, 1]);
+  const selO = useTransform(p, [0.13, 0.18, 0.86, 0.9], [0, 1, 1, 0]);
+  // …and the sketch gives way to a finished site
+  const real = useTransform(p, [0.88, 0.96], [0, 1]);
+  const realScale = useTransform(p, [0.88, 0.96], [1.04, 1]);
 
   return (
     <div className="[container-type:inline-size]">
@@ -135,6 +139,10 @@ function Screen({ p, stage }: { p: MotionValue<number>; stage: number }) {
             <Arrowhead className="h-[2.4cqw] w-[2.4cqw]" />
           </motion.span>
 
+          <motion.div style={{ opacity: real, scale: realScale }} className="absolute inset-0">
+            <Image src="/v2/v1-accueil.jpg" alt="" fill sizes="(min-width: 1024px) 700px, 92vw" className="object-cover object-left-top" />
+          </motion.div>
+
           {/* the designer's selection frame */}
           <motion.div
             style={{ left: selL, top: selT, width: selW, height: selH, opacity: selO }}
@@ -164,7 +172,7 @@ function Screen({ p, stage }: { p: MotionValue<number>; stage: number }) {
   );
 }
 
-export function V2Build() {
+export function V2Build({ n }: { n?: string }) {
   const ref = useRef<HTMLElement>(null);
   const { scrollYProgress: p } = useScroll({ target: ref, offset: ["start start", "end end"] });
   const stage = useStage(p);
@@ -177,7 +185,7 @@ export function V2Build() {
       <div className="sticky top-0 flex h-[100svh] items-center overflow-hidden" style={{ paddingTop: HEADER_H }}>
         <div className="mx-auto grid w-full max-w-[1240px] items-center gap-6 px-5 sm:px-8 lg:grid-cols-[0.82fr_1.18fr] lg:gap-14">
           <div>
-            <Eyebrow>{problem.eyebrow}</Eyebrow>
+            <Label n={n}>{problem.eyebrow}</Label>
             <h2 id="v2-build-title" className="mt-4 font-display text-[clamp(1.7rem,4vw,3.5rem)] font-semibold leading-[1.03] tracking-[-0.04em] lg:mt-5">
               {problem.title}
             </h2>

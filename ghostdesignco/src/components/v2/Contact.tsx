@@ -5,22 +5,22 @@ import { whatsappDirect } from "@/lib/brief";
 import { site } from "@/lib/site";
 import { BriefForm } from "@/components/sections/BriefForm";
 import { Rise } from "@/components/ui/motion";
-import { Spotlight } from "./Extras";
+import { Label } from "./ui";
 
 const pill =
   "inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.04] px-4 py-2.5 text-bone transition-colors duration-300 hover:border-acid/60 hover:text-acid";
 
 /** Dark closing band: the same brief form as the main site, on flat black. */
-export function V2Contact() {
+export function V2Contact({ n }: { n?: string }) {
   return (
-    <section id="contact" aria-labelledby="v2-contact-title" data-ghost-dark className="bg-white">
-      <div className="relative overflow-hidden rounded-t-[40px] bg-[#0B0B0C] text-bone">
-        <Spotlight />
+    <section id="contact" aria-labelledby="v2-contact-title" data-ghost-dark className="border-t border-white/10 bg-[#0B0B0C] text-bone">
+      <div className="relative">
         <div className="relative mx-auto grid max-w-[1240px] items-start gap-12 px-5 py-20 sm:px-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,560px)] lg:gap-16 lg:py-28">
           <div className="lg:pt-6">
-            <Rise className="flex items-center gap-2.5 text-[12px] font-medium uppercase tracking-[0.22em] text-fog">
-              <span className="h-1.5 w-1.5 rounded-full bg-acid" />
-              {contact.eyebrow}
+            <Rise>
+              <Label n={n} dark>
+                {contact.eyebrow}
+              </Label>
             </Rise>
             <Rise delay={0.05}>
               <h2 id="v2-contact-title" className="mt-5 font-display text-[clamp(2.4rem,5vw,4.6rem)] font-semibold leading-[0.98] tracking-[-0.04em]">

@@ -3,29 +3,52 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { guideState } from "@/lib/guide";
-import { TOUR_STEPS, tour, type TourState } from "@/lib/tour";
+import { tour, type TourState } from "@/lib/tour";
 import { GhostMark } from "./Logo";
 import { EXPO, cx } from "./motion";
 
 const NAV_KEYS = new Set(["ArrowDown", "ArrowUp", "PageDown", "PageUp", "Home", "End", " "]);
 
 /** Launch button, used in the header and under the hero. */
-export function TourButton({ className, compact = false, label = "Visite guidée" }: { className?: string; compact?: boolean; label?: string }) {
+export function TourButton({
+  className,
+  compact = false,
+  label = "Visite guidée",
+  tone = "dark",
+}: {
+  className?: string;
+  compact?: boolean;
+  label?: string;
+  /** "light" for pages on a pale background */
+  tone?: "dark" | "light";
+}) {
+  const light = tone === "light";
   return (
     <button
       type="button"
       onClick={() => tour.start()}
       aria-label="Lancer la visite guidée"
       className={cx(
-        "group inline-flex items-center gap-2 rounded-full text-fog transition-colors duration-300 hover:text-bone",
+        "group inline-flex items-center gap-2 rounded-full transition-colors duration-300",
+        light ? "text-ink-soft hover:text-ink" : "text-fog hover:text-bone",
         className,
       )}
     >
-      <span className="relative inline-flex h-7 w-7 items-center justify-center rounded-full border border-white/15 bg-white/[0.04] text-acid transition-colors duration-300 group-hover:border-acid/60">
+      <span
+        className={cx(
+          "relative inline-flex h-7 w-7 items-center justify-center rounded-full border transition-colors duration-300",
+          light ? "border-line bg-white text-ink group-hover:border-ink/30" : "border-white/15 bg-white/[0.04] text-acid group-hover:border-acid/60",
+        )}
+      >
         <svg viewBox="0 0 12 12" className="ml-0.5 h-2.5 w-2.5" fill="currentColor" aria-hidden>
           <path d="M2.5 1.2 10.4 6 2.5 10.8Z" />
         </svg>
-        <span className="absolute inset-0 animate-ping rounded-full border border-acid/40 [animation-duration:2.4s] motion-reduce:hidden" />
+        <span
+          className={cx(
+            "absolute inset-0 animate-ping rounded-full border [animation-duration:2.4s] motion-reduce:hidden",
+            light ? "border-acid-deep/60" : "border-acid/40",
+          )}
+        />
       </span>
       {!compact && <span className="text-sm">{label}</span>}
     </button>
@@ -101,8 +124,9 @@ export function Tour() {
     return () => cancelAnimationFrame(raf);
   }, [s.active]);
 
-  const step = TOUR_STEPS[s.index];
-  const total = TOUR_STEPS.length;
+  const steps = tour.steps();
+  const step = steps[s.index];
+  const total = steps.length;
 
   return (
     <AnimatePresence>

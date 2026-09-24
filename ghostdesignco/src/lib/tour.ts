@@ -6,7 +6,7 @@ import { cancelScroll, scrollState, scrollToY, stationSpan } from "./scroll";
  * section tells a story while scrolling, holds while the ghost speaks, then
  * moves on. It always ends on the brief form.
  */
-type Step = {
+export type Step = {
   id: string;
   line: string;
   /** seconds spent scrolling through the pinned part of the section */
@@ -32,6 +32,13 @@ export const TOUR_STEPS: Step[] = [
 
 export type TourState = { active: boolean; index: number; paused: boolean; done: boolean };
 
+/** Where a step lives on the page: its top and the length of its pinned part. */
+export type Locate = (id: string) => { top: number; range: number };
+
+// The 3D site uses these; another page can bring its own (tour.configure).
+let steps: Step[] = TOUR_STEPS;
+let locate: Locate = stationSpan;
+
 let state: TourState = { active: false, index: 0, paused: false, done: false };
 const listeners = new Set<(s: TourState) => void>();
 let timer = 0;
@@ -54,12 +61,12 @@ function clear() {
 
 function run(index: number) {
   clear();
-  if (index >= TOUR_STEPS.length) return tour.stop();
-  const step = TOUR_STEPS[index];
+  if (index >= steps.length) return tour.stop();
+  const step = steps[index];
   const mine = token;
   set({ active: true, index, paused: false, done: false });
 
-  const { top, range } = stationSpan(step.id);
+  const { top, range } = locate(step.id);
   const start = top + (step.sweep ? 0 : (step.at ?? 0) * range);
   const distance = Math.abs(start - window.scrollY) / Math.max(1, scrollState.vh);
   const dive = Math.min(3.2, Math.max(1.1, 0.9 + distance * 0.45));
@@ -88,6 +95,16 @@ function run(index: number) {
 
 export const tour = {
   get: () => state,
+  steps: () => steps,
+  /** Swap in another page's steps (and how to find them); stops a running tour. */
+  configure(next: Step[], where: Locate) {
+    tour.stop();
+    steps = next;
+    locate = where;
+  },
+  reset() {
+    tour.configure(TOUR_STEPS, stationSpan);
+  },
   subscribe(fn: (s: TourState) => void) {
     listeners.add(fn);
     return () => {

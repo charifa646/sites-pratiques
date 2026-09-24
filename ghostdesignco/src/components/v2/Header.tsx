@@ -7,10 +7,17 @@ import { whatsappDirect } from "@/lib/brief";
 import { site } from "@/lib/site";
 import { Arrow } from "@/components/ui/Button";
 import { EXPO, cx } from "@/components/ui/motion";
+import { TourButton } from "@/components/ui/Tour";
+import { tour } from "@/lib/tour";
 import { useActiveSection } from "@/components/ui/useActiveSection";
+import { realProjects } from "./Work";
 import { HEADER_H, V2Logo, goTo } from "./ui";
 
-const SECTION_IDS = menu.map((m) => m.href.slice(1));
+// réalisations joins the menus with the first real capture
+const has = (href: string) => href !== "#realisations" || realProjects.length > 0;
+const NAV = nav.filter((n) => has(n.href));
+const MENU = menu.filter((m) => has(m.href));
+const SECTION_IDS = MENU.map((m) => m.href.slice(1));
 
 /** Light bar: transparent over the hero, paper glass once the page moves; full-screen menu below lg. */
 export function V2Header() {
@@ -72,7 +79,7 @@ export function V2Header() {
             <V2Logo />
           </a>
           <nav aria-label="Sections" className="hidden items-center gap-8 lg:flex">
-            {nav.map((n) => {
+            {NAV.map((n) => {
               const on = active === n.href.slice(1);
               return (
                 <a
@@ -94,7 +101,9 @@ export function V2Header() {
               );
             })}
           </nav>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-4">
+            <TourButton tone="light" className="hidden xl:inline-flex" />
+            <TourButton tone="light" compact className="xl:hidden max-[339px]:hidden" />
             <a
               href="#contact"
               onClick={go("contact")}
@@ -138,7 +147,7 @@ export function V2Header() {
           >
             <nav aria-label="Sections">
               <ul>
-                {menu.map((m, i) => {
+                {MENU.map((m, i) => {
                   const on = active === m.href.slice(1);
                   return (
                     <motion.li key={m.href} initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.04 * i, ease: EXPO }}>
@@ -164,6 +173,19 @@ export function V2Header() {
                 {cta.quote}
                 <Arrow className="h-5 w-5" />
               </a>
+              <button
+                type="button"
+                onClick={() => {
+                  setOpen(false);
+                  window.setTimeout(() => tour.start(), 260);
+                }}
+                className="flex items-center justify-between rounded-full border border-line bg-white px-6 py-4 text-[16px] text-ink"
+              >
+                Lancer la visite guidée
+                <svg viewBox="0 0 12 12" className="h-3 w-3" fill="currentColor" aria-hidden>
+                  <path d="M2.5 1.2 10.4 6 2.5 10.8Z" />
+                </svg>
+              </button>
               <div className="flex flex-wrap gap-x-6 gap-y-2 pt-3 text-[14px] text-ink-soft">
                 <a href={whatsappDirect()} target="_blank" rel="noopener noreferrer" className="hover:text-ink">
                   WhatsApp <span aria-hidden>↗</span>
