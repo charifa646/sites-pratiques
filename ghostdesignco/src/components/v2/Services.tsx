@@ -9,14 +9,17 @@ import { EXPO, Rise, cx } from "@/components/ui/motion";
 import { BrowserMock, PhoneMock, SalesMock } from "./Mockups";
 import { Label, PrimaryButton, goTo } from "./ui";
 
-/** Asks the services section to show one offer (from the hero's cards). */
+/**
+ * Asks the services section to show one offer: from the hero's cards (it
+ * then comes on screen), or from the guided tour (which scrolls by itself).
+ */
 export const OFFER_EVENT = "v2-offer";
-export function showOffer(i: number) {
-  window.dispatchEvent(new CustomEvent<number>(OFFER_EVENT, { detail: i }));
+export function showOffer(i: number, scroll = true) {
+  window.dispatchEvent(new CustomEvent<{ i: number; scroll: boolean }>(OFFER_EVENT, { detail: { i, scroll } }));
 }
 
-/** Each service on a stage of the same size, so switching never jumps. */
-function Visual({ id }: { id: string }) {
+/** Each service on a stage of the same size, so switching never jumps (also the previews of Réalisations). */
+export function OfferVisual({ id }: { id: string }) {
   if (id === "landing") {
     return (
       <div className="grid h-full place-items-center">
@@ -87,8 +90,9 @@ export function V2Services({ n }: { n?: string }) {
   });
   useEffect(() => {
     const on = (e: Event) => {
-      const i = (e as CustomEvent<number>).detail;
-      if (window.matchMedia("(min-width: 1024px) and (min-height: 640px)").matches) pick.current(i);
+      const { i, scroll } = (e as CustomEvent<{ i: number; scroll: boolean }>).detail;
+      if (!scroll) setActive(i);
+      else if (window.matchMedia("(min-width: 1024px) and (min-height: 640px)").matches) pick.current(i);
       else {
         setActive(i);
         goTo("services");
@@ -205,7 +209,7 @@ export function V2Services({ n }: { n?: string }) {
                   transition={{ duration: 0.8, delay: 0.15, ease: EXPO }}
                   className="aspect-[6/5] sm:aspect-[5/4] lg:aspect-[16/10.5]"
                 >
-                  <Visual id={item.id} />
+                  <OfferVisual id={item.id} />
                 </motion.div>
               </motion.div>
             </AnimatePresence>

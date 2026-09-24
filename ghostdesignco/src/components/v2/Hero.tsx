@@ -3,7 +3,8 @@
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode, type RefObject } from "react";
-import { cta, hero, method, offer, proof } from "@/lib/copy";
+import { cta, hero, method, offer } from "@/lib/copy";
+import { tour } from "@/lib/tour";
 import { Rise, cx } from "@/components/ui/motion";
 import type { Tier } from "./HeroScene";
 import { heroGhost } from "./handoff";
@@ -460,7 +461,9 @@ export function V2Hero() {
           </Rise>
           <Rise delay={0.18} className="v2-cta pointer-events-auto mt-5 flex flex-wrap items-center justify-center gap-x-7 gap-y-3 sm:mt-7">
             <PrimaryButton onClick={() => goTo("contact")}>{cta.quote}</PrimaryButton>
-            <TextLink onClick={() => goTo("services")}>{cta.secondary}</TextLink>
+            <TextLink className="hidden sm:inline-block" onClick={() => goTo("services")}>
+              {cta.secondary}
+            </TextLink>
           </Rise>
           <Rise delay={0.22} as="p" className="v2-tall v2-reassure mt-3 text-[13px] text-ink-mute">
             {hero.reassurance.join(" · ")}
@@ -468,12 +471,21 @@ export function V2Hero() {
         </div>
       </div>
 
-      {/* mentions under the frame, as on the slides (tall screens: the
-          reassurance already sits under the button) */}
+      {/* mentions under the frame, as on the slides: the hero's small print of
+          the 3D site (tall screens: the reassurance sits under the button, and
+          phones reach the tour from the header, as there) */}
       <div className="v2-foot pointer-events-none absolute inset-x-0 z-10 flex items-center text-[12.5px] tracking-[0.01em] text-ink-mute">
-        <span className="v2-foot-l absolute">
-          [ {proof.stats.map((s) => `${s.value}${s.suffix} ${s.label}`).join(" · ")} ]
-        </span>
+        <button
+          type="button"
+          onClick={() => tour.start()}
+          className="v2-foot-l pointer-events-auto absolute hidden items-center gap-1.5 transition-colors duration-300 hover:text-ink sm:inline-flex"
+        >
+          [
+          <svg viewBox="0 0 12 12" className="h-2.5 w-2.5 text-acid-deep" fill="currentColor" aria-hidden>
+            <path d="M2.5 1.2 10.4 6 2.5 10.8Z" />
+          </svg>
+          Lancer la visite guidée ]
+        </button>
         <span className="v2-wide v2-foot-r absolute">[ {hero.reassurance.join(" · ")} ]</span>
       </div>
     </section>

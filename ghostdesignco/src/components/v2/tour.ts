@@ -1,20 +1,26 @@
-import type { Locate, Step } from "@/lib/tour";
+import { TOUR_STEPS, type Locate, type Step } from "@/lib/tour";
+import { offer } from "@/lib/copy";
 import { HEADER_H } from "./ui";
 
+/** The guide's line for a stop of the 3D site's tour, word for word. */
+const line = (id: string) => TOUR_STEPS.find((s) => s.id === id)?.line ?? "";
+
 /**
- * The guided tour of the V2 page: the same guide and voice as the 3D site,
- * walking these sections. Sections taller than the screen are swept.
+ * The guided tour of the V2 page: the same guide and the same lines as the
+ * 3D site, walking these sections. Sections taller than the screen are
+ * swept; the three offers each get their stop (their tab opens on the way).
  */
 export const V2_STEPS: Step[] = [
-  { id: "top", line: "Bonjour ! Je suis votre guide. Suivez-moi, je vous fais visiter." },
-  { id: "constat", line: "Un bon site fait comprendre, inspire confiance et donne envie. Regardez.", sweep: 6 },
-  { id: "services", line: "Trois formats : le site vitrine, la landing page et la page de vente.", sweep: 6 },
-  { id: "realisations", line: "Nos réalisations… et une place pour la vôtre." },
-  { id: "temoignages", line: "Nos clients racontent leur projet, en vidéo." },
-  { id: "methode", line: "Trois étapes, et votre site est en ligne en 5 à 15 jours." },
-  { id: "tarifs", line: "Pas de prix standard : une proposition faite pour votre projet." },
-  { id: "questions", line: "Les questions qu'on nous pose le plus souvent." },
-  { id: "contact", line: "À vous ! Quelques mots suffisent pour commencer." },
+  { id: "top", line: line("hero") },
+  { id: "preuve", line: line("proof") },
+  { id: "constat", line: line("problem"), sweep: 6 },
+  ...offer.items.map((o, i) => ({ id: o.anchor, line: line(`offer-${i + 1}`) })),
+  { id: "realisations", line: line("work") },
+  { id: "temoignages", line: line("voices") },
+  { id: "methode", line: line("method") },
+  { id: "tarifs", line: line("pricing") },
+  { id: "questions", line: line("faq") },
+  { id: "contact", line: line("contact") },
 ];
 
 /** A section's top (under the header) and how much of it is pinned. */

@@ -10,13 +10,10 @@ import { EXPO, cx } from "@/components/ui/motion";
 import { TourButton } from "@/components/ui/Tour";
 import { tour } from "@/lib/tour";
 import { useActiveSection } from "@/components/ui/useActiveSection";
-import { realProjects } from "./Work";
 import { HEADER_H, V2Logo, goTo } from "./ui";
 
-// réalisations joins the menus with the first real capture
-const has = (href: string) => href !== "#realisations" || realProjects.length > 0;
-const NAV = nav.filter((n) => has(n.href));
-const MENU = menu.filter((m) => has(m.href));
+const NAV = nav;
+const MENU = menu;
 const SECTION_IDS = MENU.map((m) => m.href.slice(1));
 
 /** Light bar: transparent over the hero, paper glass once the page moves; full-screen menu below lg. */

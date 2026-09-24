@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { useEffect } from "react";
+import { offer } from "@/lib/copy";
 import { tour } from "@/lib/tour";
 import { Tour } from "@/components/ui/Tour";
 import { Footer } from "@/components/ui/Footer";
@@ -13,9 +14,10 @@ import { V2Hero } from "./Hero";
 import { Marquee } from "./Marquee";
 import { V2Method } from "./Method";
 import { V2Pricing } from "./Pricing";
-import { V2Services } from "./Services";
+import { V2Proof } from "./Proof";
+import { V2Services, showOffer } from "./Services";
 import { V2Voices } from "./Voices";
-import { V2Work, realProjects } from "./Work";
+import { V2Work } from "./Work";
 import { V2_STEPS, locateV2 } from "./tour";
 
 // the glass ghost, loaded after the page: the text never waits for it
@@ -36,8 +38,19 @@ export function V2Home() {
     return () => tour.reset();
   }, []);
 
-  // sections are numbered in page order; réalisations only once there are captures
-  const order = ["constat", "services", ...(realProjects.length ? ["realisations"] : []), "temoignages", "methode", "tarifs", "questions", "contact"];
+  // at each offer's stop of the tour, its tab opens (the tour does the scrolling)
+  useEffect(
+    () =>
+      tour.subscribe((s) => {
+        if (!s.active) return;
+        const i = offer.items.findIndex((o) => o.anchor === tour.steps()[s.index]?.id);
+        if (i >= 0) showOffer(i, false);
+      }),
+    [],
+  );
+
+  // sections are numbered in page order
+  const order = ["preuve", "constat", "services", "realisations", "temoignages", "methode", "tarifs", "questions", "contact"];
   const n = (id: string) => String(order.indexOf(id) + 1).padStart(2, "0");
 
   return (
@@ -46,6 +59,7 @@ export function V2Home() {
       <main>
         <V2Hero />
         <Marquee />
+        <V2Proof n={n("preuve")} />
         <V2Build n={n("constat")} />
         <V2Services n={n("services")} />
         <V2Work n={n("realisations")} />

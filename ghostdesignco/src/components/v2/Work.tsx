@@ -5,18 +5,20 @@ import { cta, work } from "@/lib/copy";
 import { projects } from "@/lib/projects";
 import { Rise, cx } from "@/components/ui/motion";
 import { WindowBar } from "./Mockups";
+import { OfferVisual } from "./Services";
 import { Label, PrimaryButton, goTo } from "./ui";
 
-/** Projects with a real capture: this page shows nothing it cannot back up. */
-export const realProjects = projects.filter((p) => p.image);
+/** Which drawing previews a project without a capture yet (as on the 3D site). */
+const PREVIEW: Record<string, string> = { "Site vitrine": "vitrine", "Landing page": "landing", "Page de vente": "vente" };
+const previewOf = (type: string) => PREVIEW[type] ?? "vitrine";
 
 /**
- * Réalisations. Only projects with a capture in /public/projects are shown;
- * until the first one arrives the section stays off the page (and out of the
- * menu), rather than showing drawn stand-ins.
+ * Réalisations: the projects of lib/projects, in order. A project with a
+ * capture in /public/projects shows it; the others are previewed by the
+ * drawing of their kind of page, like the 3D site's gallery. Then the
+ * invitation to be the next one.
  */
 export function V2Work({ n }: { n?: string }) {
-  if (!realProjects.length) return null;
   return (
     <section id="realisations" aria-labelledby="v2-work-title" className="bg-white py-24 lg:py-32">
       <div className="mx-auto max-w-[1240px] px-5 sm:px-8">
@@ -36,16 +38,24 @@ export function V2Work({ n }: { n?: string }) {
           </Rise>
         </div>
 
-        <div className="mt-14 grid gap-x-8 gap-y-14 lg:grid-cols-2">
-          {realProjects.map((p, i) => (
-            <Rise key={p.title} delay={(i % 2) * 0.08} blur={false} className={cx(i % 2 === 1 && "lg:mt-20")}>
+        <ol className="mt-14 grid gap-x-8 gap-y-14 lg:grid-cols-2">
+          {projects.map((p, i) => (
+            <Rise as="li" key={p.title} delay={(i % 2) * 0.08} blur={false} className={cx(i % 2 === 1 && "lg:mt-20")}>
               <figure>
-                <div className="overflow-hidden rounded-[12px] border border-line bg-white shadow-[0_24px_60px_-34px_rgba(12,12,13,0.4)] [container-type:inline-size]">
-                  <WindowBar />
-                  <div className="relative aspect-[16/10]">
-                    <Image src={p.image!} alt={`${p.title}, ${p.type}`} fill sizes="(min-width: 1024px) 580px, 92vw" className="object-cover object-top" />
+                {p.image ? (
+                  <div className="overflow-hidden rounded-[12px] border border-line bg-white shadow-[0_24px_60px_-34px_rgba(12,12,13,0.4)] [container-type:inline-size]">
+                    <WindowBar />
+                    <div className="relative aspect-[16/10]">
+                      <Image src={p.image} alt={`${p.title}, ${p.type}`} fill sizes="(min-width: 1024px) 580px, 92vw" className="object-cover object-top" />
+                    </div>
                   </div>
-                </div>
+                ) : (
+                  <div className="grid aspect-[16/11] place-items-center overflow-hidden rounded-[24px] border border-line bg-paper px-[6%] pt-[5%]">
+                    <div className="h-full w-full">
+                      <OfferVisual id={previewOf(p.type)} />
+                    </div>
+                  </div>
+                )}
                 <figcaption className="mt-5 flex items-baseline justify-between gap-6 border-b border-line pb-4">
                   <span>
                     <span className="block font-display text-[22px] font-semibold tracking-[-0.02em]">{p.title}</span>
@@ -61,7 +71,7 @@ export function V2Work({ n }: { n?: string }) {
               </figure>
             </Rise>
           ))}
-        </div>
+        </ol>
 
         <Rise blur={false} className="mt-16">
           <div

@@ -182,14 +182,15 @@ export function V2Build({ n }: { n?: string }) {
 
   return (
     <section ref={ref} id="constat" aria-labelledby="v2-build-title" className="relative h-[260vh] bg-paper lg:h-[300vh]">
-      <div className="v2-pin sticky top-0 flex h-[100svh] items-center overflow-hidden" style={{ paddingTop: HEADER_H }}>
+      {/* pinned under the header (not behind it with a padding: no gap above it on the way in) */}
+      <div className="v2-pin sticky flex items-center overflow-hidden" style={{ top: HEADER_H, height: `calc(100svh - ${HEADER_H}px)` }}>
         <div className="mx-auto grid w-full max-w-[1240px] items-center gap-6 px-5 sm:px-8 lg:grid-cols-[0.82fr_1.18fr] lg:gap-14">
           <div>
             <Label n={n}>{problem.eyebrow}</Label>
             <h2 id="v2-build-title" className="mt-4 font-display text-[clamp(1.7rem,4vw,3.5rem)] font-semibold leading-[1.03] tracking-[-0.04em] lg:mt-5">
               {problem.title}
             </h2>
-            <p className="mt-5 hidden max-w-[30rem] text-[17px] leading-relaxed text-ink-soft sm:block">{problem.text}</p>
+            <p className="mt-4 max-w-[30rem] text-[15px] leading-relaxed text-ink-soft sm:mt-5 sm:text-[17px]">{problem.text}</p>
 
             <div className="relative mt-5 lg:mt-9">
               {/* progress rail */}

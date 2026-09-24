@@ -6,6 +6,7 @@ import { Component, useEffect, useLayoutEffect, useMemo, useRef, useState, type 
 import * as THREE from "three";
 import { guideState } from "@/lib/guide";
 import { scrollState } from "@/lib/scroll";
+import { tour } from "@/lib/tour";
 import { ghostGeometry, patchGhost, type GhostUniforms } from "@/components/three/ghostShape";
 import { heroGhost } from "./handoff";
 import { HERO_READY, hasWebGL2, pickTier } from "./quality";
@@ -101,17 +102,18 @@ function GhostBody({ tier, box, size }: { tier: Tier; box: React.RefObject<HTMLD
   );
   const background = useMemo(() => PAPER.clone(), []);
 
+  // light version: the same milky lime glass, lit from within, as the hero's
   const loMat = useMemo(() => {
     const m = new THREE.MeshPhysicalMaterial({
-      color: new THREE.Color("#e3efd9"),
-      roughness: 0.22,
+      color: new THREE.Color("#f4fbe8"),
+      roughness: 0.18,
       transparent: true,
       opacity: 0.86,
       clearcoat: 1,
-      clearcoatRoughness: 0.14,
-      emissive: new THREE.Color("#132a05"),
-      envMapIntensity: 1.3,
-      side: THREE.DoubleSide,
+      clearcoatRoughness: 0.1,
+      emissive: new THREE.Color("#b6ff3b"),
+      emissiveIntensity: 0.36,
+      envMapIntensity: 1.2,
     });
     patchGhost(m, uniforms);
     return m;
@@ -156,6 +158,8 @@ function GhostBody({ tier, box, size }: { tier: Tier; box: React.RefObject<HTMLD
   const verdicts = useRef(new WeakMap<Element, { x: number; y: number; t: number; hit: boolean }>());
   // where it waits at the edge when no spot is free (off screen if nowhere)
   const rest = useRef({ y: 0, t: -1e4, away: false });
+  // now and then, while the page rests, it crosses the screen (t < 0: not now)
+  const cross = useRef({ wait: 12 + Math.random() * 6, t: -1, dir: -1, from: 0, y: 0 });
 
   useEffect(() => {
     const onMove = (e: PointerEvent) => {
@@ -274,9 +278,9 @@ function GhostBody({ tier, box, size }: { tier: Tier; box: React.RefObject<HTMLD
         if (found !== undefined) wait.y = found;
       }
     }
-    const tx = spot ? spot.tx : wait.away ? vw + W * 0.9 : edgeX;
+    let tx = spot ? spot.tx : wait.away ? vw + W * 0.9 : edgeX;
     let ty = spot ? spot.ty : wait.y || vh * 0.52;
-    const clipTo = spot ? spot.clip : vh + H;
+    let clipTo = spot ? spot.clip : vh + H;
     const dark = spot ? spot.dark : m.dark;
     let look = spot ? spot.look : -1;
     if (!spot) {
@@ -284,6 +288,44 @@ function GhostBody({ tier, box, size }: { tier: Tier; box: React.RefObject<HTMLD
       if (under) m.dark = THREE.MathUtils.damp(m.dark, under.closest("[data-ghost-dark]") ? 1 : 0, 4, dt);
     }
     ty = clamp(ty, minY, maxY);
+
+    // 1b. now and then, when the page rests (no scroll, no guided tour), it
+    //     crosses the screen on a gentle wave, then comes back in from the side
+    //     it left, as if it had gone round; a scroll sends it back to its place
+    const cr = cross.current;
+    const calm = Math.abs(scrollState.velocity) < 0.02 && !tour.get().active;
+    if (cr.t < 0) {
+      cr.wait = calm ? cr.wait - dt : Math.max(cr.wait, 4);
+      if (cr.wait <= 0 && m.started) {
+        cr.t = 0;
+        cr.dir = m.x > vw / 2 ? -1 : 1;
+        cr.from = m.x;
+        cr.y = clamp(m.y, minY + H * 0.3, maxY - H * 0.3);
+      }
+    } else if (!calm) {
+      cr.t = -1;
+      cr.wait = 8 + Math.random() * 6;
+    }
+    const crossing = cr.t >= 0;
+    if (crossing) {
+      cr.t += dt;
+      const k = Math.min(1, cr.t / (3 + vw / 600));
+      const e = k < 0.5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
+      tx = THREE.MathUtils.lerp(cr.from, cr.dir < 0 ? -W * 0.9 : vw + W * 0.9, e);
+      ty = cr.y + Math.sin(k * Math.PI * 2) * H * 0.3;
+      clipTo = vh + H;
+      look = cr.dir;
+      m.glide = false;
+      const under = document.elementFromPoint(clamp(m.x, 0, vw - 1), clamp(m.y, 0, vh - 1));
+      if (under) m.dark = THREE.MathUtils.damp(m.dark, under.closest("[data-ghost-dark]") ? 1 : 0, 6, dt);
+      if (k >= 1) {
+        m.x = cr.dir < 0 ? vw + W * 0.9 : -W * 0.9;
+        m.vx = 0;
+        m.vy = 0;
+        cr.t = -1;
+        cr.wait = 16 + Math.random() * 12;
+      }
+    }
 
     // 2. first frame: start hidden below the anchor edge, then rise out of it
     if (!m.started) {
@@ -325,7 +367,7 @@ function GhostBody({ tier, box, size }: { tier: Tier; box: React.RefObject<HTMLD
 
     // 4. pose: looks at its section (and at the pointer), leans into the motion
     const p = pointer.current;
-    if (p.active) {
+    if (p.active && !crossing) {
       const px = clamp((p.x - m.x) / (vw * 0.5), -1, 1);
       look = look * 0.4 + px * 0.6;
       m.look = THREE.MathUtils.damp(m.look, clamp((p.y - m.y) / (vh * 0.5), -1, 1), 3, dt);
@@ -355,9 +397,10 @@ function GhostBody({ tier, box, size }: { tier: Tier; box: React.RefObject<HTMLD
 
   return (
     <group position={[0, -0.06, 0]}>
-      <pointLight color="#b6ff3b" intensity={6} distance={7} decay={2} position={[0, 0.3, 0.2]} />
+      {/* the light and glow inside belong to the full glass (the light version glows by itself) */}
+      {tier === "hi" && <pointLight color="#b6ff3b" intensity={6} distance={7} decay={2} position={[0, 0.3, 0.2]} />}
       <group ref={body}>
-        <sprite material={core} scale={[1.45, 1.45, 1]} position={[0, 0.3, 0]} />
+        {tier === "hi" && <sprite material={core} scale={[1.45, 1.45, 1]} position={[0, 0.3, 0]} />}
         {tier === "hi" ? (
           <mesh geometry={geo}>
             <MeshTransmissionMaterial

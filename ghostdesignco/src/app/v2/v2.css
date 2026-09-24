@@ -63,12 +63,13 @@ body:has(.v2)::after {
   }
 }
 
-/* tall screens (tablets, "desktop site" on a phone): the pinned constat
-   starts right under the hero instead of floating mid-screen */
-@media (max-aspect-ratio: 999/1000) and (min-height: 900px) {
+/* portrait screens (phones, tablets, "desktop site" on a phone): the pinned
+   constat starts right under what comes before, not in the middle of the
+   screen with a gap above it */
+@media (max-aspect-ratio: 999/1000) {
   .v2-pin {
     align-items: flex-start;
-    padding-top: calc(68px + 6svh) !important;
+    padding-top: 2.5svh;
   }
 }
 
