@@ -11,4 +11,6 @@ export const heroGhost = {
   size: 0,
   /** set when the companion wakes up (it sleeps while the hero holds the ghost) */
   wake: false,
+  /** the hero's 3D is on screen (see HERO_READY) */
+  ready: false,
 };

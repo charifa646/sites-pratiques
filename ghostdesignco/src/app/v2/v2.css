@@ -44,6 +44,34 @@ body:has(.v2)::after {
   }
 }
 
+/* the three services running by in big type, outlined and solid in turn */
+@keyframes v2-marquee {
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+.v2-marquee {
+  animation: v2-marquee 38s linear infinite;
+}
+.v2-outline {
+  color: transparent;
+  -webkit-text-stroke: 1.5px #0c0c0d;
+}
+@media (prefers-reduced-motion: reduce) {
+  .v2-marquee {
+    animation: none;
+  }
+}
+
+/* tall screens (tablets, "desktop site" on a phone): the pinned constat
+   starts right under the hero instead of floating mid-screen */
+@media (max-aspect-ratio: 999/1000) and (min-height: 900px) {
+  .v2-pin {
+    align-items: flex-start;
+    padding-top: calc(68px + 6svh) !important;
+  }
+}
+
 /* ------------------------------------------------------------------ */
 /* Hero: the ghost behind the glass                                    */
 /* ------------------------------------------------------------------ */
@@ -61,14 +89,9 @@ body:has(.v2)::after {
   }
 }
 
-/* The cards drift apart as the hero scrolls away (--p, set by the page).
-   Nothing here may take opacity, a filter or a mask: that would cut the
-   frosted glass inside off from the ghost it blurs. */
-.v2-card {
-  --fade: calc(1 - var(--p, 0) * 1.7);
-  transform: translate3d(calc(var(--p, 0) * var(--dx) * 1cqh), calc(var(--p, 0) * var(--dy) * 1cqh), 0)
-    scale(calc(1 + var(--p, 0) * var(--ds)));
-}
+/* On wide screens the cards drift apart as the hero scrolls away (the page
+   moves them, see Hero). Nothing here may take opacity, a filter or a mask:
+   that would cut the frosted glass inside off from the ghost it blurs. */
 .v2-card-in {
   animation: v2-settle 1.2s cubic-bezier(0.16, 1, 0.3, 1) both;
   animation-delay: calc(0.15s + var(--i) * 0.06s);
@@ -76,10 +99,6 @@ body:has(.v2)::after {
 .v2-card[data-tone="clear"] .v2-card-in {
   background: rgba(255, 255, 255, 0.07);
 }
-.v2-fade {
-  opacity: var(--fade);
-}
-
 /* the glass: a pane that slides in, blurs what is behind, and can be wiped
    (mist: the same pane without the live blur, where nothing sits behind) */
 .v2-fog,
@@ -88,7 +107,6 @@ body:has(.v2)::after {
   box-shadow:
     inset 1px 1px 0 rgba(255, 255, 255, 0.6),
     inset -1px -1px 0 rgba(12, 12, 13, 0.03);
-  opacity: var(--fade);
   transition: opacity 0.6s ease;
   animation: v2-pane 1.15s cubic-bezier(0.16, 1, 0.3, 1) both;
   animation-delay: calc(0.3s + var(--i) * 0.06s);
@@ -144,12 +162,6 @@ body:has(.v2)::after {
 .v2-title {
   font-size: clamp(2.5rem, min(5.7vw, 9.6cqh), 6.8rem);
 }
-.v2-copy,
-.v2-foot {
-  transform: translate3d(0, calc(var(--p, 0) * -14cqh), 0);
-  opacity: calc(1 - var(--p, 0) * 1.6);
-}
-
 @media (min-aspect-ratio: 1/1) {
   .v2-hero {
     min-height: 640px;
@@ -327,13 +339,5 @@ body:has(.v2)::after {
   from {
     transform: translateX(-14px);
     opacity: 0;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .v2-card,
-  .v2-copy,
-  .v2-foot {
-    transform: none;
   }
 }

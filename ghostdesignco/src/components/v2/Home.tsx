@@ -10,6 +10,7 @@ import { V2Contact } from "./Contact";
 import { V2Faq } from "./Faq";
 import { V2Header } from "./Header";
 import { V2Hero } from "./Hero";
+import { Marquee } from "./Marquee";
 import { V2Method } from "./Method";
 import { V2Pricing } from "./Pricing";
 import { V2Services } from "./Services";
@@ -44,6 +45,7 @@ export function V2Home() {
       <V2Header />
       <main>
         <V2Hero />
+        <Marquee />
         <V2Build n={n("constat")} />
         <V2Services n={n("services")} />
         <V2Work n={n("realisations")} />

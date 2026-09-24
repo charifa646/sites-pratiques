@@ -6,6 +6,8 @@ import { useEffect, useRef, useState, type CSSProperties, type ReactNode, type R
 import { cta, hero, method, offer, proof } from "@/lib/copy";
 import { Rise, cx } from "@/components/ui/motion";
 import type { Tier } from "./HeroScene";
+import { heroGhost } from "./handoff";
+import { HERO_READY, hasWebGL2, pickTier } from "./quality";
 import { Scramble } from "./Scramble";
 import { showOffer } from "./Services";
 import { PrimaryButton, TextLink, goTo } from "./ui";
@@ -146,16 +148,12 @@ function Glass({ grid, className }: { grid: Grid; className: string }) {
           top: `${card.y}cqh`,
           width: `${card.w}${u}`,
           height: `${card.h}cqh`,
-          // how it drifts away when the page scrolls
-          "--dx": (centre * 0.55).toFixed(2),
-          "--dy": (-(10 + (card.y + card.h / 2) * 0.3)).toFixed(2),
-          "--ds": (0.08 + Math.abs(centre) * 0.003).toFixed(3),
           "--i": i,
         } as CSSProperties;
         const label = item ? (
           <span
             className={cx(
-              "v2-fade absolute whitespace-nowrap text-ink-soft transition-colors duration-500 group-hover:text-ink",
+              "absolute whitespace-nowrap text-ink-soft transition-colors duration-500 group-hover:text-ink",
               card.stack && "v2-stack-label",
               SPOT[card.at ?? "bl"],
             )}
@@ -167,7 +165,7 @@ function Glass({ grid, className }: { grid: Grid; className: string }) {
             </span>
           </span>
         ) : card.step !== undefined ? (
-          <span aria-hidden className={cx("v2-fade absolute whitespace-nowrap text-ink-mute", SPOT[card.at ?? "bl"])}>
+          <span aria-hidden className={cx("absolute whitespace-nowrap text-ink-mute", SPOT[card.at ?? "bl"])}>
             <Scramble text={`[${method.steps[card.step].title}]`} delay={0.5 + i * 0.05} />
           </span>
         ) : null;
@@ -177,10 +175,10 @@ function Glass({ grid, className }: { grid: Grid; className: string }) {
             {(card.tone === "glass" || card.tone === "frost") && (
               <span aria-hidden className="v2-fog absolute inset-0" style={{ "--blur": `${card.blur ?? 8}px` } as CSSProperties} />
             )}
-            <span aria-hidden className="v2-edge-x v2-fade absolute left-0 top-0 h-px w-full origin-left" />
-            <span aria-hidden className="v2-edge-y v2-fade absolute left-0 top-0 h-full w-px origin-top" />
-            {edges[i].right && <span aria-hidden className="v2-edge-y v2-fade absolute right-0 top-0 h-full w-px origin-bottom" />}
-            {edges[i].bottom && <span aria-hidden className="v2-edge-x v2-fade absolute bottom-0 left-0 h-px w-full origin-right" />}
+            <span aria-hidden className="v2-edge-x absolute left-0 top-0 h-px w-full origin-left" />
+            <span aria-hidden className="v2-edge-y absolute left-0 top-0 h-full w-px origin-top" />
+            {edges[i].right && <span aria-hidden className="v2-edge-y absolute right-0 top-0 h-full w-px origin-bottom" />}
+            {edges[i].bottom && <span aria-hidden className="v2-edge-x absolute bottom-0 left-0 h-px w-full origin-right" />}
             {item && (
               <span aria-hidden className="pointer-events-none absolute inset-[7px] opacity-0 transition-all duration-500 ease-expo group-hover:inset-[11px] group-hover:opacity-100">
                 <span className="absolute left-0 top-0 h-3 w-3 border-l-[1.5px] border-t-[1.5px] border-acid-deep" />
@@ -193,7 +191,17 @@ function Glass({ grid, className }: { grid: Grid; className: string }) {
           </>
         );
         return (
-          <div key={i} data-tone={card.tone} data-demo={card.demo ? "" : undefined} className="v2-card absolute" style={style}>
+          <div
+            key={i}
+            data-tone={card.tone}
+            data-demo={card.demo ? "" : undefined}
+            // how it drifts away when the page scrolls (wide screens, see Stage)
+            data-dx={(centre * 0.55).toFixed(2)}
+            data-dy={(-(10 + (card.y + card.h / 2) * 0.3)).toFixed(2)}
+            data-ds={(0.08 + Math.abs(centre) * 0.003).toFixed(3)}
+            className="v2-card absolute"
+            style={style}
+          >
             {item ? (
               <button
                 type="button"
@@ -298,44 +306,56 @@ function Stage({ host }: { host: RefObject<HTMLElement> }) {
   const progress = useRef(0);
 
   useEffect(() => {
-    const q = new URLSearchParams(window.location.search);
-    if (q.get("hero") === "off") return;
-    let gl: WebGL2RenderingContext | null = null;
-    try {
-      gl = document.createElement("canvas").getContext("webgl2");
-    } catch {
-      gl = null;
-    }
-    if (!gl) return;
-    gl.getExtension("WEBGL_lose_context")?.loseContext();
-    const cores = navigator.hardwareConcurrency ?? 4;
-    const memory = (navigator as Navigator & { deviceMemory?: number }).deviceMemory ?? 8;
-    const desktop = window.matchMedia("(pointer: fine)").matches && window.innerWidth >= 1024;
-    const pinned = q.get("ghost");
+    if (new URLSearchParams(window.location.search).get("hero") === "off" || !hasWebGL2()) return;
     setReduced(window.matchMedia("(prefers-reduced-motion: reduce)").matches);
-    setTier(pinned === "hi" || pinned === "lo" ? pinned : memory >= 4 && (desktop ? cores >= 4 : cores >= 6) ? "hi" : "lo");
+    setTier(pickTier());
   }, []);
 
-  // how far the hero has scrolled away (0 → 1): the scene reads it, and the
-  // cards and words drift away with it (--p)
+  // how far the hero has scrolled away (0 → 1): the scene reads it. On wide
+  // screens the cards drift apart and the words rise and fade with it; they
+  // are moved one by one (a variable on the hero would restyle all of it on
+  // every frame). Tall screens and reduced motion: the hero simply scrolls.
   useEffect(() => {
+    const el = host.current;
+    if (!el) return;
+    const wide = window.matchMedia("(min-aspect-ratio: 1/1)");
+    const still = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const cards = Array.from(el.querySelectorAll<HTMLElement>(".v2-wide .v2-card")).map((c) => ({
+      el: c,
+      dx: Number(c.dataset.dx),
+      dy: Number(c.dataset.dy),
+      ds: Number(c.dataset.ds),
+    }));
+    const words = Array.from(el.querySelectorAll<HTMLElement>(".v2-copy, .v2-foot"));
     let raf = 0;
+    let drawn = -1;
+    const draw = () => {
+      raf = 0;
+      const k = wide.matches && !still.matches ? progress.current : 0;
+      if (k === drawn) return;
+      drawn = k;
+      const u = el.clientHeight / 100;
+      for (const c of cards) c.el.style.transform = k ? `translate3d(${(k * c.dx * u).toFixed(1)}px, ${(k * c.dy * u).toFixed(1)}px, 0) scale(${(1 + k * c.ds).toFixed(4)})` : "";
+      for (const w of words) {
+        w.style.transform = k ? `translate3d(0, ${(-k * 14 * u).toFixed(1)}px, 0)` : "";
+        w.style.opacity = k ? Math.max(0, 1 - k * 1.6).toFixed(3) : "";
+      }
+    };
     const onScroll = () => {
-      const el = host.current;
-      if (!el) return;
       const r = el.getBoundingClientRect();
-      const p = Math.min(1, Math.max(0, -r.top / Math.max(1, r.height)));
-      progress.current = p;
-      if (!raf)
-        raf = requestAnimationFrame(() => {
-          raf = 0;
-          el.style.setProperty("--p", p.toFixed(4));
-        });
+      progress.current = Math.min(1, Math.max(0, -r.top / Math.max(1, r.height)));
+      if (!raf) raf = requestAnimationFrame(draw);
+    };
+    const onResize = () => {
+      drawn = -1;
+      onScroll();
     };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onResize);
     return () => {
       window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onResize);
       cancelAnimationFrame(raf);
     };
   }, [host]);
@@ -359,7 +379,11 @@ function Stage({ host }: { host: RefObject<HTMLElement> }) {
             progress={progress}
             reduced={reduced}
             tier={tier}
-            onReady={() => setLive(true)}
+            onReady={() => {
+              setLive(true);
+              heroGhost.ready = true;
+              window.dispatchEvent(new Event(HERO_READY));
+            }}
             onFail={() => setTier(null)}
             onLow={() => setTier("lo")}
           />

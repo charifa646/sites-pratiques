@@ -182,7 +182,7 @@ export function V2Build({ n }: { n?: string }) {
 
   return (
     <section ref={ref} id="constat" aria-labelledby="v2-build-title" className="relative h-[260vh] bg-paper lg:h-[300vh]">
-      <div className="sticky top-0 flex h-[100svh] items-center overflow-hidden" style={{ paddingTop: HEADER_H }}>
+      <div className="v2-pin sticky top-0 flex h-[100svh] items-center overflow-hidden" style={{ paddingTop: HEADER_H }}>
         <div className="mx-auto grid w-full max-w-[1240px] items-center gap-6 px-5 sm:px-8 lg:grid-cols-[0.82fr_1.18fr] lg:gap-14">
           <div>
             <Label n={n}>{problem.eyebrow}</Label>

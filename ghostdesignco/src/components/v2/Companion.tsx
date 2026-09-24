@@ -8,6 +8,7 @@ import { guideState } from "@/lib/guide";
 import { scrollState } from "@/lib/scroll";
 import { ghostGeometry, patchGhost, type GhostUniforms } from "@/components/three/ghostShape";
 import { heroGhost } from "./handoff";
+import { HERO_READY, hasWebGL2, pickTier } from "./quality";
 import { HEADER_H } from "./ui";
 
 /**
@@ -455,25 +456,41 @@ export default function Companion() {
   useEffect(() => {
     // ?ghost=hi|lo|off pins the choice (QA); reduced motion keeps the still image
     const q = new URLSearchParams(window.location.search).get("ghost");
-    if (q === "off" || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    let gl: WebGL2RenderingContext | null = null;
-    try {
-      gl = document.createElement("canvas").getContext("webgl2");
-    } catch {
-      gl = null;
-    }
-    if (!gl) return;
-    gl.getExtension("WEBGL_lose_context")?.loseContext();
-    const cores = navigator.hardwareConcurrency ?? 4;
-    const memory = (navigator as Navigator & { deviceMemory?: number }).deviceMemory ?? 8;
-    const desktop = window.matchMedia("(pointer: fine)").matches && window.innerWidth >= 1024;
-    const strong = memory >= 4 && (desktop ? cores >= 4 : cores >= 6);
-    setTier(q === "hi" || q === "lo" ? q : strong ? "hi" : "lo");
+    if (q === "off" || window.matchMedia("(prefers-reduced-motion: reduce)").matches || !hasWebGL2()) return;
     const onResize = () => setSize(sizeFor(window.innerWidth));
     onResize();
     window.addEventListener("resize", onResize);
+
+    // one 3D scene starting at a time: the companion waits for the hero's to
+    // be on screen, then for a quiet moment (or starts as soon as the page
+    // scrolls); with no hero scene at all it does not wait for long
+    let started = false;
+    let idle = 0;
+    let timer = 0;
+    const start = () => {
+      if (started) return;
+      started = true;
+      window.removeEventListener("scroll", onScroll);
+      setTier(pickTier());
+    };
+    const whenIdle = () => {
+      if (window.requestIdleCallback) idle = window.requestIdleCallback(start, { timeout: 2500 });
+      else timer = window.setTimeout(start, 1200);
+    };
+    const onScroll = () => {
+      if (window.scrollY > window.innerHeight * 0.1) start();
+    };
+    if (heroGhost.ready) whenIdle();
+    else window.addEventListener(HERO_READY, whenIdle, { once: true });
+    window.addEventListener("scroll", onScroll, { passive: true });
+    const fallback = window.setTimeout(whenIdle, 6000);
     return () => {
       window.removeEventListener("resize", onResize);
+      window.removeEventListener(HERO_READY, whenIdle);
+      window.removeEventListener("scroll", onScroll);
+      window.clearTimeout(fallback);
+      window.clearTimeout(timer);
+      if (idle) window.cancelIdleCallback?.(idle);
       document.documentElement.classList.remove("v2-companion");
     };
   }, []);
