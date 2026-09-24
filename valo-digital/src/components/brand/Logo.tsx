@@ -1,5 +1,3 @@
-import { brand } from "@/lib/catalogue";
-
 /**
  * The VD monogram, redrawn from the 2026 cover: a V whose right arm is cut
  * from the D by a hairline. Replace with the official vector file when the
@@ -22,7 +20,7 @@ export function Monogram({ className, title }: { className?: string; title?: str
 /** The lockup as on the cover: the monogram over « ValoDigital ». */
 export function LogoStacked({ className }: { className?: string }) {
   return (
-    <svg viewBox="0 0 1165 1010" className={className} fill="currentColor" role="img" aria-label={brand.name}>
+    <svg viewBox="0 0 1165 1010" className={className} fill="currentColor" role="img" aria-label="VALO DIGITAL">
       <path d={V} />
       <path d={D} fillRule="evenodd" />
       <text

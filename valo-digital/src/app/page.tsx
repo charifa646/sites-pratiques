@@ -1,34 +1,29 @@
 import { Header } from "@/components/Header";
 import { Hero } from "@/components/Hero";
+import { Problem } from "@/components/Problem";
 import { Pillars } from "@/components/Pillars";
-import { Intro } from "@/components/Intro";
-import { Orientation } from "@/components/Orientation";
 import { Formations } from "@/components/Formations";
-import { Prestations } from "@/components/Prestations";
-import { Social } from "@/components/Social";
-import { Solutions } from "@/components/Solutions";
+import { Services } from "@/components/Services";
+import { Conseil } from "@/components/Conseil";
 import { Methode } from "@/components/Methode";
-import { Contact } from "@/components/Contact";
+import { Closing } from "@/components/Closing";
 import { Footer } from "@/components/Footer";
-import { SelectionProvider } from "@/components/selection/Selection";
 
 export default function Home() {
   return (
-    <SelectionProvider>
+    <>
       <Header />
       <main className="pt-[var(--header)]">
         <Hero />
+        <Problem />
         <Pillars />
-        <Intro />
-        <Orientation />
         <Formations />
-        <Prestations />
-        <Social />
-        <Solutions />
+        <Services />
+        <Conseil />
         <Methode />
-        <Contact />
+        <Closing />
       </main>
       <Footer />
-    </SelectionProvider>
+    </>
   );
 }
