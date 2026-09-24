@@ -8,6 +8,7 @@ de démonstration). Chaque projet vit dans son propre sous-dossier.
 | Dossier                        | Description                  | Stack                                                   |
 | ------------------------------ | ---------------------------- | ------------------------------------------------------- |
 | [`kora-transit/`](./kora-transit) | Premier projet (en cours) | Next.js 14 · TypeScript · Tailwind CSS v3 · Framer Motion 11 |
+| [`valo-digital/`](./valo-digital) | Site test pour le client VALO DIGITAL (catalogue 2026) | Next.js 14 · TypeScript · Tailwind CSS v3 |
 
 ## Démarrer un projet
 
