@@ -7,6 +7,7 @@ import { cta, hero, method, offer, proof } from "@/lib/copy";
 import { Rise, cx } from "@/components/ui/motion";
 import type { Tier } from "./HeroScene";
 import { Scramble } from "./Scramble";
+import { showOffer } from "./Services";
 import { PrimaryButton, TextLink, goTo } from "./ui";
 
 // the 3D stage loads after the words: the page never waits for it
@@ -23,7 +24,9 @@ const HeroScene = dynamic(() => import("./HeroScene"), { ssr: false });
  * width on tall ones; their tops are in % of the height.
  */
 
-type Tone = "clear" | "glass" | "frost";
+// clear: a bare pane; glass / frost: live blur of the ghost behind (kept to
+// the panes in front of it, it is costly); mist: the frosted look, no blur
+type Tone = "clear" | "glass" | "frost" | "mist";
 type Spot = "c" | "tl" | "tr" | "bl" | "br";
 type Card = {
   x: number; // left edge, from the centre line
@@ -60,24 +63,24 @@ const WIDE: Grid = {
     cellW(1, 0, { tone: "clear", step: 0, at: "c" }),
     cellW(2, 0, { tone: "glass", blur: 6 }),
     cellW(3, 0, { tone: "clear" }),
-    cellW(4, 0, { tone: "frost", blur: 14, step: 1, at: "tr", demo: true }),
-    cellW(6, 0, { tone: "glass", blur: 4 }),
+    cellW(4, 0, { tone: "frost", blur: 12, step: 1, at: "tr", demo: true }),
+    cellW(6, 0, { tone: "mist" }),
     cellW(0, 1, { tone: "clear" }),
     cellW(1, 1, { tone: "clear", offer: 0, at: "tl" }),
     cellW(2, 1, { tone: "clear" }),
     cellW(3, 1, { tone: "frost", blur: 12 }),
     cellW(4, 1, { tone: "clear" }),
-    cellW(5, 1, { tone: "glass", blur: 6, offer: 1, at: "tr" }),
-    cellW(1, 2, { tone: "frost", blur: 10, offer: 2, at: "bl" }),
+    cellW(5, 1, { tone: "mist", offer: 1, at: "tr" }),
+    cellW(1, 2, { tone: "mist", offer: 2, at: "bl" }),
     cellW(2, 2, { tone: "glass", blur: 5 }),
     cellW(3, 2, { tone: "clear" }),
-    cellW(4, 2, { tone: "frost", blur: 14 }),
+    cellW(4, 2, { tone: "frost", blur: 12 }),
     cellW(5, 2, { tone: "clear", step: 2, at: "br" }),
     cellW(0, 3, { tone: "clear" }),
-    cellW(2, 3, { tone: "frost", blur: 16 }),
+    cellW(2, 3, { tone: "frost", blur: 12 }),
     cellW(3, 3, { tone: "clear" }),
     cellW(4, 3, { tone: "glass", blur: 8 }),
-    cellW(6, 3, { tone: "frost", blur: 10 }),
+    cellW(6, 3, { tone: "mist" }),
   ],
 };
 
@@ -100,16 +103,16 @@ const TALL: Grid = {
     cellT(2, 0, { tone: "frost", blur: 10 }),
     cellT(0, 1, { tone: "clear" }),
     cellT(1, 1, { tone: "frost", blur: 12, demo: true }),
-    cellT(2, 1, { tone: "glass", blur: 6 }),
-    cellT(0, 2, { tone: "frost", blur: 10 }),
+    cellT(2, 1, { tone: "mist" }),
+    cellT(0, 2, { tone: "mist" }),
     cellT(1, 2, { tone: "clear" }),
-    cellT(2, 2, { tone: "frost", blur: 12 }),
+    cellT(2, 2, { tone: "mist" }),
     cellT(0, 3, { tone: "clear" }),
-    cellT(1, 3, { tone: "glass", blur: 6 }),
+    cellT(1, 3, { tone: "mist" }),
     cellT(2, 3, { tone: "clear" }),
-    cellT(0, 4, { tone: "frost", blur: 10, offer: 0, at: "bl", stack: true }),
+    cellT(0, 4, { tone: "mist", offer: 0, at: "bl", stack: true }),
     cellT(1, 4, { tone: "clear", offer: 1, at: "bl", stack: true }),
-    cellT(2, 4, { tone: "glass", blur: 6, offer: 2, at: "bl", stack: true }),
+    cellT(2, 4, { tone: "mist", offer: 2, at: "bl", stack: true }),
   ],
 };
 
@@ -170,7 +173,10 @@ function Glass({ grid, className }: { grid: Grid; className: string }) {
         ) : null;
         const inner = (
           <>
-            {card.tone !== "clear" && <span aria-hidden className="v2-fog absolute inset-0" style={{ "--blur": `${card.blur ?? 8}px` } as CSSProperties} />}
+            {card.tone === "mist" && <span aria-hidden className="v2-mist absolute inset-0" />}
+            {(card.tone === "glass" || card.tone === "frost") && (
+              <span aria-hidden className="v2-fog absolute inset-0" style={{ "--blur": `${card.blur ?? 8}px` } as CSSProperties} />
+            )}
             <span aria-hidden className="v2-edge-x v2-fade absolute left-0 top-0 h-px w-full origin-left" />
             <span aria-hidden className="v2-edge-y v2-fade absolute left-0 top-0 h-full w-px origin-top" />
             {edges[i].right && <span aria-hidden className="v2-edge-y v2-fade absolute right-0 top-0 h-full w-px origin-bottom" />}
@@ -191,7 +197,7 @@ function Glass({ grid, className }: { grid: Grid; className: string }) {
             {item ? (
               <button
                 type="button"
-                onClick={() => goTo(item.anchor)}
+                onClick={() => showOffer(card.offer!)}
                 aria-label={`${item.title} : voir l'offre`}
                 className="v2-card-in group pointer-events-auto absolute inset-0 block text-left"
               >
@@ -348,7 +354,15 @@ function Stage({ host }: { host: RefObject<HTMLElement> }) {
       </div>
       {tier && (
         <div className={cx("absolute inset-0 transition-opacity duration-1000", live ? "opacity-100" : "opacity-0")} aria-hidden>
-          <HeroScene host={host} progress={progress} reduced={reduced} tier={tier} onReady={() => setLive(true)} onFail={() => setTier(null)} />
+          <HeroScene
+            host={host}
+            progress={progress}
+            reduced={reduced}
+            tier={tier}
+            onReady={() => setLive(true)}
+            onFail={() => setTier(null)}
+            onLow={() => setTier("lo")}
+          />
         </div>
       )}
     </>

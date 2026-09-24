@@ -4,4 +4,11 @@
  * (CSS px, centre) and the companion stays hidden; once the hero lets go, the
  * companion appears at that very spot and carries on down the page.
  */
-export const heroGhost = { active: false, x: 0, y: 0, size: 0 };
+export const heroGhost = {
+  active: false,
+  x: 0,
+  y: 0,
+  size: 0,
+  /** set when the companion wakes up (it sleeps while the hero holds the ghost) */
+  wake: false,
+};

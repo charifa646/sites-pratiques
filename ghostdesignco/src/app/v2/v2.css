@@ -21,6 +21,29 @@ body:has(.v2)::after {
   outline-color: #0c0c0d;
 }
 
+/* the phone's landing page scrolls down to its single action, then back */
+@keyframes v2-scroll {
+  0%,
+  14% {
+    transform: translate3d(0, 0, 0);
+  }
+  52%,
+  78% {
+    transform: translate3d(0, var(--v2-scroll), 0);
+  }
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+}
+.v2-scroll {
+  animation: v2-scroll 10s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .v2-scroll {
+    animation: none;
+  }
+}
+
 /* ------------------------------------------------------------------ */
 /* Hero: the ghost behind the glass                                    */
 /* ------------------------------------------------------------------ */
@@ -57,27 +80,33 @@ body:has(.v2)::after {
   opacity: var(--fade);
 }
 
-/* the glass: a pane that slides in, blurs what is behind, and can be wiped */
-.v2-fog {
+/* the glass: a pane that slides in, blurs what is behind, and can be wiped
+   (mist: the same pane without the live blur, where nothing sits behind) */
+.v2-fog,
+.v2-mist {
   background: linear-gradient(160deg, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.12));
   box-shadow:
     inset 1px 1px 0 rgba(255, 255, 255, 0.6),
     inset -1px -1px 0 rgba(12, 12, 13, 0.03);
-  -webkit-backdrop-filter: blur(var(--blur)) saturate(106%);
-  backdrop-filter: blur(var(--blur)) saturate(106%);
-  -webkit-mask-composite: source-in;
-  mask-composite: intersect;
   opacity: var(--fade);
   transition: opacity 0.6s ease;
   animation: v2-pane 1.15s cubic-bezier(0.16, 1, 0.3, 1) both;
   animation-delay: calc(0.3s + var(--i) * 0.06s);
+}
+.v2-fog {
+  -webkit-backdrop-filter: blur(var(--blur)) saturate(106%);
+  backdrop-filter: blur(var(--blur)) saturate(106%);
+  -webkit-mask-composite: source-in;
+  mask-composite: intersect;
 }
 .v2-card[data-tone="glass"] .v2-fog {
   background: linear-gradient(160deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.05));
 }
 /* an offer under the pointer: its glass clears */
 .v2-card .group:hover .v2-fog,
-.v2-card .group:focus-visible .v2-fog {
+.v2-card .group:focus-visible .v2-fog,
+.v2-card .group:hover .v2-mist,
+.v2-card .group:focus-visible .v2-mist {
   opacity: 0.15;
 }
 

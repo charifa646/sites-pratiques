@@ -1,8 +1,8 @@
 "use client";
 
-import { Environment, Lightformer, MeshReflectorMaterial, MeshTransmissionMaterial } from "@react-three/drei";
+import { Environment, Lightformer, MeshReflectorMaterial, MeshTransmissionMaterial, PerformanceMonitor } from "@react-three/drei";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { Component, useEffect, useLayoutEffect, useMemo, useRef, type ReactNode, type RefObject } from "react";
+import { Component, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode, type RefObject } from "react";
 import * as THREE from "three";
 import { guideState } from "@/lib/guide";
 import { scrollState } from "@/lib/scroll";
@@ -118,8 +118,8 @@ function Floor({ tier }: { tier: Tier }) {
       <planeGeometry args={[80, 80]} />
       <MeshReflectorMaterial
         mirror={1}
-        blur={[260, 90]}
-        resolution={tier === "hi" ? 1024 : 512}
+        blur={[180, 60]}
+        resolution={tier === "hi" ? 512 : 256}
         mixBlur={0.45}
         mixStrength={1.06}
         mixContrast={1}
@@ -317,8 +317,8 @@ function Ghost({
               ref={mtm as never}
               background={background}
               clippingPlanes={planes}
-              resolution={768}
-              samples={16}
+              resolution={512}
+              samples={8}
               backside={false}
               thickness={0.9}
               roughness={0.18}
@@ -407,6 +407,10 @@ class Guard extends Component<{ children: ReactNode; onFail: () => void }, { fai
   }
 }
 
+// pixel density: capped, then lowered on the fly when frames drop (as on the 3D site)
+const MAX_DPR: Record<Tier, number> = { hi: 1.5, lo: 1.25 };
+const densityFor = (tier: Tier) => Math.min(window.devicePixelRatio || 1, MAX_DPR[tier]);
+
 export default function HeroScene({
   host,
   progress,
@@ -414,6 +418,7 @@ export default function HeroScene({
   tier,
   onReady,
   onFail,
+  onLow,
 }: {
   host: RefObject<HTMLElement>;
   progress: RefObject<number>;
@@ -421,8 +426,11 @@ export default function HeroScene({
   tier: Tier;
   onReady: () => void;
   onFail: () => void;
+  /** the device can't keep up: switch to the light materials */
+  onLow: () => void;
 }) {
   const ghost = useRef<THREE.Group>(null);
+  const [dpr, setDpr] = useState(() => densityFor(tier));
   useEffect(
     () => () => {
       heroGhost.active = false;
@@ -433,11 +441,20 @@ export default function HeroScene({
     <Guard onFail={onFail}>
       <Canvas
         flat
-        dpr={tier === "hi" ? [1, 1.75] : [1, 1.5]}
-        gl={{ alpha: false, antialias: true, powerPreference: "high-performance" }}
+        dpr={dpr}
+        gl={{ alpha: false, antialias: true, powerPreference: "high-performance", stencil: false }}
         camera={{ fov: 30, position: [0, 1.2, 10.5] }}
         style={{ position: "absolute", inset: 0 }}
       >
+        <PerformanceMonitor
+          flipflops={3}
+          onIncline={() => setDpr(densityFor(tier))}
+          onDecline={() => setDpr((d) => Math.max(1, d - 0.25))}
+          onFallback={() => {
+            setDpr(1);
+            onLow();
+          }}
+        />
         {/* a paper sky: the mirror reflects light, not a void */}
         <color attach="background" args={[PAPER]} />
         <Rig />

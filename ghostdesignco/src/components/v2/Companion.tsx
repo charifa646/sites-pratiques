@@ -1,7 +1,7 @@
 "use client";
 
 import { Environment, Lightformer, MeshTransmissionMaterial } from "@react-three/drei";
-import { Canvas, useFrame } from "@react-three/fiber";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Component, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import * as THREE from "three";
 import { guideState } from "@/lib/guide";
@@ -185,6 +185,19 @@ function GhostBody({ tier, box, size }: { tier: Tier; box: React.RefObject<HTMLD
     const H = S * 1.25;
     const m = travel.current;
 
+    // waking up (it sleeps while the hero holds the ghost): take over from
+    // where the hero let it go
+    if (heroGhost.wake && !heroGhost.active) {
+      heroGhost.wake = false;
+      m.x = heroGhost.x;
+      m.y = heroGhost.y;
+      m.vx = 0;
+      m.vy = -260;
+      m.clip = window.innerHeight * 3;
+      m.anchor = null;
+      m.glide = false;
+      m.started = true;
+    }
     // the hero scene holds the ghost: stay hidden, ready to take over from its spot
     if (heroGhost.active) {
       el.style.visibility = "hidden";
@@ -251,7 +264,8 @@ function GhostBody({ tier, box, size }: { tier: Tier; box: React.RefObject<HTMLD
     const wait = rest.current;
     if (!spot && now - wait.t > 300) {
       wait.t = now;
-      const sliver = [-0.3, -0.22, -0.15];
+      // the part left on screen: from 0.33 of the box width left of its centre
+      const sliver = [-0.33, -0.26, -0.18, -0.1];
       const free = (yy: number) => yy >= minY && yy <= maxY && !covers(edgeX, yy, W, H, vh + H, sliver);
       if (wait.away || !free(wait.y)) {
         const found = [0.52, 0.42, 0.62, 0.32, 0.72, 0.24, 0.82].map((f) => vh * f).find(free);
@@ -348,8 +362,8 @@ function GhostBody({ tier, box, size }: { tier: Tier; box: React.RefObject<HTMLD
             <MeshTransmissionMaterial
               ref={mtm as never}
               background={background}
-              resolution={512}
-              samples={10}
+              resolution={256}
+              samples={6}
               backside={false}
               thickness={1.1}
               roughness={0.3}
@@ -387,6 +401,26 @@ function GhostBody({ tier, box, size }: { tier: Tier; box: React.RefObject<HTMLD
       </group>
     </group>
   );
+}
+
+/**
+ * No frames at all while the hero holds the ghost (it is hidden then): only
+ * one 3D scene draws at a time. Checked ten times a second.
+ */
+function Sleep() {
+  const setFrameloop = useThree((s) => s.setFrameloop);
+  useEffect(() => {
+    let awake = true;
+    const id = window.setInterval(() => {
+      const want = !heroGhost.active;
+      if (want === awake) return;
+      awake = want;
+      if (want) heroGhost.wake = true;
+      setFrameloop(want ? "always" : "never");
+    }, 100);
+    return () => window.clearInterval(id);
+  }, [setFrameloop]);
+  return null;
 }
 
 /** Marks the page once real frames are on screen: the still ghost steps aside. */
@@ -456,7 +490,7 @@ export default function Companion() {
       <Guard>
         <Canvas
           flat
-          dpr={[1, 2]}
+          dpr={[1, 1.5]}
           gl={{ alpha: true, antialias: true, powerPreference: "high-performance" }}
           camera={{ fov: 30, position: [0, 0.12, 6.8] }}
           style={{ position: "absolute", inset: 0 }}
@@ -471,6 +505,7 @@ export default function Companion() {
           </Environment>
           <GhostBody tier={tier} box={box} size={size} />
           <Ready />
+          <Sleep />
         </Canvas>
       </Guard>
     </div>

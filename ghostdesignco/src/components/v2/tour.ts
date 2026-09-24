@@ -8,7 +8,7 @@ import { HEADER_H } from "./ui";
 export const V2_STEPS: Step[] = [
   { id: "top", line: "Bonjour ! Je suis votre guide. Suivez-moi, je vous fais visiter." },
   { id: "constat", line: "Un bon site fait comprendre, inspire confiance et donne envie. Regardez.", sweep: 6 },
-  { id: "services", line: "Trois formats : le site vitrine, la landing page et la page de vente." },
+  { id: "services", line: "Trois formats : le site vitrine, la landing page et la page de vente.", sweep: 6 },
   { id: "realisations", line: "Nos réalisations… et une place pour la vôtre." },
   { id: "temoignages", line: "Nos clients racontent leur projet, en vidéo." },
   { id: "methode", line: "Trois étapes, et votre site est en ligne en 5 à 15 jours." },

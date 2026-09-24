@@ -1,121 +1,216 @@
 "use client";
 
-import Image from "next/image";
+import { AnimatePresence, motion, useMotionValueEvent, useScroll, useTransform } from "framer-motion";
+import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { cta, needForOffer, offer } from "@/lib/copy";
+import { scrollToY } from "@/lib/scroll";
 import { useIntent } from "@/components/ui/Providers";
-import { Arrow } from "@/components/ui/Button";
-import { Rise, cx } from "@/components/ui/motion";
-import { WindowBar } from "./Mockups";
-import { Label, goTo } from "./ui";
+import { EXPO, Rise, cx } from "@/components/ui/motion";
+import { BrowserMock, PhoneMock, SalesMock } from "./Mockups";
+import { Label, PrimaryButton, goTo } from "./ui";
 
-/**
- * The three offers side by side, each shown on a real-looking page. The
- * pictures are illustrations made for this site (not client work), so they
- * carry an "Exemple" tag. On hover the page inside the frame scrolls.
- */
-const EXAMPLES: Record<string, { src: string; w: number; h: number; alt: string }> = {
-  vitrine: { src: "/v2/exemple-vitrine.jpg", w: 1600, h: 905, alt: "Exemple de site vitrine pour un restaurant" },
-  landing: { src: "/v2/exemple-landing.jpg", w: 820, h: 1450, alt: "Exemple de landing page mobile pour un atelier photo" },
-  vente: { src: "/v2/exemple-vente.jpg", w: 1200, h: 1607, alt: "Exemple de page de vente pour une formation en ligne" },
-};
+/** Asks the services section to show one offer (from the hero's cards). */
+export const OFFER_EVENT = "v2-offer";
+export function showOffer(i: number) {
+  window.dispatchEvent(new CustomEvent<number>(OFFER_EVENT, { detail: i }));
+}
 
+/** Each service on a stage of the same size, so switching never jumps. */
 function Visual({ id }: { id: string }) {
-  const ex = EXAMPLES[id];
   if (id === "landing") {
     return (
-      <div className="h-[88%] rounded-[26px] bg-ink p-[7px] shadow-[0_24px_50px_-24px_rgba(12,12,13,0.5)]" style={{ aspectRatio: `${ex.w + 14} / ${ex.h * 0.84 + 14}` }}>
-        <div className="relative h-full overflow-hidden rounded-[20px] bg-white">
-          <Image
-            src={ex.src}
-            alt={ex.alt}
-            width={ex.w}
-            height={ex.h}
-            sizes="(min-width: 1024px) 200px, 45vw"
-            className="w-full transition-transform duration-[2.2s] ease-[cubic-bezier(0.65,0,0.35,1)] group-hover:-translate-y-[16%]"
-          />
-        </div>
+      <div className="grid h-full place-items-center">
+        <PhoneMock className="w-[38%] max-w-[230px]" />
       </div>
     );
   }
-  const tall = id === "vente";
-  return (
-    <div className={cx("overflow-hidden rounded-[12px] border border-line bg-white shadow-[0_24px_50px_-26px_rgba(12,12,13,0.4)] [container-type:inline-size]", tall ? "w-[78%]" : "w-[92%]")}>
-      <WindowBar />
-      <div className={cx("relative overflow-hidden", tall ? "aspect-[4/3.3]" : "aspect-[16/9.05]")}>
-        <Image
-          src={ex.src}
-          alt={ex.alt}
-          width={ex.w}
-          height={ex.h}
-          sizes="(min-width: 1024px) 380px, 88vw"
-          className={cx(
-            "w-full transition-transform duration-[2.2s] ease-[cubic-bezier(0.65,0,0.35,1)]",
-            tall ? "group-hover:-translate-y-[42%]" : "group-hover:scale-[1.04]",
-          )}
-        />
+  if (id === "vente") {
+    return (
+      <div className="relative h-full overflow-hidden">
+        <SalesMock className="mx-auto w-[88%] pt-[4%]" />
+        <span aria-hidden className="absolute inset-x-0 bottom-0 h-[22%] bg-gradient-to-t from-paper to-transparent" />
       </div>
+    );
+  }
+  return (
+    <div className="grid h-full place-items-center">
+      <BrowserMock className="w-full" />
     </div>
   );
 }
 
+/**
+ * On large screens the section is pinned: scrolling walks through the three
+ * services (the tabs follow, and a click scrolls to its service). Smaller
+ * screens keep plain tabs.
+ */
 export function V2Services({ n }: { n?: string }) {
+  const ref = useRef<HTMLElement>(null);
+  const [active, setActive] = useState(0);
+  const [pinned, setPinned] = useState(false);
   const { setNeed } = useIntent();
+  const tabs = useRef<(HTMLButtonElement | null)[]>([]);
+  const item = offer.items[active];
+  const count = offer.items.length;
+
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
+  const bar = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 1024px) and (min-height: 640px)");
+    const on = () => setPinned(mq.matches);
+    on();
+    mq.addEventListener("change", on);
+    return () => mq.removeEventListener("change", on);
+  }, []);
+
+  useMotionValueEvent(scrollYProgress, "change", (v) => {
+    if (!pinned) return;
+    const i = Math.min(count - 1, Math.max(0, Math.floor(v * count)));
+    setActive((a) => (a === i ? a : i));
+  });
+
+  const select = (i: number) => {
+    const el = ref.current;
+    if (pinned && el) {
+      const top = el.getBoundingClientRect().top + window.scrollY;
+      const range = el.offsetHeight - window.innerHeight;
+      scrollToY(top + (range * (i + 0.5)) / count, { duration: 1 });
+    }
+    setActive(i);
+  };
+
+  // an offer picked in the hero: open its tab (and bring it on screen)
+  const pick = useRef(select);
+  useEffect(() => {
+    pick.current = select;
+  });
+  useEffect(() => {
+    const on = (e: Event) => {
+      const i = (e as CustomEvent<number>).detail;
+      if (window.matchMedia("(min-width: 1024px) and (min-height: 640px)").matches) pick.current(i);
+      else {
+        setActive(i);
+        goTo("services");
+      }
+    };
+    window.addEventListener(OFFER_EVENT, on);
+    return () => window.removeEventListener(OFFER_EVENT, on);
+  }, []);
+
+  // arrows, Home and End move between tabs (ARIA tabs pattern)
+  const onKey = (e: KeyboardEvent) => {
+    const last = count - 1;
+    const next =
+      e.key === "ArrowRight" ? (active === last ? 0 : active + 1) : e.key === "ArrowLeft" ? (active === 0 ? last : active - 1) : e.key === "Home" ? 0 : e.key === "End" ? last : null;
+    if (next === null) return;
+    e.preventDefault();
+    select(next);
+    tabs.current[next]?.focus();
+  };
+
   return (
-    <section id="services" aria-labelledby="v2-services-title" className="bg-white py-24 lg:py-32">
-      <div className="mx-auto max-w-[1240px] px-5 sm:px-8">
-        <div className="grid items-end gap-6 lg:grid-cols-[1fr_auto]">
-          <div>
+    <section ref={ref} id="services" aria-labelledby="v2-services-title" className={cx("relative bg-white", pinned ? "h-[300vh]" : "py-24")}>
+      {/* footer links land on each service's stretch of the scroll */}
+      {offer.items.map((it, i) => (
+        <span key={it.anchor} id={it.anchor} aria-hidden className="absolute left-0" style={{ top: pinned ? `${(i * 100) / count}%` : 0 }} />
+      ))}
+      <div className={cx(pinned && "sticky top-[68px] flex h-[calc(100svh-68px)] flex-col justify-center")}>
+        <div className="mx-auto w-full max-w-[1240px] px-5 sm:px-8">
+          <div className="text-center">
             <Rise>
-              <Label n={n}>{offer.eyebrow}</Label>
+              <Label n={n} className="justify-center [@media(max-height:820px)]:hidden">
+                {offer.eyebrow}
+              </Label>
             </Rise>
             <Rise delay={0.05}>
-              <h2 id="v2-services-title" className="mt-5 font-display text-[clamp(2.3rem,4.8vw,4.2rem)] font-semibold leading-[1] tracking-[-0.04em]">
+              <h2 id="v2-services-title" className="mt-5 font-display text-[clamp(2.2rem,4.2vw,3.7rem)] font-semibold leading-[1] tracking-[-0.04em]">
                 {offer.title}
               </h2>
             </Rise>
           </div>
-          <Rise as="p" delay={0.1} className="font-display text-[clamp(1.2rem,1.8vw,1.5rem)] font-medium tracking-[-0.02em] text-ink-mute">
-            {offer.items.map((o) => o.title).join(" · ")}
-          </Rise>
-        </div>
 
-        <ol className="mt-14 grid gap-6 lg:grid-cols-3 lg:gap-7">
-          {offer.items.map((it, i) => (
-            <Rise as="li" key={it.id} delay={0.06 * i} blur={false}>
-              <article
-                id={it.anchor}
-                data-ghost={i === 2 ? "tr" : undefined}
-                data-ghost-x={i === 2 ? "-0.4" : undefined}
-                data-ghost-y={i === 2 ? "-0.38" : undefined}
-                data-ghost-m={i === 0 ? "tr" : undefined}
-                data-ghost-mx={i === 0 ? "-0.4" : undefined}
-                data-ghost-my={i === 0 ? "-0.36" : undefined}
-                className="group flex h-full flex-col overflow-hidden rounded-[22px] border border-line bg-paper"
+          <Rise delay={0.1}>
+            <div role="tablist" aria-label="Nos services" className="relative mx-auto mt-8 grid max-w-[560px] grid-cols-3 gap-1 rounded-full bg-paper p-1.5">
+              {offer.items.map((it, i) => (
+                <button
+                  key={it.id}
+                  ref={(el) => {
+                    tabs.current[i] = el;
+                  }}
+                  type="button"
+                  role="tab"
+                  id={`v2-tab-${it.id}`}
+                  aria-selected={i === active}
+                  aria-controls="v2-service-panel"
+                  tabIndex={i === active ? 0 : -1}
+                  onClick={() => select(i)}
+                  onKeyDown={onKey}
+                  className={cx(
+                    "whitespace-nowrap rounded-full px-1 py-2.5 text-[12.5px] font-medium transition-[background-color,color,box-shadow] duration-300 sm:px-2 sm:text-[14px]",
+                    i === active
+                      ? "bg-white text-ink shadow-[0_1px_2px_rgba(12,12,13,0.08),0_6px_16px_-8px_rgba(12,12,13,0.25)]"
+                      : "text-ink-soft hover:text-ink",
+                  )}
+                >
+                  {it.title}
+                </button>
+              ))}
+              {pinned && (
+                <span aria-hidden className="absolute -bottom-3 left-6 right-6 h-[2px] overflow-hidden rounded-full bg-line">
+                  <motion.span style={{ width: bar }} className="block h-full bg-ink" />
+                </span>
+              )}
+            </div>
+          </Rise>
+
+          <div
+            id="v2-service-panel"
+            role="tabpanel"
+            aria-labelledby={`v2-tab-${item.id}`}
+            data-ghost="tr"
+            data-ghost-x="-0.42"
+            data-ghost-y="-0.4"
+            data-ghost-m="tr"
+            data-ghost-mx="-0.4"
+            data-ghost-my="-0.36"
+            className="mt-9 grid overflow-hidden rounded-[32px] border border-line bg-paper"
+          >
+            <AnimatePresence initial={false}>
+              <motion.div
+                key={item.id}
+                initial={{ opacity: 0, y: 14 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8, transition: { duration: 0.25 } }}
+                transition={{ duration: 0.55, delay: 0.12, ease: EXPO }}
+                className="grid items-center gap-10 p-6 [grid-area:1/1] sm:p-10 lg:grid-cols-[0.85fr_1.15fr] lg:gap-14 lg:px-14 lg:py-10"
               >
-                <div className="relative grid aspect-[4/3.3] place-items-center overflow-hidden bg-[linear-gradient(180deg,#EFEDE6,#F4F3EE)]">
-                  <span className="absolute left-4 top-3.5 text-[11px] font-medium uppercase tracking-[0.14em] text-ink-mute">Exemple</span>
-                  <Visual id={it.id} />
-                </div>
-                <div className="flex flex-1 flex-col border-t border-line p-7">
-                  <span className="font-display text-[15px] font-medium tabular-nums text-ink-mute">{it.n}</span>
-                  <h3 className="mt-2 font-display text-[clamp(1.6rem,2.2vw,2rem)] font-semibold leading-[1.05] tracking-[-0.03em]">{it.title}</h3>
-                  <p className="mt-3 text-[16px] leading-relaxed text-ink-soft">{it.text}</p>
-                  <button
-                    type="button"
+                <div>
+                  <span className="font-display text-[15px] font-medium text-ink-mute">{item.n}</span>
+                  <h3 className="mt-3 font-display text-[clamp(1.9rem,3.2vw,2.8rem)] font-semibold leading-[1.02] tracking-[-0.03em]">{item.title}</h3>
+                  <p className="mt-4 max-w-[30rem] text-[17px] leading-relaxed text-ink-soft">{item.text}</p>
+                  <PrimaryButton
+                    className="mt-8"
                     onClick={() => {
-                      setNeed(needForOffer[it.id]);
+                      setNeed(needForOffer[item.id]);
                       goTo("contact");
                     }}
-                    className="group/b mt-8 inline-flex items-center gap-2 self-start rounded-full bg-ink px-5 py-3 text-[14px] font-medium text-bone transition-colors duration-300 hover:bg-[#26262a]"
                   >
                     {cta.quote}
-                    <Arrow className="h-4 w-4 transition-transform duration-300 group-hover/b:translate-x-0.5" />
-                  </button>
+                  </PrimaryButton>
                 </div>
-              </article>
-            </Rise>
-          ))}
-        </ol>
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.92, rotate: -1.5 }}
+                  animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                  transition={{ duration: 0.8, delay: 0.15, ease: EXPO }}
+                  className="aspect-[6/5] sm:aspect-[5/4] lg:aspect-[16/10.5]"
+                >
+                  <Visual id={item.id} />
+                </motion.div>
+              </motion.div>
+            </AnimatePresence>
+          </div>
+        </div>
       </div>
     </section>
   );
