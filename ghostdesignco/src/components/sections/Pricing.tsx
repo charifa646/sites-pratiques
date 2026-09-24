@@ -12,7 +12,7 @@ export function Pricing() {
       <div className="sticky top-0 flex h-[100svh] items-end pb-[7svh] lg:items-center lg:pb-0">
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 bg-[radial-gradient(80%_55%_at_20%_80%,rgba(5,5,5,0.85),transparent_75%)] lg:bg-[radial-gradient(50%_70%_at_22%_50%,rgba(5,5,5,0.78),transparent_72%)]"
+          className="pointer-events-none absolute inset-0 bg-[radial-gradient(80%_55%_at_20%_80%,rgb(var(--c-void)/0.85),transparent_75%)] lg:bg-[radial-gradient(50%_70%_at_22%_50%,rgb(var(--c-void)/0.78),transparent_72%)]"
         />
         <div className="relative mx-auto w-full max-w-[1400px] px-5 sm:px-10">
           <div className="max-w-[600px]">

@@ -26,7 +26,7 @@ const peek = new THREE.Vector3();
 const head = new THREE.Vector3();
 
 export function Ghost({ selectionRef }: { selectionRef: RefObject<HTMLDivElement> }) {
-  const { hi, tall, reduced } = useWorld();
+  const { hi, tall, reduced, palette } = useWorld();
   const camera = useThree((s) => s.camera);
   const size = useThree((s) => s.size);
   const group = useRef<THREE.Group>(null!);
@@ -46,16 +46,16 @@ export function Ghost({ selectionRef }: { selectionRef: RefObject<HTMLDivElement
       roughness: 0.22,
       metalness: 0,
       transparent: true,
-      opacity: 0.8,
+      opacity: palette.ghostOpacity,
       clearcoat: 1,
       clearcoatRoughness: 0.14,
-      emissive: new THREE.Color("#0f2403"),
+      emissive: new THREE.Color(palette.ghostGlow),
       envMapIntensity: 1.4,
       side: THREE.DoubleSide,
     });
     patchGhost(m, uniforms);
     return m;
-  }, [uniforms]);
+  }, [uniforms, palette]);
 
   useLayoutEffect(() => {
     if (hi && mtm.current) patchGhost(mtm.current, uniforms);

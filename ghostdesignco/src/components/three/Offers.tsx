@@ -63,7 +63,7 @@ function Vitrine() {
 
 /** 02: a phone showing a landing page that scrolls down to its single action. */
 function Landing() {
-  const { tall, reduced } = useWorld();
+  const { tall, reduced, palette } = useWorld();
   const group = useRef<THREE.Group>(null!);
   const ring = useRef<THREE.Mesh>(null!);
   const map = useMemo(() => {
@@ -128,7 +128,7 @@ function Landing() {
     <group ref={group}>
       <sprite material={halo} scale={[6, 6, 1]} position={[0, 0, -0.6]} />
       <RoundedBox args={[1.74, 3.52, 0.12]} radius={0.2} smoothness={5}>
-        <meshPhysicalMaterial color="#0b0b0b" roughness={0.28} metalness={0.7} clearcoat={1} clearcoatRoughness={0.1} envMapIntensity={1.5} />
+        <meshPhysicalMaterial color={palette.prop} roughness={0.28} metalness={0.7} clearcoat={1} clearcoatRoughness={0.1} envMapIntensity={1.5} />
       </RoundedBox>
       <mesh position={[0, 0, 0.065]} material={screen}>
         <planeGeometry args={[SW, SH]} />

@@ -17,7 +17,7 @@ const WIDTH = 70;
 const CENTER_Z = -140;
 
 export function Floor() {
-  const { hi, reduced } = useWorld();
+  const { hi, reduced, palette } = useWorld();
   const gl = useThree((s) => s.gl);
   const scene = useThree((s) => s.scene);
   const camera = useThree((s) => s.camera);
@@ -56,7 +56,10 @@ export function Floor() {
           uGhostScale: { value: 1 },
           uCam: { value: new THREE.Vector3() },
           uAcid: { value: ACID_LIN.clone() },
-          uFogColor: { value: new THREE.Color("#050505") },
+          uRings: { value: new THREE.Color(palette.rings) },
+          uBase: { value: new THREE.Vector3(...palette.floor) },
+          uGrid: { value: new THREE.Vector3(...palette.grid) },
+          uFogColor: { value: new THREE.Color(palette.bg) },
           uFogNear: { value: 12 },
           uFogFar: { value: 46 },
         },
@@ -83,6 +86,9 @@ export function Floor() {
           uniform float uGhostScale;
           uniform vec3 uCam;
           uniform vec3 uAcid;
+          uniform vec3 uRings;
+          uniform vec3 uBase;
+          uniform vec3 uGrid;
           uniform vec3 uFogColor;
           uniform float uFogNear;
           uniform float uFogFar;
@@ -103,7 +109,7 @@ export function Floor() {
             float near = exp(-d * 0.45);
             float rip = sin(d * 5.5 - uTime * 2.3) * near;
 
-            vec3 col = vec3(0.006, 0.0062, 0.0068);
+            vec3 col = uBase;
             vec3 V = normalize(uCam - vWorld);
             float F = 0.05 + 0.95 * pow(1.0 - clamp(V.y, 0.0, 1.0), 5.0);
 
@@ -126,12 +132,12 @@ export function Floor() {
             // pool of light under the guide, with slow rings
             float pool = exp(-d * d * 0.3);
             float rings = smoothstep(0.1, 0.0, abs(fract(d * 0.42 - uTime * 0.22) - 0.5)) * near;
-            col += uAcid * (pool * 0.05 + rings * 0.025);
+            col += uAcid * pool * 0.05 + uRings * rings * 0.025;
 
             // blueprint grid: minor every 2 units, major every 10
             float side = 1.0 - smoothstep(10.0, 20.0, abs(xz.x));
             float g = grid(xz, 2.0, 1.0) * 0.04 + grid(xz, 10.0, 1.3) * 0.075;
-            col += mix(uAcid, vec3(0.62, 0.68, 0.6), 0.4) * g * side * (0.6 + 0.4 * F);
+            col += uGrid * g * side * (0.6 + 0.4 * F);
 
             float fog = smoothstep(uFogNear, uFogFar, vDepth);
             gl_FragColor = vec4(mix(col, uFogColor, fog), 1.0);
@@ -139,7 +145,7 @@ export function Floor() {
           }
         `,
       }),
-    [target],
+    [target, palette],
   );
 
   const bias = useMemo(() => new THREE.Matrix4().set(0.5, 0, 0, 0.5, 0, 0.5, 0, 0.5, 0, 0, 0.5, 0.5, 0, 0, 0, 1), []);

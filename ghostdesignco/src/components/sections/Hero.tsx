@@ -12,7 +12,7 @@ export function Hero() {
       {/* readability scrim on the text side */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(70%_60%_at_18%_62%,rgba(5,5,5,0.78),transparent_70%)] lg:bg-[radial-gradient(52%_70%_at_20%_55%,rgba(5,5,5,0.72),transparent_70%)]"
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(70%_60%_at_18%_62%,rgb(var(--c-void)/0.78),transparent_70%)] lg:bg-[radial-gradient(52%_70%_at_20%_55%,rgb(var(--c-void)/0.72),transparent_70%)]"
       />
       <div className="relative mx-auto flex min-h-[100svh] max-w-[1400px] flex-col justify-end px-5 pb-[9svh] pt-28 sm:px-10 lg:justify-center lg:pb-0">
         <div className="max-w-[860px]">

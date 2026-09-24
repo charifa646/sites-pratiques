@@ -148,7 +148,7 @@ export function Voices() {
       <div className="sticky top-0 flex h-[100svh] items-end pb-[6svh] lg:items-start lg:pb-0 lg:pt-[17vh]">
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 bg-[radial-gradient(80%_45%_at_30%_62%,rgba(5,5,5,0.8),transparent_75%)] lg:bg-[radial-gradient(34%_34%_at_18%_30%,rgba(5,5,5,0.82),transparent_75%)]"
+          className="pointer-events-none absolute inset-0 bg-[radial-gradient(80%_45%_at_30%_62%,rgb(var(--c-void)/0.8),transparent_75%)] lg:bg-[radial-gradient(34%_34%_at_18%_30%,rgb(var(--c-void)/0.82),transparent_75%)]"
         />
         <div className="relative mx-auto grid w-full max-w-[1400px] grid-cols-[minmax(0,1fr)] items-start gap-8 px-5 sm:px-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,680px)] lg:gap-16">
           <div className="max-w-[520px]">

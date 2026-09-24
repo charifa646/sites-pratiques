@@ -37,6 +37,7 @@ function labelTexture(text: string) {
 
 function Gate({ z, label, w, h }: { z: number; label: string; w: number; h: number }) {
   const camera = useThree((s) => s.camera);
+  const { palette } = useWorld();
   const frame = useRef<LineObj>(null);
   const handles = useRef<LineObj>(null);
   const fill = useRef<THREE.MeshBasicMaterial>(null!);
@@ -101,7 +102,7 @@ function Gate({ z, label, w, h }: { z: number; label: string; w: number; h: numb
     <group position={[0, 0, z]}>
       <Line ref={frame as never} points={loop} color="#b6ff3b" lineWidth={1} transparent opacity={0} depthWrite={false} />
       <mesh geometry={fillGeo}>
-        <meshBasicMaterial ref={fill} color="#050505" transparent opacity={0} depthWrite={false} />
+        <meshBasicMaterial ref={fill} color={palette.bg} transparent opacity={0} depthWrite={false} />
       </mesh>
       <Line ref={handles as never} points={squares} segments color="#b6ff3b" lineWidth={1.2} transparent opacity={0} depthWrite={false} />
       <mesh position={[-w / 2 + tagW / 2, y1 + 0.26, 0]}>

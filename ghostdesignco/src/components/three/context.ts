@@ -1,23 +1,24 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import * as THREE from "three";
+import { PALETTES, type WorldPalette } from "./palette";
 
-/** Rendering tier and layout of the world, shared by every piece of it. */
-export type WorldFlags = { hi: boolean; tall: boolean; reduced: boolean };
-export const WorldCtx = createContext<WorldFlags>({ hi: false, tall: false, reduced: false });
+/** Rendering tier, layout and colours of the world, shared by every piece of it. */
+export type WorldFlags = { hi: boolean; tall: boolean; reduced: boolean; palette: WorldPalette };
+export const WorldCtx = createContext<WorldFlags>({ hi: false, tall: false, reduced: false, palette: PALETTES.night });
 export const useWorld = () => useContext(WorldCtx);
 
 /** Acid green in linear space, for shaders. */
 export const ACID_LIN = new THREE.Color("#b6ff3b");
 
 /** Soft radial sprite, drawn once. */
-export function glowTexture(inner = "rgba(182,255,59,0.55)", mid = "rgba(182,255,59,0.16)") {
+export function glowTexture(inner = "rgba(182,255,59,0.55)", mid = "rgba(182,255,59,0.16)", outer = "rgba(182,255,59,0)") {
   const c = document.createElement("canvas");
   c.width = c.height = 128;
   const g = c.getContext("2d")!;
   const r = g.createRadialGradient(64, 64, 0, 64, 64, 64);
   r.addColorStop(0, inner);
   r.addColorStop(0.4, mid);
-  r.addColorStop(1, "rgba(182,255,59,0)");
+  r.addColorStop(1, outer);
   g.fillStyle = r;
   g.fillRect(0, 0, 128, 128);
   const t = new THREE.CanvasTexture(c);

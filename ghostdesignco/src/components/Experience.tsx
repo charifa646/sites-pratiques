@@ -16,18 +16,20 @@ import { Method } from "@/components/sections/Method";
 import { Pricing } from "@/components/sections/Pricing";
 import { Faq } from "@/components/sections/Faq";
 import { Contact } from "@/components/sections/Contact";
+import type { PaletteName } from "@/components/three/palette";
 
 const World = dynamic(() => import("@/components/three/World"), { ssr: false });
 
 /**
  * One continuous dive: a fixed WebGL world behind the page, the camera
- * travelling through it as the sections scroll by.
+ * travelling through it as the sections scroll by. The palette colours the
+ * world ("warm" for the /nuit-chaude preview; the page takes it from CSS).
  */
-export function Experience() {
+export function Experience({ palette = "night" }: { palette?: PaletteName }) {
   const selection = useRef<HTMLDivElement>(null);
   return (
     <>
-      <World selectionRef={selection} />
+      <World selectionRef={selection} palette={palette} />
       <SelectionFrame ref={selection} />
       <Header />
       <main className="relative z-10">

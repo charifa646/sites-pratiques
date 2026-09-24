@@ -5,7 +5,7 @@ import { useLayoutEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 import { scrollState } from "@/lib/scroll";
 import { rng } from "./textures";
-import { ACID_LIN, useWorld } from "./context";
+import { useWorld } from "./context";
 
 /**
  * Two particle systems:
@@ -13,7 +13,7 @@ import { ACID_LIN, useWorld } from "./context";
  * - streaks: light trails that appear only when the visitor dives fast.
  */
 export function Dust() {
-  const { hi, reduced } = useWorld();
+  const { hi, reduced, palette } = useWorld();
   const dpr = useThree((s) => s.viewport.dpr);
   const count = hi ? 2600 : 1100;
 
@@ -45,7 +45,7 @@ export function Dust() {
         uniforms: {
           uTime: { value: 0 },
           uPixel: { value: 1 },
-          uAcid: { value: ACID_LIN.clone() },
+          uAcid: { value: new THREE.Color(palette.dust) },
           uFogNear: { value: 12 },
           uFogFar: { value: 46 },
         },
@@ -89,7 +89,7 @@ export function Dust() {
         depthWrite: false,
         blending: THREE.AdditiveBlending,
       }),
-    [],
+    [palette],
   );
 
   const scene = useThree((s) => s.scene);
@@ -116,6 +116,7 @@ const SPAN = 64;
 function Streaks({ count }: { count: number }) {
   const ref = useRef<THREE.LineSegments>(null!);
   const camera = useThree((s) => s.camera);
+  const { palette } = useWorld();
 
   const geo = useMemo(() => {
     const r = rng(5);
@@ -146,7 +147,7 @@ function Streaks({ count }: { count: number }) {
         uniforms: {
           uCamZ: { value: 0 },
           uVel: { value: 0 },
-          uAcid: { value: ACID_LIN.clone() },
+          uAcid: { value: new THREE.Color(palette.dust) },
         },
         vertexShader: /* glsl */ `
           attribute float aEnd;
@@ -183,7 +184,7 @@ function Streaks({ count }: { count: number }) {
         depthWrite: false,
         blending: THREE.AdditiveBlending,
       }),
-    [],
+    [palette],
   );
 
   // main camera only: keep the trails out of the floor reflection

@@ -102,12 +102,13 @@ export function Footer({ home = true }: { home?: boolean }) {
         <svg viewBox="0 0 1180 196" className="mt-12 block w-full select-none" role="img" aria-label="Ghostdesignco">
           <defs>
             <linearGradient id="wordmark-fill" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0" stopColor="#EDEDEA" />
-              <stop offset="0.55" stopColor="#8E8E8A" />
-              <stop offset="1" stopColor="#232323" />
+              {/* colours from the page palette (globals.css), in style: attributes do not read variables */}
+              <stop offset="0" style={{ stopColor: "rgb(var(--c-bone))" }} />
+              <stop offset="0.55" style={{ stopColor: "rgb(var(--c-steel))" }} />
+              <stop offset="1" style={{ stopColor: "rgb(var(--c-coal))" }} />
             </linearGradient>
             <linearGradient id="wordmark-mirror" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0.35" stopColor="#EDEDEA" stopOpacity="0" />
+              <stop offset="0.35" style={{ stopColor: "rgb(var(--c-bone))", stopOpacity: 0 }} />
               <stop offset="1" stopColor="#B6FF3B" stopOpacity="0.16" />
             </linearGradient>
           </defs>

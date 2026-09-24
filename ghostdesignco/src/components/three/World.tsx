@@ -11,6 +11,7 @@ import { cx } from "@/components/ui/motion";
 import { Browser } from "./Browser";
 import { Constellation } from "./Constellation";
 import { WorldCtx, glowTexture, useWorld, type WorldFlags } from "./context";
+import { PALETTES, type PaletteName } from "./palette";
 import { Dust } from "./Dust";
 import { Floor } from "./Floor";
 import { Gates } from "./Gates";
@@ -89,23 +90,23 @@ function Rig() {
   return null;
 }
 
-/** Faint acid haze at the vanishing point: there is always light ahead. */
+/** Faint haze at the vanishing point (acid, or ember in the warm night): there is always light ahead. */
 function Horizon() {
   const ref = useRef<THREE.Sprite>(null!);
   const camera = useThree((s) => s.camera);
-  const mat = useMemo(
-    () =>
-      new THREE.SpriteMaterial({
-        map: glowTexture("rgba(182,255,59,0.3)", "rgba(182,255,59,0.05)"),
-        blending: THREE.AdditiveBlending,
-        depthWrite: false,
-        depthTest: false,
-        transparent: true,
-        opacity: 0.2,
-        fog: false,
-      }),
-    [],
-  );
+  const { palette } = useWorld();
+  const mat = useMemo(() => {
+    const [inner, mid, outer, opacity] = palette.horizon;
+    return new THREE.SpriteMaterial({
+      map: glowTexture(inner, mid, outer),
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+      depthTest: false,
+      transparent: true,
+      opacity,
+      fog: false,
+    });
+  }, [palette]);
   useFrame(() => {
     ref.current.position.set(camera.position.x * 0.5, FLOOR_Y + 0.6, camera.position.z - 50);
   });
@@ -131,15 +132,16 @@ function Effects() {
 }
 
 function Lights() {
+  const { palette } = useWorld();
   return (
     <>
       <ambientLight intensity={0.2} />
       <Environment resolution={256} frames={1}>
-        <Lightformer form="rect" intensity={2.2} position={[0, 7, -2]} rotation-x={Math.PI / 2} scale={[16, 5, 1]} />
-        <Lightformer form="rect" intensity={1.6} position={[-7, 1.5, 1]} rotation-y={Math.PI / 2} scale={[12, 1.6, 1]} />
-        <Lightformer form="rect" intensity={1.2} position={[7, 1.5, 1]} rotation-y={-Math.PI / 2} scale={[12, 1.2, 1]} />
+        <Lightformer form="rect" color={palette.key} intensity={2.2} position={[0, 7, -2]} rotation-x={Math.PI / 2} scale={[16, 5, 1]} />
+        <Lightformer form="rect" color={palette.key} intensity={1.6} position={[-7, 1.5, 1]} rotation-y={Math.PI / 2} scale={[12, 1.6, 1]} />
+        <Lightformer form="rect" color={palette.key} intensity={1.2} position={[7, 1.5, 1]} rotation-y={-Math.PI / 2} scale={[12, 1.2, 1]} />
         <Lightformer form="ring" color="#b6ff3b" intensity={3.5} position={[0, 1.2, -9]} scale={5} />
-        <Lightformer form="rect" color="#b6ff3b" intensity={1.2} position={[0, -4, 2]} rotation-x={-Math.PI / 2} scale={[12, 4, 1]} />
+        <Lightformer form="rect" color={palette.under} intensity={1.2} position={[0, -4, 2]} rotation-x={-Math.PI / 2} scale={[12, 4, 1]} />
       </Environment>
     </>
   );
@@ -165,8 +167,8 @@ function Scene({ flags, selectionRef, onReady }: { flags: Omit<WorldFlags, "tall
   const value = useMemo(() => ({ ...flags, tall: width < 1024 }), [flags, width]);
   return (
     <WorldCtx.Provider value={value}>
-      <color attach="background" args={["#050505"]} />
-      <fog attach="fog" args={["#050505", 12, 46]} />
+      <color attach="background" args={[flags.palette.bg]} />
+      <fog attach="fog" args={[flags.palette.bg, 12, 46]} />
       <Rig />
       <Lights />
       <Horizon />
@@ -203,7 +205,7 @@ class Guard extends Component<{ children: ReactNode }, { failed: boolean }> {
   }
 }
 
-export default function World({ selectionRef }: { selectionRef: RefObject<HTMLDivElement> }) {
+export default function World({ selectionRef, palette = "night" }: { selectionRef: RefObject<HTMLDivElement>; palette?: PaletteName }) {
   const [tier, setTier] = useState<"hi" | "lo" | null>(null);
   const [dpr, setDpr] = useState(1);
   const [maxDpr, setMaxDpr] = useState(1.5);
@@ -240,7 +242,7 @@ export default function World({ selectionRef }: { selectionRef: RefObject<HTMLDi
     return () => rm.removeEventListener("change", on);
   }, []);
 
-  const flags = useMemo(() => ({ hi: tier === "hi", reduced }), [tier, reduced]);
+  const flags = useMemo(() => ({ hi: tier === "hi", reduced, palette: PALETTES[palette] }), [tier, reduced, palette]);
 
   if (!tier) return null;
   return (

@@ -3,16 +3,19 @@ import type { Config } from "tailwindcss";
 /**
  * Ghostdesignco tokens: near-black space, one acid green signature.
  * acid = the brand accent (buttons, highlights, glow), acid-deep = its shadow
- * side for gradients and pressed states.
+ * side for gradients and pressed states. The dark side (void, bone, fog) reads
+ * CSS variables (globals.css) so a page can take another palette; the default
+ * values are the site's.
  */
+const tone = (name: string) => `rgb(var(--c-${name}) / <alpha-value>)`;
 const config: Config = {
   content: ["./src/**/*.{ts,tsx}"],
   theme: {
     extend: {
       colors: {
-        void: { DEFAULT: "#050505", 900: "#080808", 800: "#0d0d0d", 700: "#141414", 600: "#1c1c1c" },
-        bone: "#EDEDEA",
-        fog: { DEFAULT: "#9A9A96", dim: "#6E6E6A" },
+        void: { DEFAULT: tone("void"), 900: tone("void-900"), 800: tone("void-800"), 700: tone("void-700"), 600: tone("void-600") },
+        bone: tone("bone"),
+        fog: { DEFAULT: tone("fog"), dim: tone("fog-dim") },
         acid: { DEFAULT: "#B6FF3B", deep: "#7ED321", ink: "#0B1400" },
         // V2 (light): warm paper, near-black ink, hairline borders
         paper: "#F4F3EE",
