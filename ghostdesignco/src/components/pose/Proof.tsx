@@ -40,7 +40,7 @@ const ICONS: Record<string, ReactNode> = {
 const FIGURES = [
   { key: "projects", count: proof.stats[0].value, value: null, suffix: proof.stats[0].suffix, label: proof.stats[0].label, tilt: -5, y: 0 },
   { key: "years", count: proof.stats[1].value, value: null, suffix: proof.stats[1].suffix, label: proof.stats[1].label, tilt: 4, y: -18 },
-  { key: "days", count: null, value: "5–15", suffix: " jours", label: "pour être en ligne", tilt: 3, y: 10 },
+  { key: "days", count: null, value: "5 à 15", suffix: "", label: "jours pour être en ligne", tilt: 3, y: 10 },
   { key: "custom", count: 100, value: null, suffix: " %", label: "sur mesure", tilt: -4, y: -8 },
 ] as const;
 

@@ -26,9 +26,11 @@ const PAPER = "#F4F3EE";
 /**
  * Daylight (V2), or night (/pose): the sky and floor, the grid's ink, the sky
  * light, the halo, the light inside the ghost, and the light version's glass
- * (at night softer and clearer, as the words cross it).
+ * (at night softer and clearer, as the words cross it). The night has no
+ * mirror floor: the ghost floats in the dark, in its halo.
  */
 type Palette = {
+  mirror: boolean;
   sky: string;
   ink: string;
   hemi: [string, string, number];
@@ -38,6 +40,7 @@ type Palette = {
   lo: { color: string; opacity: number; emissive: number; mirror: number };
 };
 const DAY: Palette = {
+  mirror: true,
   sky: PAPER,
   ink: "#0c0c0d",
   hemi: ["#ffffff", "#e9e6de", 1.1],
@@ -47,6 +50,7 @@ const DAY: Palette = {
   lo: { color: "#f4fbe8", opacity: 0.84, emissive: 0.42, mirror: 0.5 },
 };
 const NIGHT: Palette = {
+  mirror: false,
   sky: "#09090A",
   ink: "#EDEDEA",
   hemi: ["#ffffff", "#232326", 0.65],
@@ -498,8 +502,9 @@ function Ghost({
     const below = -(BOUNDS.top + 0.2) * L.s;
     group.current.position.set(L.x, THREE.MathUtils.lerp(below, L.y, rise) + bob * rise + leave * 2.6, leave * 1.4);
     group.current.scale.setScalar(L.s * (1 - leave * 0.2));
-    // the floor cuts it only while it comes through (a plane far below keeps everything)
-    plane.constant = rise < 0.999 ? 0 : 50;
+    // the floor cuts it only while it comes through (a plane far below keeps everything);
+    // at night there is no floor: it rises out of the dark below
+    plane.constant = palette.mirror && rise < 0.999 ? 0 : 50;
 
     // looks at the pointer
     const px = pointer.current.x;
@@ -609,7 +614,7 @@ function Ghost({
           </group>
         </group>
       </group>
-      {tier === "lo" && (
+      {tier === "lo" && palette.mirror && (
         <group scale={[1, -1, 1]}>
           <group ref={mGroup}>
             <group ref={mBody}>
@@ -761,7 +766,7 @@ export default function HeroScene({
         {/* the ghost first: the floor's reflection pass then sees it as drawn this frame */}
         <Ghost tier={tier} reduced={reduced} progress={progress} holder={ghost} palette={palette} />
         <Halo ghost={ghost} strength={palette.halo} />
-        <MirrorFloor tier={tier} reduced={reduced} ghost={ghost} palette={palette} />
+        {palette.mirror && <MirrorFloor tier={tier} reduced={reduced} ghost={ghost} palette={palette} />}
         <Ready onReady={onReady} />
       </Canvas>
     </Guard>

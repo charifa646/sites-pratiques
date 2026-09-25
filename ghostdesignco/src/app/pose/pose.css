@@ -243,3 +243,13 @@
 .pose #contact {
   border-top-color: transparent;
 }
+
+/* section names without the hairline between the number and the name */
+.pose p > span[aria-hidden].h-px {
+  display: none;
+}
+
+/* no mirror at night: the still picture shown before the 3D has no reflection either */
+.pose .v2-still-mirror {
+  display: none;
+}
