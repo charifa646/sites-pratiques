@@ -1,0 +1,67 @@
+/*
+ * /pose: the sections of V2 on the dark side. Its light tokens (paper, ink,
+ * line) turn dark inside .pose; the drawn websites (each one a size
+ * container) keep their light screens, like a client's site on a monitor.
+ */
+.pose {
+  --c-paper: 9 9 10;
+  --c-ink: 237 237 234;
+  --c-ink-soft: 154 154 150;
+  --c-ink-mute: 110 110 106;
+  --c-line: 36 36 38;
+  /* V2's white sections: one step up from the page */
+  --c-raise: 17 17 19;
+}
+
+.pose [class*="container-type:inline-size"] {
+  --c-paper: 244 243 238;
+  --c-ink: 12 12 13;
+  --c-ink-soft: 85 84 79;
+  --c-ink-mute: 138 136 129;
+  --c-line: 227 225 217;
+  --c-raise: 255 255 255;
+}
+
+.pose .bg-white {
+  background-color: rgb(var(--c-raise) / var(--tw-bg-opacity, 1));
+}
+
+/* the outlined words of the band */
+.pose .v2-outline {
+  -webkit-text-stroke-color: rgb(var(--c-ink));
+}
+
+/* the accent is the bright acid of the night; the drawn sites keep their own */
+.pose .text-acid-deep {
+  color: #b6ff3b;
+}
+.pose [class*="container-type:inline-size"] .text-acid-deep {
+  color: #7ed321;
+}
+
+/* steps reached (the constat's pillars, the method): acid discs, as on the 3D site */
+.pose .bg-ink.text-acid {
+  border-color: #b6ff3b;
+  background-color: #b6ff3b;
+  color: #0b1400;
+}
+
+/* the section numbers in acid, as on the dark bands */
+.pose p > .tabular-nums.text-ink:first-child {
+  color: #b6ff3b;
+}
+
+/* the constat's pillars stay bare on large screens */
+@media (min-width: 1024px) {
+  .pose .lg\:bg-transparent {
+    background-color: transparent;
+  }
+}
+
+/* the drawn phone's black frame, on a black page: a hairline edge */
+.pose [class*="container-type:inline-size"] > .bg-ink {
+  background-color: #1b1b1e;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.14),
+    0 30px 60px -24px rgba(0, 0, 0, 0.8);
+}

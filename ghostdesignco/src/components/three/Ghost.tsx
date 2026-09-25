@@ -5,6 +5,7 @@ import { useFrame, useThree } from "@react-three/fiber";
 import { useLayoutEffect, useMemo, useRef, type RefObject } from "react";
 import * as THREE from "three";
 import { guideState } from "@/lib/guide";
+import { heroGhost } from "@/components/v2/handoff";
 import { scrollState } from "@/lib/scroll";
 import { glowTexture, useWorld } from "./context";
 import { ghostGeometry, patchGhost, type GhostUniforms } from "./ghostShape";
@@ -24,8 +25,15 @@ const corners = Array.from({ length: 4 }, () => new THREE.Vector3());
 const tmp = new THREE.Vector3();
 const peek = new THREE.Vector3();
 const head = new THREE.Vector3();
+// the companion's height on screen, in px (see v2/Companion): the hand-over size
+const companionSize = (w: number) => (w >= 1024 ? 160 : w >= 640 ? 130 : 96);
 
-export function Ghost({ selectionRef }: { selectionRef: RefObject<HTMLDivElement> }) {
+/**
+ * `handoff` (/pose): the ghost stays in the hero and, once the page scrolls on,
+ * shrinks to the companion's size and hands itself over to it: the companion
+ * appears where it was and carries on down the page.
+ */
+export function Ghost({ selectionRef, handoff = false }: { selectionRef: RefObject<HTMLDivElement>; handoff?: boolean }) {
   const { hi, tall, reduced, palette } = useWorld();
   const camera = useThree((s) => s.camera);
   const size = useThree((s) => s.size);
@@ -96,6 +104,7 @@ export function Ghost({ selectionRef }: { selectionRef: RefObject<HTMLDivElement
   const vel = useRef(new THREE.Vector3());
   const born = useRef<number | null>(null);
   const lastState = useRef("off");
+  const shrink = useRef(1);
 
   useFrame((state, delta) => {
     const dt = Math.min(delta, 0.1);
@@ -129,7 +138,7 @@ export function Ghost({ selectionRef }: { selectionRef: RefObject<HTMLDivElement
     const bob = reduced ? 0 : Math.sin(t * 1.1) * 0.08 + Math.sin(t * 0.47) * 0.05;
     const gs = sample.gs;
     group.current.position.set(pos.current.x, pos.current.y + bob * gs - (1 - intro) * 2.6, pos.current.z);
-    group.current.scale.setScalar(gs * (0.55 + 0.45 * intro));
+    group.current.scale.setScalar(gs * (0.55 + 0.45 * intro) * shrink.current);
     worldState.ghost.copy(group.current.position);
     worldState.ghostScale = gs;
 
@@ -159,10 +168,43 @@ export function Ghost({ selectionRef }: { selectionRef: RefObject<HTMLDivElement
 
     // where the head is on screen, for the guided tour's speech bubble
     group.current.updateWorldMatrix(true, true);
-    head.set(0, BOUNDS.top, 0).applyMatrix4(body.current.matrixWorld).project(camera);
-    guideState.x = (head.x * 0.5 + 0.5) * size.width;
-    guideState.y = (0.5 - head.y * 0.5) * size.height;
-    guideState.visible = intro > 0.9 && head.z < 1 && Math.abs(head.x) < 1.05 && Math.abs(head.y) < 1.05;
+    const out = scrollState.y / (scrollState.vh || size.height);
+    // with reduced motion there is no companion: the ghost stays in the hero
+    const held = !handoff || reduced || out < 0.22;
+    if (held) {
+      head.set(0, BOUNDS.top, 0).applyMatrix4(body.current.matrixWorld).project(camera);
+      guideState.x = (head.x * 0.5 + 0.5) * size.width;
+      guideState.y = (0.5 - head.y * 0.5) * size.height;
+      guideState.visible = intro > 0.9 && head.z < 1 && Math.abs(head.x) < 1.05 && Math.abs(head.y) < 1.05;
+    }
+
+    // hand-over: tell the companion where the ghost is, and let it go past the hero
+    if (handoff) {
+      const m = body.current.matrixWorld;
+      let minX = Infinity;
+      let minY = Infinity;
+      let maxX = -Infinity;
+      let maxY = -Infinity;
+      for (let i = 0; i < 4; i++) {
+        const c = corners[i].set(i & 1 ? BOUNDS.x : -BOUNDS.x, i & 2 ? BOUNDS.top : BOUNDS.bottom, 0);
+        c.applyMatrix4(m).project(camera);
+        const x = (c.x * 0.5 + 0.5) * size.width;
+        const y = (0.5 - c.y * 0.5) * size.height;
+        minX = Math.min(minX, x);
+        maxX = Math.max(maxX, x);
+        minY = Math.min(minY, y);
+        maxY = Math.max(maxY, y);
+      }
+      heroGhost.active = held;
+      heroGhost.x = (minX + maxX) / 2;
+      heroGhost.y = (minY + maxY) / 2;
+      heroGhost.size = maxY - minY;
+      group.current.visible = held;
+      // next frame's size: from full size at rest to the companion's as the page starts to scroll
+      const full = (maxY - minY) / shrink.current;
+      const e = reduced ? 0 : THREE.MathUtils.smoothstep(out, 0.03, 0.2);
+      shrink.current = THREE.MathUtils.lerp(1, Math.min(1, companionSize(size.width) / Math.max(1, full)), e);
+    }
 
     // Figma selection frame, only while the hero holds the stage
     const el = selectionRef.current;

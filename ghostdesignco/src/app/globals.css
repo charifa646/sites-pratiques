@@ -15,6 +15,12 @@
   --c-bone: 237 237 234;
   --c-fog: 154 154 150;
   --c-fog-dim: 110 110 106;
+  /* the light side of V2, as r g b (paper, ink and line read these) */
+  --c-paper: 244 243 238;
+  --c-ink: 12 12 13;
+  --c-ink-soft: 85 84 79;
+  --c-ink-mute: 138 136 129;
+  --c-line: 227 225 217;
   /* the footer wordmark's metal */
   --c-steel: 142 142 138;
   --c-coal: 35 35 35;

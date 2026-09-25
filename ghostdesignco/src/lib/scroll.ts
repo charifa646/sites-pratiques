@@ -82,6 +82,9 @@ export function stationSpan(id: string) {
   return { top: s.top, range: Math.max(0, s.height - scrollState.vh) };
 }
 
+/** How long a dive lasts, in seconds (/pose sets a calmer pace while it is on screen). */
+export const dive = { duration: 2.6 };
+
 /** Cinematic scroll to a section (the "dive"); instant when motion is reduced. */
 export function diveTo(id: string) {
   const el = document.getElementById(id);
@@ -89,7 +92,7 @@ export function diveTo(id: string) {
   const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   if (lenis && !reduce) {
     lenis.scrollTo(el, {
-      duration: 2.6,
+      duration: dive.duration,
       easing: (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2),
     });
   } else {

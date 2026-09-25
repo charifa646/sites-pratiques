@@ -196,6 +196,7 @@ function GhostBody({ tier, box, size }: { tier: Tier; box: React.RefObject<HTMLD
       heroGhost.wake = false;
       m.x = heroGhost.x;
       m.y = heroGhost.y;
+      m.dark = document.elementFromPoint(clamp(m.x, 0, vw - 1), clamp(m.y, 0, vh - 1))?.closest("[data-ghost-dark]") ? 1 : 0;
       m.vx = 0;
       m.vy = -260;
       m.clip = window.innerHeight * 3;
@@ -329,6 +330,7 @@ function GhostBody({ tier, box, size }: { tier: Tier; box: React.RefObject<HTMLD
 
     // 2. first frame: start hidden below the anchor edge, then rise out of it
     if (!m.started) {
+      m.dark = dark;
       m.x = tx;
       m.y = ty + S * 0.7;
       m.clip = clipTo;
