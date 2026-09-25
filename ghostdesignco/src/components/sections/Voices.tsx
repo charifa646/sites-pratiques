@@ -64,9 +64,13 @@ export function VideoCard({ t }: { t: Testimonial }) {
             type="button"
             onClick={() => setOn(true)}
             aria-label={label}
-            className="group absolute inset-0 flex items-center justify-center bg-cover bg-center"
-            style={poster ? { backgroundImage: `url("${poster}")` } : undefined}
+            className="group absolute inset-0 flex items-center justify-center"
           >
+            {/* the poster loads only when the section comes near */}
+            {poster && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={poster} alt="" loading="lazy" decoding="async" className="absolute inset-0 h-full w-full object-cover" />
+            )}
             <span
               aria-hidden
               className={cx(

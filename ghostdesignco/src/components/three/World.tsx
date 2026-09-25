@@ -4,7 +4,7 @@ import { Environment, Lightformer, PerformanceMonitor } from "@react-three/drei"
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Bloom, ChromaticAberration, EffectComposer, Vignette } from "@react-three/postprocessing";
 import type { ChromaticAberrationEffect } from "postprocessing";
-import { Component, useEffect, useMemo, useRef, useState, type ReactNode, type RefObject } from "react";
+import { Component, useCallback, useEffect, useMemo, useRef, useState, type ReactNode, type RefObject } from "react";
 import * as THREE from "three";
 import { scrollState } from "@/lib/scroll";
 import { cx } from "@/components/ui/motion";
@@ -162,9 +162,41 @@ function Ready({ onReady }: { onReady: () => void }) {
   return null;
 }
 
+/**
+ * Compiles every shader of the world before its first frame, off the main
+ * thread where the browser allows it (KHR_parallel_shader_compile): on a PC
+ * the page stays fluid instead of freezing while the GPU driver compiles.
+ */
+function Warmup({ onWarm }: { onWarm: () => void }) {
+  const { gl, scene, camera } = useThree();
+  useEffect(() => {
+    let alive = true;
+    const done = () => {
+      if (!alive) return;
+      alive = false;
+      onWarm();
+    };
+    // one frame so every station has mounted its meshes, and a ceiling so the world always shows up
+    const raf = requestAnimationFrame(() => gl.compileAsync(scene, camera).then(done, done));
+    const ceiling = window.setTimeout(done, 9000);
+    return () => {
+      alive = false;
+      cancelAnimationFrame(raf);
+      window.clearTimeout(ceiling);
+    };
+  }, [gl, scene, camera, onWarm]);
+  return null;
+}
+
 function Scene({ flags, selectionRef, onReady }: { flags: Omit<WorldFlags, "tall">; selectionRef: RefObject<HTMLDivElement>; onReady: () => void }) {
   const width = useThree((s) => s.size.width);
   const value = useMemo(() => ({ ...flags, tall: width < 1024 }), [flags, width]);
+  // the full-screen effects compile their own shaders: they join a moment after the first frames
+  const [fx, setFx] = useState(false);
+  const ready = useCallback(() => {
+    onReady();
+    window.setTimeout(() => setFx(true), 1200);
+  }, [onReady]);
   return (
     <WorldCtx.Provider value={value}>
       <color attach="background" args={[flags.palette.bg]} />
@@ -185,8 +217,8 @@ function Scene({ flags, selectionRef, onReady }: { flags: Omit<WorldFlags, "tall
       <Questions />
       <Portal />
       <Ghost selectionRef={selectionRef} />
-      {flags.hi && <Effects />}
-      <Ready onReady={onReady} />
+      {flags.hi && fx && <Effects />}
+      <Ready onReady={ready} />
     </WorldCtx.Provider>
   );
 }
@@ -211,35 +243,48 @@ export default function World({ selectionRef, palette = "night" }: { selectionRe
   const [maxDpr, setMaxDpr] = useState(1.5);
   const [reduced, setReduced] = useState(false);
   const [ready, setReady] = useState(false);
+  const [warm, setWarm] = useState(false);
   const [pinned, setPinned] = useState(false);
+  const onWarm = useCallback(() => setWarm(true), []);
+  const onReady = useCallback(() => setReady(true), []);
 
   useEffect(() => {
-    // no WebGL 2: the page stands on its own, no canvas at all
-    let gl2: WebGL2RenderingContext | null = null;
-    try {
-      gl2 = document.createElement("canvas").getContext("webgl2");
-    } catch {
-      gl2 = null;
-    }
-    if (!gl2) return;
-    gl2.getExtension("WEBGL_lose_context")?.loseContext();
-    const fine = window.matchMedia("(pointer: fine)").matches;
-    const wide = window.innerWidth >= 1024;
-    const cores = navigator.hardwareConcurrency ?? 4;
-    const memory = (navigator as Navigator & { deviceMemory?: number }).deviceMemory ?? 8;
-    // ?world=hi|lo pins the tier (QA); otherwise it is picked from the device
-    const pinned = new URLSearchParams(window.location.search).get("world");
-    const hi = pinned ? pinned === "hi" : fine && wide && cores >= 4 && memory >= 4;
-    const cap = Math.min(window.devicePixelRatio || 1, hi ? 1.5 : 1.75);
-    setPinned(Boolean(pinned));
-    setTier(hi ? "hi" : "lo");
-    setMaxDpr(cap);
-    setDpr(cap);
     const rm = window.matchMedia("(prefers-reduced-motion: reduce)");
-    setReduced(rm.matches);
     const on = () => setReduced(rm.matches);
+    const start = () => {
+      // no WebGL 2: the page stands on its own, no canvas at all
+      let gl2: WebGL2RenderingContext | null = null;
+      try {
+        gl2 = document.createElement("canvas").getContext("webgl2");
+      } catch {
+        gl2 = null;
+      }
+      if (!gl2) return;
+      gl2.getExtension("WEBGL_lose_context")?.loseContext();
+      const fine = window.matchMedia("(pointer: fine)").matches;
+      const wide = window.innerWidth >= 1024;
+      const cores = navigator.hardwareConcurrency ?? 4;
+      const memory = (navigator as Navigator & { deviceMemory?: number }).deviceMemory ?? 8;
+      // ?world=hi|lo pins the tier (QA); otherwise it is picked from the device
+      const pinned = new URLSearchParams(window.location.search).get("world");
+      const hi = pinned ? pinned === "hi" : fine && wide && cores >= 4 && memory >= 4;
+      const cap = Math.min(window.devicePixelRatio || 1, hi ? 1.5 : 1.75);
+      setPinned(Boolean(pinned));
+      setTier(hi ? "hi" : "lo");
+      setMaxDpr(cap);
+      // wide screens start a little lower; the monitor raises it back when the machine keeps up
+      setDpr(hi ? Math.min(cap, 1.25) : cap);
+      setReduced(rm.matches);
+    };
     rm.addEventListener("change", on);
-    return () => rm.removeEventListener("change", on);
+    // the page paints and answers first; the world wakes up when the browser is idle
+    const hasIdle = "requestIdleCallback" in window;
+    const idle = hasIdle ? window.requestIdleCallback(start, { timeout: 1200 }) : window.setTimeout(start, 300);
+    return () => {
+      rm.removeEventListener("change", on);
+      if (hasIdle) window.cancelIdleCallback(idle);
+      else window.clearTimeout(idle);
+    };
   }, []);
 
   const flags = useMemo(() => ({ hi: tier === "hi", reduced, palette: PALETTES[palette] }), [tier, reduced, palette]);
@@ -257,6 +302,7 @@ export default function World({ selectionRef, palette = "night" }: { selectionRe
         <Canvas
           flat
           dpr={dpr}
+          frameloop={warm ? "always" : "never"}
           gl={{ antialias: tier === "lo", alpha: false, powerPreference: "high-performance", stencil: false }}
           camera={{ fov: 35, near: 0.1, far: 80, position: [0, 0.25, 9] }}
         >
@@ -271,7 +317,8 @@ export default function World({ selectionRef, palette = "night" }: { selectionRe
               }}
             />
           )}
-          <Scene flags={flags} selectionRef={selectionRef} onReady={() => setReady(true)} />
+          <Scene flags={flags} selectionRef={selectionRef} onReady={onReady} />
+          <Warmup onWarm={onWarm} />
         </Canvas>
       </Guard>
     </div>
