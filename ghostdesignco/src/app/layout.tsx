@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { DM_Sans, Instrument_Serif } from "next/font/google";
 import localFont from "next/font/local";
+import { Analytics } from "@vercel/analytics/next";
 import { Providers } from "@/components/ui/Providers";
 import { seo, siteUrl } from "@/lib/seo";
 import "./globals.css";
@@ -57,6 +58,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="fr" className={`${dm.variable} ${serif.variable} ${clash.variable}`}>
       <body className="grain font-sans">
         <Providers>{children}</Providers>
+        <Analytics />
       </body>
     </html>
   );
