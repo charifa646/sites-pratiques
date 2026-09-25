@@ -16,12 +16,14 @@ export function Hero() {
       />
       <div className="relative mx-auto flex min-h-[100svh] max-w-[1400px] flex-col justify-end px-5 pb-[9svh] pt-28 sm:px-10 lg:justify-center lg:pb-0">
         <div className="max-w-[860px]">
-          <Rise className="flex items-center gap-2.5 text-[12px] font-medium uppercase tracking-[0.22em] text-fog">
-            <span className="h-1.5 w-1.5 rounded-full bg-acid shadow-[0_0_8px_1px_rgba(182,255,59,0.4)]" />
-            {hero.eyebrow}
+          {/* the page's h1 for search engines: what we do, in the words people search */}
+          <Rise>
+            <h1 id="hero-title" className="flex items-center gap-2.5 text-[12px] font-medium uppercase tracking-[0.22em] text-fog">
+              <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-acid shadow-[0_0_8px_1px_rgba(182,255,59,0.4)]" />
+              {hero.eyebrow}
+            </h1>
           </Rise>
-          <h1
-            id="hero-title"
+          <p
             className="mt-6 font-display text-[clamp(2.7rem,7.4vw,7rem)] font-semibold leading-[0.93] tracking-[-0.04em] text-bone"
           >
             <Mask className="pb-[0.04em]">Des sites qui</Mask>
@@ -33,7 +35,7 @@ export function Hero() {
               <span className="hidden lg:inline">de </span>
               <span className="glow pr-[0.1em] font-serif font-normal italic tracking-[-0.01em] text-acid">{hero.title.accent}</span>
             </Mask>
-          </h1>
+          </p>
           <Rise as="p" delay={0.35} className="mt-7 max-w-[34rem] text-[16px] leading-relaxed text-fog sm:text-[18px]">
             {hero.text}
           </Rise>

@@ -35,7 +35,7 @@ export const cta = {
 };
 
 export const hero = {
-  eyebrow: "Création de sites sur mesure",
+  eyebrow: "Création de site web sur mesure",
   // Headline split so the last word can carry the accent.
   title: { lead: "Des sites qui donnent envie de", accent: "rester." },
   text: "Ghostdesignco crée des sites web sur mesure pour les entrepreneurs et les entreprises qui veulent une présence en ligne aussi soignée que leur activité.",

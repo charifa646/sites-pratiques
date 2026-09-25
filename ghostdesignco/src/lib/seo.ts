@@ -7,7 +7,7 @@ export const siteUrl =
   process.env.VERCEL_ENV === "production" ? productionUrl : process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000";
 
 export const seo = {
-  title: "Ghostdesignco · Création de sites web sur mesure",
+  title: "Ghostdesignco · Création de site web sur mesure",
   description:
     "Sites vitrines, landing pages et pages de vente sur mesure, en ligne en 5 à 15 jours. Textes rédigés pour vous, nom de domaine et hébergement compris.",
 };
