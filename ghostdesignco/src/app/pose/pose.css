@@ -65,3 +65,55 @@
     inset 0 0 0 1px rgba(255, 255, 255, 0.14),
     0 30px 60px -24px rgba(0, 0, 0, 0.8);
 }
+
+/* Réalisations, the pile: the cards' height (lower on phones, where the
+   previews are narrow) */
+.pose .pile-card {
+  --pile-h: 540px;
+}
+@media (min-width: 640px) {
+  .pose .pile-card {
+    --pile-h: 620px;
+  }
+}
+
+/* Réalisations, the pile: each preview is sized on its stage (a size
+   container). On a wide stage it rises from the bottom edge, cut there like a
+   page that goes on; on a tall one (phones) it sits in the middle. */
+.pose .pose-stage {
+  container-type: size;
+}
+.pose .pose-shot {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 7cqh;
+}
+.pose .shot-browser {
+  width: min(80cqw, 150cqh);
+}
+.pose .shot-sales {
+  width: min(66cqw, 118cqh);
+}
+.pose .shot-phone {
+  width: min(30cqw, 52cqh);
+}
+.pose .shot-image {
+  width: min(80cqw, 145cqh);
+}
+@container (orientation: portrait) {
+  .pose .pose-shot {
+    align-items: center;
+    padding-top: 0;
+  }
+  .pose .shot-browser,
+  .pose .shot-sales,
+  .pose .shot-image {
+    width: 88cqw;
+  }
+  .pose .shot-phone {
+    width: min(64cqw, 44cqh);
+  }
+}

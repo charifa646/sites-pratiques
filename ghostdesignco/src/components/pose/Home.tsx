@@ -19,10 +19,13 @@ import { V2Pricing } from "@/components/v2/Pricing";
 import { V2Proof } from "@/components/v2/Proof";
 import { V2Services, showOffer } from "@/components/v2/Services";
 import { V2Voices } from "@/components/v2/Voices";
-import { V2Work } from "@/components/v2/Work";
 import { heroGhost } from "@/components/v2/handoff";
 import { HERO_READY } from "@/components/v2/quality";
 import { V2_STEPS, locateV2 } from "@/components/v2/tour";
+import { PoseWork } from "./Work";
+
+// the guide walks this page's sections, and sweeps through the pile of projects
+const STEPS = V2_STEPS.map((s) => (s.id === "realisations" ? { ...s, sweep: 8 } : s));
 
 const World = dynamic(() => import("@/components/three/World"), { ssr: false });
 // the glass ghost of the page, loaded after it: the text never waits for it
@@ -62,7 +65,7 @@ export function PoseHome() {
   // the guided tour walks this page's sections (those on the page)
   useEffect(() => {
     tour.configure(
-      V2_STEPS.filter((s) => document.getElementById(s.id)),
+      STEPS.filter((s) => document.getElementById(s.id)),
       locateV2,
     );
     return () => tour.reset();
@@ -103,7 +106,7 @@ export function PoseHome() {
         <V2Proof n={n("preuve")} />
         <V2Build n={n("constat")} />
         <V2Services n={n("services")} />
-        <V2Work n={n("realisations")} />
+        <PoseWork n={n("realisations")} />
         <V2Voices n={n("temoignages")} />
         <V2Method n={n("methode")} />
         <V2Pricing n={n("tarifs")} />
