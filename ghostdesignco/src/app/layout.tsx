@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { DM_Sans, Instrument_Serif } from "next/font/google";
 import localFont from "next/font/local";
 import { Providers } from "@/components/ui/Providers";
+import { seo, siteUrl } from "@/lib/seo";
 import "./globals.css";
 
 const dm = DM_Sans({
@@ -29,22 +30,21 @@ const clash = localFont({
   display: "swap",
 });
 
-const title = "Ghostdesignco | Des sites qui donnent envie de rester";
-const description =
-  "Ghostdesignco crée des sites web sur mesure pour les entrepreneurs et les entreprises qui veulent une présence en ligne aussi soignée que leur activité.";
-
-const site = process.env.VERCEL_PROJECT_PRODUCTION_URL
-  ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-  : process.env.VERCEL_URL
-    ? `https://${process.env.VERCEL_URL}`
-    : "http://localhost:3000";
-
 export const metadata: Metadata = {
-  metadataBase: new URL(site),
-  title,
-  description,
-  openGraph: { type: "website", locale: "fr_FR", siteName: "Ghostdesignco", title, description },
-  twitter: { card: "summary_large_image", title, description },
+  metadataBase: new URL(siteUrl),
+  title: { default: seo.title, template: "%s · Ghostdesignco" },
+  description: seo.description,
+  applicationName: "Ghostdesignco",
+  authors: [{ name: "Ghostdesignco", url: siteUrl }],
+  creator: "Ghostdesignco",
+  publisher: "Ghostdesignco",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
+  },
+  openGraph: { type: "website", locale: "fr_FR", siteName: "Ghostdesignco", title: seo.title, description: seo.description },
+  twitter: { card: "summary_large_image", title: seo.title, description: seo.description },
 };
 
 export const viewport: Viewport = {

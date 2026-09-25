@@ -4,8 +4,9 @@ import { Footer } from "@/components/ui/Footer";
 import { Logo } from "@/components/ui/Logo";
 
 export const metadata: Metadata = {
-  title: "Mentions légales & confidentialité | Ghostdesignco",
+  title: "Mentions légales & confidentialité",
   description: "Éditeur, hébergement, propriété intellectuelle et données personnelles du site Ghostdesignco.",
+  alternates: { canonical: "/mentions-legales" },
 };
 
 // TODO(client): complete the publisher block (identity, status, SIRET, address, contact).
