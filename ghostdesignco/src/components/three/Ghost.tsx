@@ -210,8 +210,8 @@ export function Ghost({ selectionRef }: { selectionRef: RefObject<HTMLDivElement
           <mesh geometry={geo}>
             <MeshTransmissionMaterial
               ref={mtm as never}
-              resolution={768}
-              samples={8}
+              resolution={512}
+              samples={6}
               backside={false}
               thickness={1.1}
               roughness={0.3}

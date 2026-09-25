@@ -191,12 +191,19 @@ function Warmup({ onWarm }: { onWarm: () => void }) {
 function Scene({ flags, selectionRef, onReady }: { flags: Omit<WorldFlags, "tall">; selectionRef: RefObject<HTMLDivElement>; onReady: () => void }) {
   const width = useThree((s) => s.size.width);
   const value = useMemo(() => ({ ...flags, tall: width < 1024 }), [flags, width]);
-  // the full-screen effects compile their own shaders: they join a moment after the first frames
+  // The ghost and what surrounds it come first. The stations further down the dive
+  // (hidden in the fog at the start anyway) are compiled out of sight once it is on
+  // screen, then shown; the full-screen effects, which compile their own shaders, last.
+  const [rest, setRest] = useState<"off" | "hidden" | "shown">("off");
   const [fx, setFx] = useState(false);
   const ready = useCallback(() => {
     onReady();
-    window.setTimeout(() => setFx(true), 1200);
+    window.setTimeout(() => setRest("hidden"), 250);
   }, [onReady]);
+  const restReady = useCallback(() => {
+    setRest("shown");
+    window.setTimeout(() => setFx(true), 400);
+  }, []);
   return (
     <WorldCtx.Provider value={value}>
       <color attach="background" args={[flags.palette.bg]} />
@@ -208,15 +215,20 @@ function Scene({ flags, selectionRef, onReady }: { flags: Omit<WorldFlags, "tall
       <Gates />
       <Dust />
       <Constellation />
-      <Browser />
-      <Offers />
-      <Gallery />
-      <Stage />
-      <Method3D />
-      <Quote />
-      <Questions />
-      <Portal />
       <Ghost selectionRef={selectionRef} />
+      {rest !== "off" && (
+        <group visible={rest === "shown"}>
+          <Browser />
+          <Offers />
+          <Gallery />
+          <Stage />
+          <Method3D />
+          <Quote />
+          <Questions />
+          <Portal />
+        </group>
+      )}
+      {rest === "hidden" && <Warmup onWarm={restReady} />}
       {flags.hi && fx && <Effects />}
       <Ready onReady={ready} />
     </WorldCtx.Provider>
@@ -279,7 +291,7 @@ export default function World({ selectionRef, palette = "night" }: { selectionRe
     rm.addEventListener("change", on);
     // the page paints and answers first; the world wakes up when the browser is idle
     const hasIdle = "requestIdleCallback" in window;
-    const idle = hasIdle ? window.requestIdleCallback(start, { timeout: 1200 }) : window.setTimeout(start, 300);
+    const idle = hasIdle ? window.requestIdleCallback(start, { timeout: 400 }) : window.setTimeout(start, 150);
     return () => {
       rm.removeEventListener("change", on);
       if (hasIdle) window.cancelIdleCallback(idle);
@@ -294,7 +306,7 @@ export default function World({ selectionRef, palette = "night" }: { selectionRe
     <div
       aria-hidden
       className={cx(
-        "pointer-events-none fixed inset-0 z-0 transition-opacity duration-[1400ms] ease-out",
+        "pointer-events-none fixed inset-0 z-0 transition-opacity duration-[800ms] ease-out",
         ready ? "opacity-100" : "opacity-0",
       )}
     >
