@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { offer } from "@/lib/copy";
 import { dive } from "@/lib/scroll";
 import { tour } from "@/lib/tour";
@@ -20,6 +20,8 @@ import { V2Proof } from "@/components/v2/Proof";
 import { V2Services, showOffer } from "@/components/v2/Services";
 import { V2Voices } from "@/components/v2/Voices";
 import { V2Work } from "@/components/v2/Work";
+import { heroGhost } from "@/components/v2/handoff";
+import { HERO_READY } from "@/components/v2/quality";
 import { V2_STEPS, locateV2 } from "@/components/v2/tour";
 
 const World = dynamic(() => import("@/components/three/World"), { ssr: false });
@@ -33,6 +35,29 @@ const Companion = dynamic(() => import("@/components/v2/Companion"), { ssr: fals
  */
 export function PoseHome() {
   const selection = useRef<HTMLDivElement>(null);
+  const [companion, setCompanion] = useState(false);
+
+  // The companion only works below the hero. It loads once the ghost has
+  // finished rising from the floor (compiling its glass then would stall that
+  // entrance), or at the first scroll, whichever comes first.
+  useEffect(() => {
+    let wait = 0;
+    const go = () => setCompanion(true);
+    const afterEntrance = () => {
+      wait = window.setTimeout(go, 2600);
+    };
+    if (heroGhost.ready) afterEntrance();
+    else window.addEventListener(HERO_READY, afterEntrance, { once: true });
+    window.addEventListener("scroll", go, { once: true, passive: true });
+    // no 3D hero (no WebGL 2, reduced motion): no entrance to wait for
+    const fallback = window.setTimeout(go, 9000);
+    return () => {
+      window.removeEventListener(HERO_READY, afterEntrance);
+      window.removeEventListener("scroll", go);
+      window.clearTimeout(wait);
+      window.clearTimeout(fallback);
+    };
+  }, []);
 
   // the guided tour walks this page's sections (those on the page)
   useEffect(() => {
@@ -89,7 +114,7 @@ export function PoseHome() {
       <div className="relative z-10 bg-[#0B0B0C]">
         <Footer />
       </div>
-      <Companion />
+      {companion && <Companion />}
       <Tour />
       <div aria-hidden className="veil pointer-events-none fixed inset-0 z-[70] bg-void" />
     </div>
