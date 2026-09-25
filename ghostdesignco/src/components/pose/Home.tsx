@@ -16,12 +16,13 @@ import { V2Faq } from "@/components/v2/Faq";
 import { Marquee } from "@/components/v2/Marquee";
 import { V2Method } from "@/components/v2/Method";
 import { V2Pricing } from "@/components/v2/Pricing";
-import { V2Proof } from "@/components/v2/Proof";
 import { V2Services, showOffer } from "@/components/v2/Services";
 import { V2Voices } from "@/components/v2/Voices";
 import { heroGhost } from "@/components/v2/handoff";
 import { HERO_READY } from "@/components/v2/quality";
 import { V2_STEPS, locateV2 } from "@/components/v2/tour";
+import { PoseIncluded } from "./Included";
+import { PoseProof } from "./Proof";
 import { PoseWork } from "./Work";
 
 // the guide walks this page's sections, and sweeps through the pile of projects
@@ -92,7 +93,7 @@ export function PoseHome() {
   }, []);
 
   // sections are numbered in page order
-  const order = ["preuve", "constat", "services", "realisations", "temoignages", "methode", "tarifs", "questions", "contact"];
+  const order = ["preuve", "constat", "services", "compris", "realisations", "temoignages", "methode", "tarifs", "questions", "contact"];
   const n = (id: string) => String(order.indexOf(id) + 1).padStart(2, "0");
 
   return (
@@ -103,9 +104,10 @@ export function PoseHome() {
       <main className="relative z-10">
         <Hero />
         <Marquee />
-        <V2Proof n={n("preuve")} />
+        <PoseProof n={n("preuve")} />
         <V2Build n={n("constat")} />
         <V2Services n={n("services")} />
+        <PoseIncluded n={n("compris")} />
         <PoseWork n={n("realisations")} />
         <V2Voices n={n("temoignages")} />
         <V2Method n={n("methode")} />

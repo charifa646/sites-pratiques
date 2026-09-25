@@ -117,3 +117,59 @@
     width: min(64cqw, 44cqh);
   }
 }
+
+/* Tout est compris: the caret of the page that writes itself, the dot that
+   runs down to the hosting, the chips that float */
+@keyframes pose-caret {
+  0%,
+  45% {
+    opacity: 1;
+  }
+  55%,
+  100% {
+    opacity: 0;
+  }
+}
+.pose-caret {
+  animation: pose-caret 0.9s steps(1, end) infinite;
+}
+@keyframes pose-drop {
+  0% {
+    transform: translateY(-2px);
+    opacity: 0;
+  }
+  25%,
+  75% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(18px);
+    opacity: 0;
+  }
+}
+.pose-drop {
+  animation: pose-drop 1.8s ease-in-out infinite;
+}
+@keyframes pose-float {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -6px, 0);
+  }
+}
+.pose-float {
+  animation: pose-float 4.8s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .pose-caret,
+  .pose-drop,
+  .pose-float {
+    animation: none;
+  }
+  .pose .animate-ping {
+    animation: none;
+    opacity: 0;
+  }
+}
