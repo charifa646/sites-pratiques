@@ -300,7 +300,7 @@ function useMist(host: RefObject<HTMLElement>) {
  * The stage: a still picture first (the ghost and its reflection), then the
  * live 3D studio fades in where WebGL is available.
  */
-function Stage({ host }: { host: RefObject<HTMLElement> }) {
+function Stage({ host, night }: { host: RefObject<HTMLElement>; night: boolean }) {
   const [tier, setTier] = useState<Tier | null>(null);
   const [live, setLive] = useState(false);
   const [reduced, setReduced] = useState(false);
@@ -387,6 +387,7 @@ function Stage({ host }: { host: RefObject<HTMLElement> }) {
             }}
             onFail={() => setTier(null)}
             onLow={() => setTier("lo")}
+            night={night}
           />
         </div>
       )}
@@ -406,7 +407,8 @@ function Bracketed({ children, className }: { children: ReactNode; className?: s
   );
 }
 
-export function V2Hero() {
+/** `night`: the same hero in the dark studio of /pose (its colours come from the page). */
+export function V2Hero({ night = false }: { night?: boolean }) {
   const ref = useRef<HTMLElement>(null);
   useMist(ref);
   const words = hero.title.lead.split(" ");
@@ -417,7 +419,7 @@ export function V2Hero() {
       aria-labelledby="v2-hero-title"
       className="v2-hero relative h-[100svh] overflow-hidden [container-type:size]"
     >
-      <Stage host={ref} />
+      <Stage host={ref} night={night} />
       {/* the far end of the mirror fades into the page */}
       <div aria-hidden className="v2-floor-fade pointer-events-none absolute inset-x-0 bottom-0 z-[4] bg-gradient-to-b from-paper/0 to-paper" />
 

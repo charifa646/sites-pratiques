@@ -22,6 +22,39 @@ import { heroGhost } from "./handoff";
 export type Tier = "hi" | "lo";
 
 const PAPER = "#F4F3EE";
+
+/**
+ * Daylight (V2), or night (/pose): the sky and floor, the grid's ink, the sky
+ * light, the halo, the light inside the ghost, and the light version's glass
+ * (at night softer and clearer, as the words cross it).
+ */
+type Palette = {
+  sky: string;
+  ink: string;
+  hemi: [string, string, number];
+  halo: number;
+  glow: number;
+  core: number;
+  lo: { color: string; opacity: number; emissive: number; mirror: number };
+};
+const DAY: Palette = {
+  sky: PAPER,
+  ink: "#0c0c0d",
+  hemi: ["#ffffff", "#e9e6de", 1.1],
+  halo: 0.9,
+  glow: 6,
+  core: 0.7,
+  lo: { color: "#f4fbe8", opacity: 0.84, emissive: 0.42, mirror: 0.5 },
+};
+const NIGHT: Palette = {
+  sky: "#09090A",
+  ink: "#EDEDEA",
+  hemi: ["#ffffff", "#232326", 0.65],
+  halo: 0.55,
+  glow: 3,
+  core: 0.42,
+  lo: { color: "#cfe9a8", opacity: 0.5, emissive: 0.26, mirror: 0.3 },
+};
 const easeOut = (t: number) => 1 - Math.pow(1 - THREE.MathUtils.clamp(t, 0, 1), 3);
 const smooth = (a: number, b: number, v: number) => THREE.MathUtils.smoothstep(v, a, b);
 
@@ -57,7 +90,7 @@ function fadeBelow(m: THREE.Material, uniforms: { uDeep: { value: number } }, ke
 }
 
 /** A soft acid light behind the ghost, on the paper and in the mirror. */
-function Halo({ ghost }: { ghost: RefObject<THREE.Group> }) {
+function Halo({ ghost, strength }: { ghost: RefObject<THREE.Group>; strength: number }) {
   const sprite = useRef<THREE.Sprite>(null!);
   const mat = useMemo(() => {
     const c = document.createElement("canvas");
@@ -80,7 +113,7 @@ function Halo({ ghost }: { ghost: RefObject<THREE.Group> }) {
     const s = g.scale.x;
     sprite.current.position.set(g.position.x, g.position.y + 0.1 * s, g.position.z - 2.6);
     sprite.current.scale.setScalar(9.5 * s);
-    mat.opacity = THREE.MathUtils.damp(mat.opacity, g.visible ? 0.9 : 0, 3, Math.min(delta, 0.05));
+    mat.opacity = THREE.MathUtils.damp(mat.opacity, g.visible ? strength : 0, 3, Math.min(delta, 0.05));
   });
   return <sprite ref={sprite} material={mat} />;
 }
@@ -98,7 +131,7 @@ const FLOOR_W = 60;
 const FLOOR_L = 60;
 const FLOOR_Z = -20;
 
-function MirrorFloor({ tier, reduced, ghost }: { tier: Tier; reduced: boolean; ghost: RefObject<THREE.Group> }) {
+function MirrorFloor({ tier, reduced, ghost, palette }: { tier: Tier; reduced: boolean; ghost: RefObject<THREE.Group>; palette: Palette }) {
   const gl = useThree((s) => s.gl);
   const scene = useThree((s) => s.scene);
   const camera = useThree((s) => s.camera);
@@ -137,8 +170,8 @@ function MirrorFloor({ tier, reduced, ghost }: { tier: Tier; reduced: boolean; g
           uCam: { value: new THREE.Vector3() },
           uRise: { value: 1 },
           uShow: { value: 0 },
-          uPaper: { value: new THREE.Color(PAPER) },
-          uInk: { value: new THREE.Color("#0c0c0d") },
+          uPaper: { value: new THREE.Color(palette.sky) },
+          uInk: { value: new THREE.Color(palette.ink) },
           uAcid: { value: new THREE.Color("#b6ff3b") },
           uAcidDeep: { value: new THREE.Color("#7ed321") },
           uFogNear: { value: 9 },
@@ -233,7 +266,7 @@ function MirrorFloor({ tier, reduced, ghost }: { tier: Tier; reduced: boolean; g
           }
         `,
       }),
-    [target],
+    [target, palette],
   );
   useEffect(() => () => material.dispose(), [material]);
 
@@ -303,11 +336,13 @@ function Ghost({
   reduced,
   progress,
   holder,
+  palette,
 }: {
   tier: Tier;
   reduced: boolean;
   progress: RefObject<number>;
   holder: RefObject<THREE.Group>;
+  palette: Palette;
 }) {
   const { camera, size, gl, viewport } = useThree();
   const group = useRef<THREE.Group>(null!);
@@ -319,7 +354,7 @@ function Ghost({
     () => ({ uTime: { value: 0 }, uFlow: { value: 0 }, uRim: { value: new THREE.Color("#b6ff3b").multiplyScalar(1.1) } }),
     [],
   );
-  const background = useMemo(() => new THREE.Color(PAPER), []);
+  const background = useMemo(() => new THREE.Color(palette.sky), [palette]);
   // cut at the floor while it rises through it
   const plane = useMemo(() => new THREE.Plane(new THREE.Vector3(0, 1, 0), 0), []);
   const planes = useMemo(() => [plane], [plane]);
@@ -331,20 +366,20 @@ function Ghost({
   // translucent shell reads grey; its inner faces are left out for the same reason)
   const loMat = useMemo(() => {
     const m = new THREE.MeshPhysicalMaterial({
-      color: new THREE.Color("#f4fbe8"),
+      color: new THREE.Color(palette.lo.color),
       roughness: 0.18,
       transparent: true,
-      opacity: 0.84,
+      opacity: palette.lo.opacity,
       clearcoat: 1,
       clearcoatRoughness: 0.1,
       emissive: new THREE.Color("#b6ff3b"),
-      emissiveIntensity: 0.42,
+      emissiveIntensity: palette.lo.emissive,
       envMapIntensity: 1.2,
       clippingPlanes: planes,
     });
     patchGhost(m, uniforms);
     return m;
-  }, [uniforms, planes]);
+  }, [uniforms, planes, palette]);
   useLayoutEffect(() => {
     if (tier === "hi" && mtm.current) patchGhost(mtm.current, uniforms);
   }, [tier, uniforms]);
@@ -376,8 +411,15 @@ function Ghost({
     g.fillRect(0, 0, 128, 128);
     const t = new THREE.CanvasTexture(c);
     t.colorSpace = THREE.SRGBColorSpace;
-    return new THREE.SpriteMaterial({ map: t, blending: THREE.AdditiveBlending, depthWrite: false, transparent: true, opacity: 0.7, clippingPlanes: planes });
-  }, [planes]);
+    return new THREE.SpriteMaterial({
+      map: t,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+      transparent: true,
+      opacity: palette.core,
+      clippingPlanes: planes,
+    });
+  }, [planes, palette]);
 
   // light version (phones, tablets): the reflection is the ghost itself, drawn
   // upside down under the floor and over it (no second render of the scene)
@@ -388,10 +430,10 @@ function Ghost({
   const deep = useMemo(() => ({ uDeep: { value: 3 } }), []);
   const mirrorMat = useMemo(() => {
     const m = new THREE.MeshStandardMaterial({
-      color: new THREE.Color("#f4fbe8"),
+      color: new THREE.Color(palette.lo.color),
       roughness: 0.3,
       transparent: true,
-      opacity: 0.5,
+      opacity: palette.lo.mirror,
       emissive: new THREE.Color("#b6ff3b"),
       emissiveIntensity: 0.3,
       envMapIntensity: 1.1,
@@ -402,7 +444,7 @@ function Ghost({
     patchGhost(m, uniforms);
     fadeBelow(m, deep, "ghost-mirror");
     return m;
-  }, [uniforms, below, deep]);
+  }, [uniforms, below, deep, palette]);
   const mirrorEyeMat = useMemo(() => {
     const m = new THREE.MeshStandardMaterial({
       color: "#030303",
@@ -526,7 +568,7 @@ function Ghost({
     <>
       <group ref={group}>
         {/* the light inside (the light version glows by itself: this light would leave a glint on its face) */}
-        {tier === "hi" && <pointLight color="#b6ff3b" intensity={6} distance={7} decay={2} position={[0, 0.3, 0.3]} />}
+        {tier === "hi" && <pointLight color="#b6ff3b" intensity={palette.glow} distance={7} decay={2} position={[0, 0.3, 0.3]} />}
         <group ref={body}>
           {/* the glow inside: refracted by the full glass; the light version's glass glows on its own */}
           {tier === "hi" && <sprite material={core} scale={[1.45, 1.45, 1]} position={[0, 0.3, 0]} />}
@@ -661,6 +703,7 @@ export default function HeroScene({
   onReady,
   onFail,
   onLow,
+  night = false,
 }: {
   host: RefObject<HTMLElement>;
   progress: RefObject<number>;
@@ -670,8 +713,11 @@ export default function HeroScene({
   onFail: () => void;
   /** the device can't keep up: switch to the light materials */
   onLow: () => void;
+  /** the studio at night (/pose): dark sky and mirror, light grid */
+  night?: boolean;
 }) {
   const ghost = useRef<THREE.Group>(null);
+  const palette = night ? NIGHT : DAY;
   const [dpr, setDpr] = useState(() => densityFor(tier));
   useEffect(
     () => () => {
@@ -697,14 +743,14 @@ export default function HeroScene({
             onLow();
           }}
         />
-        {/* a paper sky: the mirror reflects light, not a void */}
-        <color attach="background" args={[PAPER]} />
+        {/* a paper sky: the mirror reflects light, not a void (a night sky on /pose) */}
+        <color attach="background" args={[palette.sky]} />
         <Rig />
         <Frameloop host={host} />
-        <fog attach="fog" args={[PAPER, 9, 24]} />
+        <fog attach="fog" args={[palette.sky, 9, 24]} />
         <ambientLight intensity={0.4} />
         {/* a pale sky over the studio floor */}
-        <hemisphereLight args={["#ffffff", "#e9e6de", 1.1]} />
+        <hemisphereLight args={palette.hemi} />
         <Environment resolution={256} frames={1}>
           <Lightformer form="rect" intensity={3} position={[0, 5, 1]} rotation-x={Math.PI / 2} scale={[7, 1.4, 1]} />
           <Lightformer form="rect" intensity={2.4} position={[-5, 0.5, 2]} rotation-y={Math.PI / 2} scale={[0.9, 8, 1]} />
@@ -713,9 +759,9 @@ export default function HeroScene({
           <Lightformer form="ring" color="#b6ff3b" intensity={3} position={[3, 3, -3]} scale={2.2} />
         </Environment>
         {/* the ghost first: the floor's reflection pass then sees it as drawn this frame */}
-        <Ghost tier={tier} reduced={reduced} progress={progress} holder={ghost} />
-        <Halo ghost={ghost} />
-        <MirrorFloor tier={tier} reduced={reduced} ghost={ghost} />
+        <Ghost tier={tier} reduced={reduced} progress={progress} holder={ghost} palette={palette} />
+        <Halo ghost={ghost} strength={palette.halo} />
+        <MirrorFloor tier={tier} reduced={reduced} ghost={ghost} palette={palette} />
         <Ready onReady={onReady} />
       </Canvas>
     </Guard>

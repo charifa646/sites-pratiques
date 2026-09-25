@@ -24,14 +24,9 @@ import { Questions } from "./Questions";
 import { Quote } from "./Quote";
 import { Stage } from "./Stage";
 import { FLOOR_Y, baseFov as fovFor, createSample, sampleDive, worldState } from "./stations";
-import { heroGhost } from "@/components/v2/handoff";
-import { HERO_READY } from "@/components/v2/quality";
 
-/**
- * Camera on the dive path, with pointer parallax, idle drift and a speed kick.
- * /pose: no dive; as the hero scrolls away the camera slowly steps back.
- */
-function Rig({ pose = false }: { pose?: boolean }) {
+/** Camera on the dive path, with pointer parallax, idle drift and a speed kick. */
+function Rig() {
   const { tall, reduced } = useWorld();
   const camera = useThree((s) => s.camera) as THREE.PerspectiveCamera;
   const size = useThree((s) => s.size);
@@ -76,11 +71,10 @@ function Rig({ pose = false }: { pose?: boolean }) {
     p.y += (target.current.y - p.y) * pk;
 
     const m = reduced ? 0 : 1;
-    const back = pose && !reduced ? THREE.MathUtils.smoothstep(scrollState.y / Math.max(1, scrollState.vh), 0, 1) : 0;
     camera.position.set(
       cam.current.x + (p.x * 0.4 + Math.sin(t * 0.21) * 0.1) * m,
-      cam.current.y + (-p.y * 0.22 + Math.sin(t * 0.17) * 0.07) * m + back * 0.5,
-      cam.current.z + back * 3,
+      cam.current.y + (-p.y * 0.22 + Math.sin(t * 0.17) * 0.07) * m,
+      cam.current.z,
     );
     camera.lookAt(look.current);
     const v = scrollState.velocity;
@@ -194,17 +188,7 @@ function Warmup({ onWarm }: { onWarm: () => void }) {
   return null;
 }
 
-function Scene({
-  flags,
-  selectionRef,
-  onReady,
-  pose,
-}: {
-  flags: Omit<WorldFlags, "tall">;
-  selectionRef: RefObject<HTMLDivElement>;
-  onReady: () => void;
-  pose: boolean;
-}) {
+function Scene({ flags, selectionRef, onReady }: { flags: Omit<WorldFlags, "tall">; selectionRef: RefObject<HTMLDivElement>; onReady: () => void }) {
   const width = useThree((s) => s.size.width);
   const value = useMemo(() => ({ ...flags, tall: width < 1024 }), [flags, width]);
   // The ghost and what surrounds it come first. The stations further down the dive
@@ -214,10 +198,8 @@ function Scene({
   const [fx, setFx] = useState(false);
   const ready = useCallback(() => {
     onReady();
-    // /pose keeps only the hero: no dive, so no stations further down
-    if (pose) window.setTimeout(() => setFx(true), 400);
-    else window.setTimeout(() => setRest("hidden"), 250);
-  }, [onReady, pose]);
+    window.setTimeout(() => setRest("hidden"), 250);
+  }, [onReady]);
   const restReady = useCallback(() => {
     setRest("shown");
     window.setTimeout(() => setFx(true), 400);
@@ -226,14 +208,14 @@ function Scene({
     <WorldCtx.Provider value={value}>
       <color attach="background" args={[flags.palette.bg]} />
       <fog attach="fog" args={[flags.palette.bg, 12, 46]} />
-      <Rig pose={pose} />
+      <Rig />
       <Lights />
       <Horizon />
       <Floor />
       <Gates />
       <Dust />
       <Constellation />
-      <Ghost selectionRef={selectionRef} handoff={pose} />
+      <Ghost selectionRef={selectionRef} />
       {rest !== "off" && (
         <group visible={rest === "shown"}>
           <Browser />
@@ -267,22 +249,7 @@ class Guard extends Component<{ children: ReactNode }, { failed: boolean }> {
   }
 }
 
-/**
- * mode "dive" (the site): the camera travels through every station as the page scrolls.
- * mode "pose" (/pose): the world is the hero's only; the ghost then becomes the page's
- * companion, and the world stops drawing once the hero has left the screen.
- */
-export default function World({
-  selectionRef,
-  palette = "night",
-  mode = "dive",
-}: {
-  selectionRef: RefObject<HTMLDivElement>;
-  palette?: PaletteName;
-  mode?: "dive" | "pose";
-}) {
-  const pose = mode === "pose";
-  const [heroOn, setHeroOn] = useState(true);
+export default function World({ selectionRef, palette = "night" }: { selectionRef: RefObject<HTMLDivElement>; palette?: PaletteName }) {
   const [tier, setTier] = useState<"hi" | "lo" | null>(null);
   const [dpr, setDpr] = useState(1);
   const [maxDpr, setMaxDpr] = useState(1.5);
@@ -290,45 +257,8 @@ export default function World({
   const [ready, setReady] = useState(false);
   const [warm, setWarm] = useState(false);
   const [pinned, setPinned] = useState(false);
-  const dim = useRef<HTMLDivElement>(null);
   const onWarm = useCallback(() => setWarm(true), []);
-  const onReady = useCallback(() => {
-    setReady(true);
-    if (pose) {
-      // the companion of the page wakes up once the hero's 3D is on screen
-      heroGhost.ready = true;
-      window.dispatchEvent(new Event(HERO_READY));
-    }
-  }, [pose]);
-
-  // /pose: the world sinks into the dark as the hero scrolls away
-  useEffect(() => {
-    if (!pose) return;
-    let raf = 0;
-    const update = () => {
-      raf = 0;
-      const k = Math.min(1, Math.max(0, window.scrollY / window.innerHeight));
-      if (dim.current) dim.current.style.opacity = (0.75 * k * k * (3 - 2 * k)).toFixed(3);
-    };
-    const onScroll = () => {
-      if (!raf) raf = requestAnimationFrame(update);
-    };
-    update();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      cancelAnimationFrame(raf);
-    };
-  }, [pose, tier]);
-
-  useEffect(() => {
-    if (!pose) return;
-    const hero = document.getElementById("top");
-    if (!hero) return;
-    const io = new IntersectionObserver(([e]) => setHeroOn(e.isIntersecting));
-    io.observe(hero);
-    return () => io.disconnect();
-  }, [pose]);
+  const onReady = useCallback(() => setReady(true), []);
 
   useEffect(() => {
     const rm = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -384,7 +314,7 @@ export default function World({
         <Canvas
           flat
           dpr={dpr}
-          frameloop={warm && heroOn ? "always" : "never"}
+          frameloop={warm ? "always" : "never"}
           gl={{ antialias: tier === "lo", alpha: false, powerPreference: "high-performance", stencil: false }}
           camera={{ fov: 35, near: 0.1, far: 80, position: [0, 0.25, 9] }}
         >
@@ -399,11 +329,10 @@ export default function World({
               }}
             />
           )}
-          <Scene flags={flags} selectionRef={selectionRef} onReady={onReady} pose={pose} />
+          <Scene flags={flags} selectionRef={selectionRef} onReady={onReady} />
           <Warmup onWarm={onWarm} />
         </Canvas>
       </Guard>
-      {pose && <div ref={dim} className="absolute inset-0 bg-void opacity-0" />}
     </div>
   );
 }

@@ -173,3 +173,73 @@
     opacity: 0;
   }
 }
+
+/* V2's header, on the dark side: its hairline, the logo's square and the
+   tour's play button take the night's colours */
+.pose header.shadow-\[0_1px_0_\#E3E1D9\] {
+  box-shadow: 0 1px 0 rgb(var(--c-line));
+}
+.pose header a[href="#top"] .bg-ink {
+  background-color: #19191c;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+.pose header button[aria-label="Lancer la visite guidée"] > span:first-child {
+  color: #b6ff3b;
+}
+
+/* V2's hero at night (the scene itself turns dark, see HeroScene): smoked
+   glass panes, light construction lines, the accent word lit in acid */
+.pose .v2-hero {
+  background: rgb(var(--c-paper));
+}
+.pose .v2-card[data-tone="clear"] .v2-card-in {
+  background: rgba(255, 255, 255, 0.02);
+}
+.pose .v2-fog,
+.pose .v2-mist {
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.025));
+  box-shadow:
+    inset 1px 1px 0 rgba(255, 255, 255, 0.12),
+    inset -1px -1px 0 rgba(0, 0, 0, 0.25);
+}
+.pose .v2-card[data-tone="glass"] .v2-fog {
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.015));
+}
+.pose .v2-edge-x,
+.pose .v2-edge-y {
+  background: rgba(255, 255, 255, 0.1);
+}
+.pose .v2-frame-x,
+.pose .v2-frame-y {
+  background: rgba(255, 255, 255, 0.08);
+}
+.pose .v2-hero .border-acid-deep {
+  border-color: #b6ff3b;
+}
+.pose .v2-hero h1 .font-serif {
+  color: #b6ff3b;
+  text-shadow:
+    0 0 14px rgba(182, 255, 59, 0.26),
+    0 0 44px rgba(182, 255, 59, 0.14);
+}
+.pose .v2-hero h1 .bg-acid {
+  opacity: 0.28;
+  filter: blur(10px);
+}
+/* the small words that cross the ghost's glow stay readable */
+.pose .v2-hero h1 {
+  text-shadow: 0 2px 28px rgba(0, 0, 0, 0.45);
+}
+.pose .v2-hero .v2-copy p,
+.pose .v2-hero .v2-lede {
+  color: rgba(237, 237, 234, 0.84);
+  text-shadow:
+    0 0 18px rgba(0, 0, 0, 0.85),
+    0 1px 3px rgba(0, 0, 0, 0.7);
+}
+
+/* the waves take over the straight edges they replace */
+.pose div:has(> .v2-marquee),
+.pose #contact {
+  border-top-color: transparent;
+}
