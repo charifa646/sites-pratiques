@@ -3,7 +3,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useId, useState, type FormEvent, type ReactNode } from "react";
 import { contact } from "@/lib/copy";
-import { composeBrief, gmailHref, isEmail, mailHref, whatsappTarget, type Brief } from "@/lib/brief";
+import { composeBrief, gmailHref, isEmail, mailHref, sendBrief, whatsappTarget, type Brief } from "@/lib/brief";
 import { site } from "@/lib/site";
 import { useIntent } from "@/components/ui/Providers";
 import { Arrow } from "@/components/ui/Button";
@@ -45,12 +45,13 @@ function Select({ id, value, onChange, options }: { id: string; value: string; o
 }
 
 /**
- * Brief composer (no backend): the visitor fills a few fields, reviews the
- * generated message, then sends it from WhatsApp or by e-mail: Gmail on
- * computers (a mailto link often finds no mail app there), the mail app on
- * phones, with the mail app and a copy of the message as the other ways.
+ * Brief composer: the visitor fills a few fields, reviews the generated
+ * message, then sends it on WhatsApp, or by e-mail: the site sends it itself
+ * (see sendBrief), with Gmail, the mail app or a copy of the message as the
+ * ways out if that fails. `bare`: without its own glass card (the quote
+ * window already is one).
  */
-export function BriefForm() {
+export function BriefForm({ bare = false }: { bare?: boolean }) {
   const uid = useId();
   const { need: intentNeed } = useIntent();
   const [brief, setBrief] = useState<Brief>({
@@ -65,11 +66,10 @@ export function BriefForm() {
   const [message, setMessage] = useState("");
   const [copied, setCopied] = useState(false);
   const [mailCopied, setMailCopied] = useState(false);
-  const [touch, setTouch] = useState(false);
+  const [sending, setSending] = useState<"idle" | "sending" | "sent" | "failed">("idle");
+  // filled in by robots only (hidden from people)
+  const [trap, setTrap] = useState("");
   const wa = whatsappTarget(message);
-
-  // phones and tablets open their mail app; computers get Gmail's window
-  useEffect(() => setTouch(window.matchMedia("(hover: none) and (pointer: coarse)").matches), []);
 
   const copy = async () => {
     try {
@@ -95,6 +95,17 @@ export function BriefForm() {
     setMailCopied(true);
   };
 
+  // by e-mail: the site sends it; an address is needed to answer
+  const sendByMail = async () => {
+    if (!isEmail(brief.email)) {
+      setErrors({ email: contact.errors.emailNeeded });
+      setStep("form");
+      return;
+    }
+    setSending("sending");
+    setSending((await sendBrief(brief, message, trap)) ? "sent" : "failed");
+  };
+
   // A service card picked earlier pre-selects the need.
   useEffect(() => {
     if (intentNeed) {
@@ -117,6 +128,7 @@ export function BriefForm() {
     setErrors(next);
     if (Object.keys(next).length) return;
     setMessage(composeBrief(brief));
+    setSending("idle");
     setStep("review");
   };
 
@@ -124,7 +136,7 @@ export function BriefForm() {
   const id = (k: string) => `${uid}-${k}`;
 
   return (
-    <div data-portal className="glass relative overflow-hidden rounded-[32px] p-6 sm:p-9">
+    <div data-portal={bare ? undefined : ""} className={cx("relative", bare ? "px-5 pb-6 sm:px-7 sm:pb-7" : "glass overflow-hidden rounded-[32px] p-6 sm:p-9")}>
       <AnimatePresence mode="wait" initial={false}>
         {step === "form" ? (
           <motion.form
@@ -191,6 +203,11 @@ export function BriefForm() {
                 onChange={(e) => set("budget")(e.target.value)}
               />
             </div>
+            {/* only robots fill this in */}
+            <div aria-hidden className="absolute -left-[9999px] h-px w-px overflow-hidden">
+              <label htmlFor={id("website")}>Site web</label>
+              <input id={id("website")} tabIndex={-1} autoComplete="off" value={trap} onChange={(e) => setTrap(e.target.value)} />
+            </div>
             <div className="sm:col-span-2">
               <Label htmlFor={id("idea")}>{f.idea.label}</Label>
               <textarea
@@ -244,61 +261,77 @@ export function BriefForm() {
               onChange={(e) => setMessage(e.target.value)}
               className={cx(field, "mt-5 resize-y font-mono text-[13px] leading-relaxed")}
             />
-            <div className="mt-5 grid gap-3 sm:grid-cols-2">
-              <a
-                href={wa.href}
-                onClick={toWhatsApp}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group flex items-center justify-between rounded-full bg-acid px-5 py-3.5 text-[15px] font-medium text-acid-ink shadow-[0_10px_30px_-14px_rgba(182,255,59,0.5)]"
-              >
-                {contact.review.whatsapp}
-                <Arrow className="h-5 w-5 -rotate-45 transition-transform duration-500 ease-expo group-hover:rotate-0" />
-              </a>
-              <a
-                href={touch ? mailHref(message, brief.need) : gmailHref(message, brief.need)}
-                target={touch ? undefined : "_blank"}
-                rel={touch ? undefined : "noopener noreferrer"}
-                className="group flex items-center justify-between rounded-full border border-white/15 px-5 py-3.5 text-[15px] text-bone transition-colors duration-300 hover:border-acid/60 hover:text-acid"
-              >
-                {contact.review.email}
-                <Arrow className="h-5 w-5 -rotate-45 transition-transform duration-500 ease-expo group-hover:rotate-0" />
-              </a>
-            </div>
-            {!touch && (
-              <p className="mt-3 text-[13px] leading-relaxed text-fog">
-                {contact.review.notGmail}{" "}
+            {sending === "sent" ? (
+              <div role="status" className="mt-5 rounded-2xl border border-acid/30 bg-acid/[0.06] p-5">
+                <p className="flex items-center gap-2.5 text-[16px] font-medium text-bone">
+                  <svg viewBox="0 0 16 16" className="h-4 w-4 text-acid" fill="none" stroke="currentColor" strokeWidth="2.2" aria-hidden>
+                    <path d="m3.5 8.5 3 3 6-7" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                  {contact.review.sent.title}
+                </p>
+                <p className="mt-1.5 text-[14px] leading-relaxed text-fog">{contact.review.sent.text}</p>
+              </div>
+            ) : (
+              <div className="mt-5 grid gap-3 sm:grid-cols-2">
                 <a
-                  href={mailHref(message, brief.need)}
-                  className="text-bone underline decoration-white/30 underline-offset-4 transition-colors hover:decoration-acid"
+                  href={wa.href}
+                  onClick={toWhatsApp}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group flex items-center justify-between rounded-full bg-acid px-5 py-3.5 text-[15px] font-medium text-acid-ink shadow-[0_10px_30px_-14px_rgba(182,255,59,0.5)]"
                 >
-                  {contact.review.mailApp}
-                </a>{" "}
-                {contact.review.or}{" "}
+                  {contact.review.whatsapp}
+                  <Arrow className="h-5 w-5 -rotate-45 transition-transform duration-500 ease-expo group-hover:rotate-0" />
+                </a>
                 <button
                   type="button"
-                  onClick={copyForMail}
-                  className="text-bone underline decoration-white/30 underline-offset-4 transition-colors hover:decoration-acid"
+                  onClick={sendByMail}
+                  disabled={sending === "sending"}
+                  className="group flex items-center justify-between rounded-full border border-white/15 px-5 py-3.5 text-left text-[15px] text-bone transition-colors duration-300 hover:border-acid/60 hover:text-acid disabled:opacity-60"
                 >
+                  {sending === "sending" ? contact.review.sending : contact.review.email}
+                  <Arrow className="h-5 w-5 -rotate-45 transition-transform duration-500 ease-expo group-hover:rotate-0" />
+                </button>
+              </div>
+            )}
+            {sending === "failed" && (
+              <p className="mt-3 text-[13px] leading-relaxed text-[#F2A58E]">
+                {contact.review.failed}{" "}
+                <a
+                  href={gmailHref(message, brief.need)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-bone underline decoration-white/30 underline-offset-4"
+                >
+                  {contact.review.gmail}
+                </a>
+                {" · "}
+                <a href={mailHref(message, brief.need)} className="text-bone underline decoration-white/30 underline-offset-4">
+                  {contact.review.mailApp}
+                </a>
+                {" · "}
+                <button type="button" onClick={copyForMail} className="text-bone underline decoration-white/30 underline-offset-4">
                   {contact.review.copyMail}
                 </button>
-                .
               </p>
             )}
             <p role="status" className={cx("mt-3 text-[13px] leading-relaxed text-bone", !copied && !mailCopied && "sr-only")}>
               {copied ? contact.review.copied : mailCopied ? `${contact.review.copiedMail} ${site.email}.` : ""}
             </p>
-            <button
-              type="button"
-              onClick={() => {
-                setCopied(false);
-                setMailCopied(false);
-                setStep("form");
-              }}
-              className="mt-4 text-[13px] text-fog underline-offset-4 transition-colors hover:text-bone hover:underline"
-            >
-              ← {contact.review.edit}
-            </button>
+            {sending !== "sent" && (
+              <button
+                type="button"
+                onClick={() => {
+                  setCopied(false);
+                  setMailCopied(false);
+                  setSending("idle");
+                  setStep("form");
+                }}
+                className="mt-4 text-[13px] text-fog underline-offset-4 transition-colors hover:text-bone hover:underline"
+              >
+                ← {contact.review.edit}
+              </button>
+            )}
           </motion.div>
         )}
       </AnimatePresence>

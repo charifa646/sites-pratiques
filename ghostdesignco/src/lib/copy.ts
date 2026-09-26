@@ -177,7 +177,7 @@ export const contact = {
   },
   needs: ["Site vitrine", "Landing page", "Page de vente", "Je ne sais pas encore"],
   submit: "Préparer mon message",
-  note: "Simple et sans engagement. Vous pourrez relire votre brief avant de l'envoyer depuis votre messagerie.",
+  note: "Simple et sans engagement. Vous relirez votre brief avant de l'envoyer, par WhatsApp ou par e-mail.",
   review: {
     title: "Votre brief est prêt.",
     text: "Relisez-le, puis envoyez-le par le canal de votre choix.",
@@ -185,10 +185,12 @@ export const contact = {
     email: "Envoyer par e-mail",
     edit: "Modifier",
     copied: "Votre brief est copié : collez-le dans la conversation WhatsApp qui s'ouvre.",
-    // computers: the e-mail button opens Gmail; the other ways, under it
-    notGmail: "Pas sur Gmail ?",
-    mailApp: "Ouvrir votre messagerie",
-    or: "ou",
+    // the site sends the e-mail itself; if it fails, the other ways
+    sending: "Envoi en cours…",
+    sent: { title: "Message envoyé.", text: "Merci ! Nous vous répondons très vite par e-mail." },
+    failed: "L'envoi n'a pas abouti. Réessayez dans un instant, ou :",
+    gmail: "ouvrir Gmail",
+    mailApp: "ouvrir votre messagerie",
     copyMail: "copier le message",
     copiedMail: "Message copié : collez-le dans un e-mail à",
   },
@@ -196,6 +198,7 @@ export const contact = {
     name: "Indiquez votre nom.",
     idea: "Dites-nous quelques mots sur votre projet.",
     email: "Cette adresse e-mail semble incomplète.",
+    emailNeeded: "Indiquez votre e-mail pour recevoir notre réponse.",
   },
 };
 

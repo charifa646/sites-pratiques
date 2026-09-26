@@ -22,6 +22,7 @@ import { HERO_READY } from "@/components/v2/quality";
 import { V2_STEPS, locateV2 } from "@/components/v2/tour";
 import { PoseIncluded } from "./Included";
 import { PoseProof } from "./Proof";
+import { QuoteModal } from "./QuoteModal";
 import { Wave } from "./Wave";
 import { PoseWork } from "./Work";
 
@@ -129,6 +130,7 @@ export function PoseHome() {
       </div>
       {companion && <Companion />}
       <Tour />
+      <QuoteModal />
     </div>
   );
 }

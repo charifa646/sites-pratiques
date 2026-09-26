@@ -1,6 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
+import { quote } from "@/lib/quote";
 import { scrollToY } from "@/lib/scroll";
 import { Arrow } from "@/components/ui/Button";
 import { GhostMark } from "@/components/ui/Logo";
@@ -8,8 +9,9 @@ import { cx } from "@/components/ui/motion";
 
 export const HEADER_H = 68;
 
-/** Smooth scroll to a section, leaving room for the fixed header. */
+/** Smooth scroll to a section, leaving room for the fixed header (the contact opens the quote window where there is one). */
 export function goTo(id: string) {
+  if (id === "contact" && quote.open()) return;
   const el = document.getElementById(id);
   if (!el) return;
   scrollToY(el.getBoundingClientRect().top + window.scrollY - (id === "top" ? 0 : HEADER_H - 1), { duration: 1.2 });

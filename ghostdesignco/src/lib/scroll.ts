@@ -1,4 +1,5 @@
 import type Lenis from "lenis";
+import { quote } from "./quote";
 
 /**
  * Shared scroll state for the DOM and the WebGL world.
@@ -68,6 +69,16 @@ export function scrollToY(
   tween = requestAnimationFrame(step);
 }
 
+/** Freezes the page while a window is open over it, then lets it go. */
+export function lockScroll() {
+  lenis?.stop();
+  document.documentElement.style.overflow = "hidden";
+}
+export function unlockScroll() {
+  document.documentElement.style.overflow = "";
+  lenis?.start();
+}
+
 /** Stops a running scrollToY (the page stays where it is). */
 export function cancelScroll() {
   if (tween) cancelAnimationFrame(tween);
@@ -87,6 +98,7 @@ export const dive = { duration: 2.6 };
 
 /** Cinematic scroll to a section (the "dive"); instant when motion is reduced. */
 export function diveTo(id: string) {
+  if (id === "contact" && quote.open()) return;
   const el = document.getElementById(id);
   if (!el) return;
   const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;

@@ -56,8 +56,8 @@ export default function Legal() {
 
         <Block title="Données personnelles">
           <p>
-            Le formulaire de contact n&apos;enregistre aucune donnée sur un serveur : votre message est préparé dans votre navigateur,
-            puis vous l&apos;envoyez vous-même par WhatsApp ou par e-mail.
+            Le formulaire de contact vous permet de nous envoyer votre demande par WhatsApp ou par e-mail. Envoyée par e-mail, elle
+            nous est transmise par le service FormSubmit (formsubmit.co) ; ce site ne l&apos;enregistre pas.
           </p>
           <p>
             Les informations que vous nous transmettez servent uniquement à répondre à votre demande et à préparer votre devis. Vous
