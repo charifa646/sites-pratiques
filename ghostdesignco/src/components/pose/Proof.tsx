@@ -45,7 +45,7 @@ const FIGURES = [
 ] as const;
 
 /**
- * En chiffres, on /pose: four glass cards laid a little askew, like prints
+ * En chiffres, on the site: four glass cards laid a little askew, like prints
  * dropped on a table; they settle in when they come on screen and straighten
  * under the pointer.
  */

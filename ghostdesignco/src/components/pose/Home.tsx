@@ -37,10 +37,11 @@ const RAISE = "rgb(var(--c-raise))";
 const BAND = "#0B0B0C";
 
 /**
- * The posed version, on the dark side: V2's hero (the ghost behind the glass,
- * framed like the MAKEDO slides) in a night studio, then V2's calm sections.
- * Waves carry the page from one tone to the next, and the ghost leaves the
- * hero to walk down the page.
+ * The site (home page), "la version posée", on the dark side: V2's hero (the
+ * ghost behind the glass, framed like the MAKEDO slides) in a night studio,
+ * then V2's calm sections. Waves carry the page from one tone to the next, and
+ * the ghost leaves the hero to walk down the page. The earlier versions stay
+ * at /v1 (the 3D dive), /v2 (light) and /nuit-chaude.
  */
 export function PoseHome() {
   const [companion, setCompanion] = useState(false);
@@ -104,7 +105,7 @@ export function PoseHome() {
     <div className="pose" data-ghost-dark>
       <V2Header />
       <main>
-        <V2Hero night />
+        <V2Hero night lead="eyebrow" />
         <Wave from={PAPER} fill={RAISE} crest />
         <Marquee />
         <PoseProof n={n("preuve")} />

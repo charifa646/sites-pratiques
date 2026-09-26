@@ -24,7 +24,7 @@ export type Tier = "hi" | "lo";
 const PAPER = "#F4F3EE";
 
 /**
- * Daylight (V2), or night (/pose): the sky and floor, the grid's ink, the sky
+ * Daylight (V2), or night (the site): the sky and floor, the grid's ink, the sky
  * light, the halo, the light inside the ghost, and the light version's glass
  * (at night softer and clearer, as the words cross it). The night has no
  * mirror floor: the ghost floats in the dark, in its halo.
@@ -718,7 +718,7 @@ export default function HeroScene({
   onFail: () => void;
   /** the device can't keep up: switch to the light materials */
   onLow: () => void;
-  /** the studio at night (/pose): dark sky and mirror, light grid */
+  /** the studio at night (the site): dark sky, light words, no mirror */
   night?: boolean;
 }) {
   const ghost = useRef<THREE.Group>(null);
@@ -748,7 +748,7 @@ export default function HeroScene({
             onLow();
           }}
         />
-        {/* a paper sky: the mirror reflects light, not a void (a night sky on /pose) */}
+        {/* a paper sky: the mirror reflects light, not a void (a night sky on the site) */}
         <color attach="background" args={[palette.sky]} />
         <Rig />
         <Frameloop host={host} />

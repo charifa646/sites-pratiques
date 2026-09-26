@@ -115,7 +115,7 @@ function NextCard() {
 }
 
 /**
- * Réalisations on /pose: the projects are a pile of cards. Scrolling lays
+ * Réalisations on the site: the projects are a pile of cards. Scrolling lays
  * each one over the one before; the last is the place for the next project.
  */
 export function PoseWork({ n }: { n?: string }) {

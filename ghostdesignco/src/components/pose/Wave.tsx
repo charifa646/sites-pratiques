@@ -4,7 +4,7 @@ import { cx } from "@/components/ui/motion";
 const EDGE = "M0,70 C120,88 220,104 360,102 C560,98 700,60 900,42 C1060,28 1200,14 1320,18 C1380,20 1420,26 1440,30";
 
 /**
- * The edge between two sections on /pose: the next section's colour rising
+ * The edge between two sections on the site: the next section's colour rising
  * as a wave over the bottom of the one before (its padding). With `from`, the
  * wave takes its own band of that colour instead, for a section whose bottom
  * is not free. `crest` draws a thin acid line along it, `line` a faint one,

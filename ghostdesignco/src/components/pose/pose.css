@@ -1,5 +1,5 @@
 /*
- * /pose: the sections of V2 on the dark side. Its light tokens (paper, ink,
+ * The site (la version posée): the sections of V2 on the dark side. Its light tokens (paper, ink,
  * line) turn dark inside .pose; the drawn websites (each one a size
  * container) keep their light screens, like a client's site on a monitor.
  */
@@ -216,22 +216,23 @@
 .pose .v2-hero .border-acid-deep {
   border-color: #b6ff3b;
 }
-.pose .v2-hero h1 .font-serif {
+.pose .v2-hero .v2-title .font-serif {
   color: #b6ff3b;
   text-shadow:
     0 0 14px rgba(182, 255, 59, 0.26),
     0 0 44px rgba(182, 255, 59, 0.14);
 }
-.pose .v2-hero h1 .bg-acid {
+.pose .v2-hero .v2-title .bg-acid {
   opacity: 0.28;
   filter: blur(10px);
 }
 /* the small words that cross the ghost's glow stay readable */
-.pose .v2-hero h1 {
+.pose .v2-hero .v2-title {
   text-shadow: 0 2px 28px rgba(0, 0, 0, 0.45);
 }
-.pose .v2-hero .v2-copy p,
-.pose .v2-hero .v2-lede {
+.pose .v2-hero .v2-eyebrow,
+.pose .v2-hero .v2-lede,
+.pose .v2-hero .v2-reassure {
   color: rgba(237, 237, 234, 0.84);
   text-shadow:
     0 0 18px rgba(0, 0, 0, 0.85),

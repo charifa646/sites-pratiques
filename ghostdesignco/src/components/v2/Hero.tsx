@@ -407,8 +407,14 @@ function Bracketed({ children, className }: { children: ReactNode; className?: s
   );
 }
 
-/** `night`: the same hero in the dark studio of /pose (its colours come from the page). */
-export function V2Hero({ night = false }: { night?: boolean }) {
+/**
+ * `night`: the same hero in a dark studio (its colours come from the page).
+ * `lead`: which line is the page's h1, the big title (V2) or the small line
+ * above it, « Création de site web sur mesure » (the site, for search engines).
+ */
+export function V2Hero({ night = false, lead = "title" }: { night?: boolean; lead?: "title" | "eyebrow" }) {
+  const Eyebrow = lead === "eyebrow" ? "h1" : "p";
+  const Title = lead === "eyebrow" ? "p" : "h1";
   const ref = useRef<HTMLElement>(null);
   useMist(ref);
   const words = hero.title.lead.split(" ");
@@ -437,12 +443,12 @@ export function V2Hero({ night = false }: { night?: boolean }) {
       <div className="v2-copy pointer-events-none absolute inset-0 z-10 flex flex-col items-center px-5 text-center sm:px-8">
         <div className="flex flex-col items-center">
           <Rise>
-            <p className="text-[13px] tracking-[0.01em] text-ink-soft sm:text-[14px]">
+            <Eyebrow className="v2-eyebrow text-[13px] tracking-[0.01em] text-ink-soft sm:text-[14px]">
               <Bracketed>{hero.eyebrow}</Bracketed>
-            </p>
+            </Eyebrow>
           </Rise>
           <Rise delay={0.05}>
-            <h1
+            <Title
               id="v2-hero-title"
               className="v2-title mt-4 font-display font-semibold leading-[0.94] tracking-[-0.045em] [text-wrap:balance] sm:mt-5"
             >
@@ -454,7 +460,7 @@ export function V2Hero({ night = false }: { night?: boolean }) {
                   <span className="relative">{hero.title.accent}</span>
                 </span>
               </span>
-            </h1>
+            </Title>
           </Rise>
         </div>
         <div className="v2-copy-end flex flex-col items-center">

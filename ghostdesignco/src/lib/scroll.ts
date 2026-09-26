@@ -82,7 +82,7 @@ export function stationSpan(id: string) {
   return { top: s.top, range: Math.max(0, s.height - scrollState.vh) };
 }
 
-/** How long a dive lasts, in seconds (/pose sets a calmer pace while it is on screen). */
+/** How long a dive lasts, in seconds (the posed site sets a calmer pace while it is on screen). */
 export const dive = { duration: 2.6 };
 
 /** Cinematic scroll to a section (the "dive"); instant when motion is reduced. */

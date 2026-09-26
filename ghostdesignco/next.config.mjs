@@ -5,9 +5,11 @@ const nextConfig = {
   // origin). Production is unaffected; this keeps `next dev` faithful to it.
   reactStrictMode: false,
   poweredByHeader: false,
-  // the old address sends visitors and search engines to the real domain
+  // the old address sends visitors and search engines to the real domain;
+  // /pose, the draft of the final version, is now the home page
   async redirects() {
     return [
+      { source: "/pose", destination: "/", permanent: false },
       {
         source: "/:path*",
         has: [{ type: "host", value: "ghostdesignco.vercel.app" }],

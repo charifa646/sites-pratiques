@@ -295,7 +295,7 @@ const CARDS: { art: ReactNode; icon: ReactNode; title: string; text: string; lin
 ];
 
 /**
- * Tout est compris (/pose): what the client will not have to deal with, in
+ * Tout est compris (the site): what the client will not have to deal with, in
  * four cards. Each has a small scene at the top (drawn in HTML, animated
  * while on screen), then its promise, taken from the FAQ, the method and the
  * pricing of the site.
