@@ -48,8 +48,9 @@ const TURN_MS = 5000;
 /**
  * On large screens the section is pinned: scrolling walks through the three
  * services (the tabs follow, and a click scrolls to its service). Smaller
- * screens keep plain tabs; with `cycle` (the site) the offers take turns on
- * their own there, a light filling the active tab, until the visitor picks
+ * screens keep plain tabs; with `cycle` (the site) each tab has a small
+ * lamp, lit on the offer shown, and on smaller screens the offers take turns
+ * on their own, the lamp going from one to the next, until the visitor picks
  * one with a tab or a swipe.
  */
 export function V2Services({ n, cycle = false }: { n?: string; cycle?: boolean }) {
@@ -181,19 +182,18 @@ export function V2Services({ n, cycle = false }: { n?: string; cycle?: boolean }
                       : "text-ink-soft hover:text-ink",
                   )}
                 >
-                  {it.title}
-                  {/* the site: the active tab glows, and a light fills it while the offers take turns */}
-                  {cycle && i === active && (
+                  {/* the site: a small lamp, lit on the offer shown (it breathes while the offers take turns) */}
+                  {cycle && (
                     <span
                       aria-hidden
-                      className="pointer-events-none absolute inset-0 rounded-full shadow-[0_0_0_1px_rgba(182,255,59,0.35),0_0_22px_-5px_rgba(182,255,59,0.6)]"
+                      className={cx(
+                        "mr-1.5 inline-block h-1.5 w-1.5 -translate-y-px rounded-full align-middle transition-[background-color,box-shadow] duration-500",
+                        i === active ? "bg-acid shadow-[0_0_8px_2px_rgba(182,255,59,0.7)]" : "bg-white/20",
+                        turning && i === active && "pose-lamp",
+                      )}
                     />
                   )}
-                  {turning && i === active && (
-                    <span aria-hidden className="pointer-events-none absolute inset-x-4 bottom-[5px] h-[2px] overflow-hidden rounded-full bg-white/10">
-                      <span key={active} className="pose-tab-fill block h-full w-full bg-acid" style={{ animationDuration: `${TURN_MS}ms` }} />
-                    </span>
-                  )}
+                  {it.title}
                 </button>
               ))}
               {pinned && (

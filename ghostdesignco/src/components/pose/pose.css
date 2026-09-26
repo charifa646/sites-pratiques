@@ -255,17 +255,16 @@
   display: none;
 }
 
-/* Services, smaller screens: the light that fills the active tab while the offers take turns */
-@keyframes pose-tab-fill {
-  from {
-    transform: scaleX(0);
+/* Services: the lamp of the offer shown breathes while the offers take turns */
+@keyframes pose-lamp {
+  0%,
+  100% {
+    box-shadow: 0 0 6px 1px rgba(182, 255, 59, 0.55);
   }
-  to {
-    transform: scaleX(1);
+  50% {
+    box-shadow: 0 0 12px 3px rgba(182, 255, 59, 0.95);
   }
 }
-.pose-tab-fill {
-  transform-origin: left;
-  animation: pose-tab-fill 5s linear forwards;
-  box-shadow: 0 0 8px rgba(182, 255, 59, 0.8);
+.pose-lamp {
+  animation: pose-lamp 1.6s ease-in-out infinite;
 }
