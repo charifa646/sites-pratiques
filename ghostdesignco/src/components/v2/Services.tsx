@@ -50,8 +50,9 @@ const TURN_MS = 5000;
  * services (the tabs follow, and a click scrolls to its service). Smaller
  * screens keep plain tabs; with `cycle` (the site) each tab has a small
  * lamp, lit on the offer shown, and on smaller screens the offers take turns
- * on their own, the lamp going from one to the next, until the visitor picks
- * one with a tab or a swipe.
+ * on their own (the lamp goes from one to the next, a bar of three segments
+ * under the tabs fills as they do) until the visitor picks one with a tab or
+ * a swipe; the tabs sit close to the offer there.
  */
 export function V2Services({ n, cycle = false }: { n?: string; cycle?: boolean }) {
   const ref = useRef<HTMLElement>(null);
@@ -201,6 +202,23 @@ export function V2Services({ n, cycle = false }: { n?: string; cycle?: boolean }
                   <motion.span style={{ width: bar }} className="block h-full bg-ink" />
                 </span>
               )}
+              {/* the site, smaller screens: one segment per offer, the one shown fills while they take turns */}
+              {cycle && !pinned && (
+                <span aria-hidden className="absolute -bottom-[11px] left-5 right-5 flex gap-1.5">
+                  {offer.items.map((it, i) => (
+                    <span key={it.id} className="h-[2px] flex-1 overflow-hidden rounded-full bg-white/10">
+                      <span
+                        key={i === active ? `${active}-${turning}` : it.id}
+                        className={cx(
+                          "block h-full origin-left bg-acid transition-transform duration-300",
+                          i < active ? "scale-x-100" : i > active ? "scale-x-0" : turning ? "pose-seg-fill" : "scale-x-100",
+                        )}
+                        style={i === active && turning ? { animationDuration: `${TURN_MS}ms` } : undefined}
+                      />
+                    </span>
+                  ))}
+                </span>
+              )}
             </div>
           </Rise>
 
@@ -232,7 +250,7 @@ export function V2Services({ n, cycle = false }: { n?: string; cycle?: boolean }
             data-ghost-m="tr"
             data-ghost-mx="-0.4"
             data-ghost-my="-0.36"
-            className="mt-9 grid overflow-hidden rounded-[32px] border border-line bg-paper"
+            className={cx("grid overflow-hidden rounded-[32px] border border-line bg-paper", cycle && !pinned ? "mt-6" : "mt-9")}
           >
             <AnimatePresence initial={false}>
               <motion.div

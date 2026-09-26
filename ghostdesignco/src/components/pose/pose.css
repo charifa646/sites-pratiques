@@ -268,3 +268,17 @@
 .pose-lamp {
   animation: pose-lamp 1.6s ease-in-out infinite;
 }
+
+/* and the segment of the offer shown fills, under the tabs (phones) */
+@keyframes pose-seg-fill {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+.pose-seg-fill {
+  animation: pose-seg-fill 5s linear forwards;
+  box-shadow: 0 0 6px rgba(182, 255, 59, 0.7);
+}
