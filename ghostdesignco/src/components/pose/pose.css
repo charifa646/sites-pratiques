@@ -7,7 +7,8 @@
   --c-paper: 9 9 10;
   --c-ink: 237 237 234;
   --c-ink-soft: 154 154 150;
-  --c-ink-mute: 110 110 106;
+  /* muted words, still readable on the dark (4.5:1) */
+  --c-ink-mute: 128 128 124;
   --c-line: 36 36 38;
   /* V2's white sections: one step up from the page */
   --c-raise: 17 17 19;
@@ -281,4 +282,9 @@
 .pose-seg-fill {
   animation: pose-seg-fill 5s linear forwards;
   box-shadow: 0 0 6px rgba(182, 255, 59, 0.7);
+}
+
+/* the method's steps not reached yet stay readable (4.5:1) */
+.pose #methode .opacity-40 {
+  opacity: 0.8;
 }

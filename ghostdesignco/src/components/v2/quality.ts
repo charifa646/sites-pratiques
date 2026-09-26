@@ -2,12 +2,25 @@ import type { Tier } from "./HeroScene";
 
 let gl2: boolean | undefined;
 
-/** Is WebGL 2 there? Asked once for the page: the hero and the companion share the answer. */
+/**
+ * Is WebGL 2 there, on a real graphics chip? Asked once for the page: the
+ * hero and the companion share the answer. Without one (a software renderer:
+ * test machines such as PageSpeed's, some old computers), the 3D would be
+ * drawn by the processor frame after frame and freeze the page, so they keep
+ * the still pictures. ?3d=on forces the 3D anyway (QA).
+ */
 export function hasWebGL2() {
   if (gl2 !== undefined) return gl2;
+  const force = new URLSearchParams(window.location.search).get("3d") === "on";
   try {
-    const gl = document.createElement("canvas").getContext("webgl2");
-    gl2 = Boolean(gl);
+    const gl = document.createElement("canvas").getContext("webgl2", force ? undefined : { failIfMajorPerformanceCaveat: true });
+    let soft = false;
+    if (gl && !force) {
+      const info = gl.getExtension("WEBGL_debug_renderer_info");
+      const renderer = String(gl.getParameter(info ? info.UNMASKED_RENDERER_WEBGL : gl.RENDERER));
+      soft = /swiftshader|llvmpipe|softpipe|software/i.test(renderer);
+    }
+    gl2 = Boolean(gl) && !soft;
     gl?.getExtension("WEBGL_lose_context")?.loseContext();
   } catch {
     gl2 = false;
