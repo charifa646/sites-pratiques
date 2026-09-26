@@ -3,7 +3,8 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useId, useState, type FormEvent, type ReactNode } from "react";
 import { contact } from "@/lib/copy";
-import { composeBrief, isEmail, mailHref, whatsappTarget, type Brief } from "@/lib/brief";
+import { composeBrief, gmailHref, isEmail, mailHref, whatsappTarget, type Brief } from "@/lib/brief";
+import { site } from "@/lib/site";
 import { useIntent } from "@/components/ui/Providers";
 import { Arrow } from "@/components/ui/Button";
 import { EXPO, cx } from "@/components/ui/motion";
@@ -45,7 +46,9 @@ function Select({ id, value, onChange, options }: { id: string; value: string; o
 
 /**
  * Brief composer (no backend): the visitor fills a few fields, reviews the
- * generated message, then sends it from WhatsApp or their mail client.
+ * generated message, then sends it from WhatsApp or by e-mail: Gmail on
+ * computers (a mailto link often finds no mail app there), the mail app on
+ * phones, with the mail app and a copy of the message as the other ways.
  */
 export function BriefForm() {
   const uid = useId();
@@ -61,11 +64,14 @@ export function BriefForm() {
   const [step, setStep] = useState<"form" | "review">("form");
   const [message, setMessage] = useState("");
   const [copied, setCopied] = useState(false);
+  const [mailCopied, setMailCopied] = useState(false);
+  const [touch, setTouch] = useState(false);
   const wa = whatsappTarget(message);
 
-  // Business links cannot carry text: put the brief on the clipboard first.
-  const toWhatsApp = async () => {
-    if (wa.prefilled) return;
+  // phones and tablets open their mail app; computers get Gmail's window
+  useEffect(() => setTouch(window.matchMedia("(hover: none) and (pointer: coarse)").matches), []);
+
+  const copy = async () => {
     try {
       await navigator.clipboard.writeText(message);
     } catch {
@@ -73,7 +79,20 @@ export function BriefForm() {
       area?.select();
       document.execCommand?.("copy");
     }
+  };
+
+  // Business links cannot carry text: put the brief on the clipboard first.
+  const toWhatsApp = async () => {
+    if (wa.prefilled) return;
+    await copy();
+    setMailCopied(false);
     setCopied(true);
+  };
+
+  const copyForMail = async () => {
+    await copy();
+    setCopied(false);
+    setMailCopied(true);
   };
 
   // A service card picked earlier pre-selects the need.
@@ -237,20 +256,43 @@ export function BriefForm() {
                 <Arrow className="h-5 w-5 -rotate-45 transition-transform duration-500 ease-expo group-hover:rotate-0" />
               </a>
               <a
-                href={mailHref(message, brief.need)}
+                href={touch ? mailHref(message, brief.need) : gmailHref(message, brief.need)}
+                target={touch ? undefined : "_blank"}
+                rel={touch ? undefined : "noopener noreferrer"}
                 className="group flex items-center justify-between rounded-full border border-white/15 px-5 py-3.5 text-[15px] text-bone transition-colors duration-300 hover:border-acid/60 hover:text-acid"
               >
                 {contact.review.email}
                 <Arrow className="h-5 w-5 -rotate-45 transition-transform duration-500 ease-expo group-hover:rotate-0" />
               </a>
             </div>
-            <p role="status" className={cx("mt-3 text-[13px] leading-relaxed text-bone", !copied && "sr-only")}>
-              {copied ? contact.review.copied : ""}
+            {!touch && (
+              <p className="mt-3 text-[13px] leading-relaxed text-fog">
+                {contact.review.notGmail}{" "}
+                <a
+                  href={mailHref(message, brief.need)}
+                  className="text-bone underline decoration-white/30 underline-offset-4 transition-colors hover:decoration-acid"
+                >
+                  {contact.review.mailApp}
+                </a>{" "}
+                {contact.review.or}{" "}
+                <button
+                  type="button"
+                  onClick={copyForMail}
+                  className="text-bone underline decoration-white/30 underline-offset-4 transition-colors hover:decoration-acid"
+                >
+                  {contact.review.copyMail}
+                </button>
+                .
+              </p>
+            )}
+            <p role="status" className={cx("mt-3 text-[13px] leading-relaxed text-bone", !copied && !mailCopied && "sr-only")}>
+              {copied ? contact.review.copied : mailCopied ? `${contact.review.copiedMail} ${site.email}.` : ""}
             </p>
             <button
               type="button"
               onClick={() => {
                 setCopied(false);
+                setMailCopied(false);
                 setStep("form");
               }}
               className="mt-4 text-[13px] text-fog underline-offset-4 transition-colors hover:text-bone hover:underline"

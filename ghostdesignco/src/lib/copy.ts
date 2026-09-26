@@ -185,6 +185,12 @@ export const contact = {
     email: "Envoyer par e-mail",
     edit: "Modifier",
     copied: "Votre brief est copié : collez-le dans la conversation WhatsApp qui s'ouvre.",
+    // computers: the e-mail button opens Gmail; the other ways, under it
+    notGmail: "Pas sur Gmail ?",
+    mailApp: "Ouvrir votre messagerie",
+    or: "ou",
+    copyMail: "copier le message",
+    copiedMail: "Message copié : collez-le dans un e-mail à",
   },
   errors: {
     name: "Indiquez votre nom.",

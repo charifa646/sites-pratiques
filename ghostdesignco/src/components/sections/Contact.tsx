@@ -3,6 +3,7 @@
 import { contact } from "@/lib/copy";
 import { whatsappDirect } from "@/lib/brief";
 import { site } from "@/lib/site";
+import { MailLink } from "@/components/ui/MailLink";
 import { Mask, Rise } from "@/components/ui/motion";
 import { BriefForm } from "./BriefForm";
 
@@ -41,12 +42,9 @@ export function Contact() {
               WhatsApp
             </a>
             {site.email && (
-              <a
-                href={`mailto:${site.email}`}
-                className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.04] px-4 py-2.5 text-bone transition-colors duration-300 hover:border-acid/60 hover:text-acid"
-              >
+              <MailLink className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.04] px-4 py-2.5 text-bone transition-colors duration-300 hover:border-acid/60 hover:text-acid">
                 E-mail
-              </a>
+              </MailLink>
             )}
           </Rise>
         </div>

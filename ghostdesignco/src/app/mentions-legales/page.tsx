@@ -10,7 +10,6 @@ export const metadata: Metadata = {
 };
 
 // TODO(client): complete the publisher block (identity, status, SIRET, address, contact).
-const pending = "à compléter";
 
 function Block({ title, children }: { title: string; children: React.ReactNode }) {
   return (
@@ -38,11 +37,10 @@ export default function Legal() {
         </h1>
 
         <Block title="Éditeur du site">
-          <p>Nom ou raison sociale : {pending}</p>
-          <p>Statut juridique et numéro SIRET : {pending}</p>
-          <p>Adresse : {pending}</p>
+          <p>Ce site est édité par Charifa Ouedraogo, qui exerce sous le nom Ghostdesignco.</p>
+          <p>Adresse : Ouagadougou, Burkina Faso</p>
           <p>Contact : contactcharifa99@gmail.com · WhatsApp +226 68 74 61 26</p>
-          <p>Directeur ou directrice de la publication : {pending}</p>
+          <p>Responsable de la publication : Charifa Ouedraogo</p>
         </Block>
 
         <Block title="Hébergement">
@@ -69,6 +67,10 @@ export default function Legal() {
 
         <Block title="Cookies">
           <p>Ce site n&apos;utilise aucun cookie publicitaire ni de mesure d&apos;audience.</p>
+          <p>
+            Sa fréquentation est mesurée de façon anonyme avec Vercel Web Analytics, sans cookie et sans donnée permettant de vous
+            identifier.
+          </p>
           <p>
             Certains témoignages vidéo sont hébergés par une plateforme tierce (Wistia). Ils ne se chargent que lorsque vous appuyez
             sur lecture ; la plateforme peut alors déposer ses propres cookies, selon sa politique de confidentialité.

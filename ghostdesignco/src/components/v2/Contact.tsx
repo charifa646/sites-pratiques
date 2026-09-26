@@ -4,6 +4,7 @@ import { contact } from "@/lib/copy";
 import { whatsappDirect } from "@/lib/brief";
 import { site } from "@/lib/site";
 import { BriefForm } from "@/components/sections/BriefForm";
+import { MailLink } from "@/components/ui/MailLink";
 import { Rise } from "@/components/ui/motion";
 import { Label } from "./ui";
 
@@ -39,11 +40,7 @@ export function V2Contact({ n }: { n?: string }) {
                 </svg>
                 WhatsApp
               </a>
-              {site.email && (
-                <a href={`mailto:${site.email}`} className={pill}>
-                  E-mail
-                </a>
-              )}
+              {site.email && <MailLink className={pill}>E-mail</MailLink>}
             </Rise>
           </div>
           {/* the companion ends its trip peeking over the form */}

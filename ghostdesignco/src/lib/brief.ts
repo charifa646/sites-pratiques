@@ -43,4 +43,13 @@ export function mailHref(message: string, need: string) {
   return `mailto:${site.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(message)}`;
 }
 
+/**
+ * Gmail's new message window, filled in. On computers a mailto link often
+ * finds no mail app and does nothing; phones open their mail app with mailto.
+ */
+export function gmailHref(message: string, need: string) {
+  const subject = `Nouveau projet : ${need}`;
+  return `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(site.email)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(message)}`;
+}
+
 export const isEmail = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim());

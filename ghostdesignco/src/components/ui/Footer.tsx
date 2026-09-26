@@ -5,6 +5,7 @@ import { whatsappDirect } from "@/lib/brief";
 import { diveTo } from "@/lib/scroll";
 import { site } from "@/lib/site";
 import { Logo } from "./Logo";
+import { MailLink } from "./MailLink";
 
 const link = "text-[15px] text-fog transition-colors duration-300 hover:text-bone";
 
@@ -69,9 +70,7 @@ export function Footer({ home = true }: { home?: boolean }) {
                 </li>
                 {site.email && (
                   <li>
-                    <a href={`mailto:${site.email}`} className={link}>
-                      E-mail
-                    </a>
+                    <MailLink className={link}>E-mail</MailLink>
                   </li>
                 )}
               </ul>

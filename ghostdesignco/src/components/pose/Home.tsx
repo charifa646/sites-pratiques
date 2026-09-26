@@ -25,8 +25,9 @@ import { PoseProof } from "./Proof";
 import { Wave } from "./Wave";
 import { PoseWork } from "./Work";
 
-// the guide walks this page's sections, and sweeps through the pile of projects
-const STEPS = V2_STEPS.map((s) => (s.id === "realisations" ? { ...s, sweep: 8 } : s));
+// the guide walks this page's sections: it sweeps through the pile of projects,
+// and stops at the constat, which builds itself on its own here
+const STEPS = V2_STEPS.map((s) => (s.id === "realisations" ? { ...s, sweep: 8 } : s.id === "constat" ? { id: s.id, line: s.line } : s));
 
 // the glass ghost of the page, loaded after it: the text never waits for it
 const Companion = dynamic(() => import("@/components/v2/Companion"), { ssr: false });
@@ -109,7 +110,7 @@ export function PoseHome() {
         <Wave from={PAPER} fill={RAISE} crest />
         <Marquee />
         <PoseProof n={n("preuve")} />
-        <V2Build n={n("constat")} />
+        <V2Build n={n("constat")} autoplay />
         <Wave fill={RAISE} line />
         <V2Services n={n("services")} />
         <Wave fill={PAPER} flip line />

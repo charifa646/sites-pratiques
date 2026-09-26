@@ -1,8 +1,8 @@
 "use client";
 
-import { motion, useMotionValueEvent, useScroll, useTransform, type MotionValue } from "framer-motion";
+import { animate, motion, useInView, useMotionValue, useMotionValueEvent, useReducedMotion, useScroll, useTransform, type MotionValue } from "framer-motion";
 import Image from "next/image";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { problem } from "@/lib/copy";
 import { cx } from "@/components/ui/motion";
 import { Arrowhead, Bar, Photo, WindowBar } from "./Mockups";
@@ -172,18 +172,46 @@ function Screen({ p, stage }: { p: MotionValue<number>; stage: number }) {
   );
 }
 
-export function V2Build({ n }: { n?: string }) {
+/**
+ * `autoplay` (the site): no pinning, the page scrolls on as usual; the site
+ * builds itself on its own once the screen is in view (about 7 s), then
+ * stays built. V2 keeps the pinned section, driven by the scroll.
+ */
+export function V2Build({ n, autoplay = false }: { n?: string; autoplay?: boolean }) {
   const ref = useRef<HTMLElement>(null);
-  const { scrollYProgress: p } = useScroll({ target: ref, offset: ["start start", "end end"] });
+  const screen = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
+  const clock = useMotionValue(0);
+  const seen = useInView(screen, { amount: 0.55, once: true });
+  const reduce = useReducedMotion();
+  useEffect(() => {
+    if (!autoplay) return;
+    if (reduce) {
+      clock.set(1);
+      return;
+    }
+    if (!seen) return;
+    const run = animate(clock, 1, { duration: 7, ease: "linear", delay: 0.3 });
+    return () => run.stop();
+  }, [autoplay, seen, reduce, clock]);
+  const p = autoplay ? clock : scrollYProgress;
   const stage = useStage(p);
   const kicker = useTransform(p, [0.88, 0.96], [0, 1]);
   const kickerY = useTransform(p, [0.88, 0.96], [16, 0]);
   const fill = useTransform(p, [START[0], 0.9], ["0%", "100%"]);
 
   return (
-    <section ref={ref} id="constat" aria-labelledby="v2-build-title" className="relative h-[260vh] bg-paper lg:h-[300vh]">
+    <section
+      ref={ref}
+      id="constat"
+      aria-labelledby="v2-build-title"
+      className={cx("relative bg-paper", autoplay ? "py-20 lg:py-28" : "h-[260vh] lg:h-[300vh]")}
+    >
       {/* pinned under the header (not behind it with a padding: no gap above it on the way in) */}
-      <div className="v2-pin sticky flex items-center overflow-hidden" style={{ top: HEADER_H, height: `calc(100svh - ${HEADER_H}px)` }}>
+      <div
+        className={cx("flex items-center", !autoplay && "v2-pin sticky overflow-hidden")}
+        style={autoplay ? undefined : { top: HEADER_H, height: `calc(100svh - ${HEADER_H}px)` }}
+      >
         <div className="mx-auto grid w-full max-w-[1240px] items-center gap-6 px-5 sm:px-8 lg:grid-cols-[0.82fr_1.18fr] lg:gap-14">
           <div>
             <Label n={n}>{problem.eyebrow}</Label>
@@ -229,7 +257,16 @@ export function V2Build({ n }: { n?: string }) {
             </motion.p>
           </div>
 
-          <div data-ghost="r" data-ghost-x="0.12" data-ghost-y="0.18" data-ghost-m="tr" data-ghost-mx="-0.5" data-ghost-my="-0.12" data-ghost-mclip="top">
+          <div
+            ref={screen}
+            data-ghost="r"
+            data-ghost-x="0.12"
+            data-ghost-y="0.18"
+            data-ghost-m="tr"
+            data-ghost-mx="-0.5"
+            data-ghost-my="-0.12"
+            data-ghost-mclip="top"
+          >
             <Screen p={p} stage={stage} />
           </div>
         </div>
