@@ -112,7 +112,7 @@ export function PoseHome() {
         <PoseProof n={n("preuve")} />
         <V2Build n={n("constat")} autoplay />
         <Wave fill={RAISE} line />
-        <V2Services n={n("services")} />
+        <V2Services n={n("services")} cycle />
         <Wave fill={PAPER} flip line />
         <PoseIncluded n={n("compris")} />
         <PoseWork n={n("realisations")} />

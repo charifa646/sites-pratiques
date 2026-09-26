@@ -1,6 +1,6 @@
 "use client";
 
-import { AnimatePresence, motion, useMotionValueEvent, useScroll, useTransform } from "framer-motion";
+import { AnimatePresence, motion, useInView, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { cta, needForOffer, offer } from "@/lib/copy";
 import { scrollToY } from "@/lib/scroll";
@@ -42,15 +42,27 @@ export function OfferVisual({ id }: { id: string }) {
   );
 }
 
+/** How long each offer stays on screen when they take turns on their own. */
+const TURN_MS = 5000;
+
 /**
  * On large screens the section is pinned: scrolling walks through the three
  * services (the tabs follow, and a click scrolls to its service). Smaller
- * screens keep plain tabs.
+ * screens keep plain tabs; with `cycle` (the site) the offers take turns on
+ * their own there, a light filling the active tab, until the visitor picks
+ * one with a tab or a swipe.
  */
-export function V2Services({ n }: { n?: string }) {
+export function V2Services({ n, cycle = false }: { n?: string; cycle?: boolean }) {
   const ref = useRef<HTMLElement>(null);
+  const panel = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
   const [pinned, setPinned] = useState(false);
+  const [taken, setTaken] = useState(false);
+  const [holding, setHolding] = useState(false);
+  const panelSeen = useInView(panel, { amount: 0.35 });
+  const reduce = useReducedMotion();
+  const turning = cycle && !pinned && !taken && !holding && !reduce && panelSeen;
+  const touch0 = useRef<{ x: number; y: number } | null>(null);
   const { setNeed } = useIntent();
   const tabs = useRef<(HTMLButtonElement | null)[]>([]);
   const item = offer.items[active];
@@ -66,6 +78,13 @@ export function V2Services({ n }: { n?: string }) {
     mq.addEventListener("change", on);
     return () => mq.removeEventListener("change", on);
   }, []);
+
+  // the offers take turns (see `cycle`)
+  useEffect(() => {
+    if (!turning) return;
+    const t = window.setTimeout(() => setActive((a) => (a + 1) % count), TURN_MS);
+    return () => window.clearTimeout(t);
+  }, [turning, active, count]);
 
   useMotionValueEvent(scrollYProgress, "change", (v) => {
     if (!pinned) return;
@@ -91,6 +110,7 @@ export function V2Services({ n }: { n?: string }) {
   useEffect(() => {
     const on = (e: Event) => {
       const { i, scroll } = (e as CustomEvent<{ i: number; scroll: boolean }>).detail;
+      setTaken(true);
       if (!scroll) setActive(i);
       else if (window.matchMedia("(min-width: 1024px) and (min-height: 640px)").matches) pick.current(i);
       else {
@@ -109,6 +129,7 @@ export function V2Services({ n }: { n?: string }) {
       e.key === "ArrowRight" ? (active === last ? 0 : active + 1) : e.key === "ArrowLeft" ? (active === 0 ? last : active - 1) : e.key === "Home" ? 0 : e.key === "End" ? last : null;
     if (next === null) return;
     e.preventDefault();
+    setTaken(true);
     select(next);
     tabs.current[next]?.focus();
   };
@@ -148,16 +169,31 @@ export function V2Services({ n }: { n?: string }) {
                   aria-selected={i === active}
                   aria-controls="v2-service-panel"
                   tabIndex={i === active ? 0 : -1}
-                  onClick={() => select(i)}
+                  onClick={() => {
+                    setTaken(true);
+                    select(i);
+                  }}
                   onKeyDown={onKey}
                   className={cx(
-                    "whitespace-nowrap rounded-full px-1 py-2.5 text-[12.5px] font-medium transition-[background-color,color,box-shadow] duration-300 sm:px-2 sm:text-[14px]",
+                    "relative whitespace-nowrap rounded-full px-1 py-2.5 text-[12.5px] font-medium transition-[background-color,color,box-shadow] duration-300 sm:px-2 sm:text-[14px]",
                     i === active
                       ? "bg-white text-ink shadow-[0_1px_2px_rgba(12,12,13,0.08),0_6px_16px_-8px_rgba(12,12,13,0.25)]"
                       : "text-ink-soft hover:text-ink",
                   )}
                 >
                   {it.title}
+                  {/* the site: the active tab glows, and a light fills it while the offers take turns */}
+                  {cycle && i === active && (
+                    <span
+                      aria-hidden
+                      className="pointer-events-none absolute inset-0 rounded-full shadow-[0_0_0_1px_rgba(182,255,59,0.35),0_0_22px_-5px_rgba(182,255,59,0.6)]"
+                    />
+                  )}
+                  {turning && i === active && (
+                    <span aria-hidden className="pointer-events-none absolute inset-x-4 bottom-[5px] h-[2px] overflow-hidden rounded-full bg-white/10">
+                      <span key={active} className="pose-tab-fill block h-full w-full bg-acid" style={{ animationDuration: `${TURN_MS}ms` }} />
+                    </span>
+                  )}
                 </button>
               ))}
               {pinned && (
@@ -169,8 +205,26 @@ export function V2Services({ n }: { n?: string }) {
           </Rise>
 
           <div
+            ref={panel}
             id="v2-service-panel"
             role="tabpanel"
+            // the site, smaller screens: a swipe goes to the next or previous offer
+            onTouchStart={(e) => {
+              if (!cycle || pinned) return;
+              setHolding(true);
+              touch0.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+            }}
+            onTouchEnd={(e) => {
+              setHolding(false);
+              const s = touch0.current;
+              touch0.current = null;
+              if (!cycle || pinned || !s) return;
+              const dx = e.changedTouches[0].clientX - s.x;
+              const dy = e.changedTouches[0].clientY - s.y;
+              if (Math.abs(dx) < 48 || Math.abs(dx) < Math.abs(dy) * 1.4) return;
+              setTaken(true);
+              setActive((a) => (a + (dx < 0 ? 1 : count - 1)) % count);
+            }}
             aria-labelledby={`v2-tab-${item.id}`}
             data-ghost="tr"
             data-ghost-x="-0.42"

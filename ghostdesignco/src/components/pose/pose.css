@@ -254,3 +254,18 @@
 .pose .v2-still-mirror {
   display: none;
 }
+
+/* Services, smaller screens: the light that fills the active tab while the offers take turns */
+@keyframes pose-tab-fill {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+.pose-tab-fill {
+  transform-origin: left;
+  animation: pose-tab-fill 5s linear forwards;
+  box-shadow: 0 0 8px rgba(182, 255, 59, 0.8);
+}
