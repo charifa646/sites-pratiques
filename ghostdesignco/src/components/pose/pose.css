@@ -288,3 +288,40 @@
 .pose #methode .opacity-40 {
   opacity: 0.8;
 }
+
+/*
+ * Les graisses de l'accueil. Les titres passent du Semibold (600) au Medium (500) et leur interlettrage
+ * s'ouvre un peu : à -0.04em, les mots se collaient entre eux. Les mots en italique serif deviennent du
+ * Clash Display droit, avec la même couleur. Tout reste dans .pose : /v1 et /v2 gardent leurs réglages,
+ * et le nom « Ghostdesignco » (.wordmark) garde son Semibold.
+ */
+.pose .font-display.font-semibold:not(.wordmark) {
+  font-weight: 500;
+}
+.pose .font-display[class*="tracking-[-0.045em]"] {
+  letter-spacing: -0.03em;
+}
+.pose .font-display[class*="tracking-[-0.04em]"] {
+  letter-spacing: -0.028em;
+}
+.pose .font-display[class*="tracking-[-0.06em]"] {
+  letter-spacing: -0.045em;
+}
+.pose .font-display[class*="tracking-[-0.05em]"] {
+  letter-spacing: -0.04em;
+}
+.pose .font-display[class*="tracking-[-0.03em]"]:not(.wordmark) {
+  letter-spacing: -0.02em;
+}
+.pose .font-serif {
+  font-family: var(--font-clash), var(--font-dm), sans-serif;
+  font-weight: 500;
+  letter-spacing: inherit;
+}
+.pose .italic {
+  font-style: normal;
+}
+/* the grey second lines (« en quatre chiffres. », « Nous, du site. ») were condensed serif: in the wider upright face they get a little smaller, to stay on one line */
+.pose .font-serif.block {
+  font-size: 0.84em;
+}

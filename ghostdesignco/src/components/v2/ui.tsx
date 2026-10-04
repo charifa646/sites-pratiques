@@ -23,7 +23,7 @@ export function V2Logo() {
       <span className="grid h-8 w-8 place-items-center rounded-[10px] bg-ink">
         <GhostMark className="h-[18px] w-auto text-acid" />
       </span>
-      <span className="font-display text-[17px] font-semibold tracking-[-0.02em] text-ink">
+      <span className="wordmark font-display text-[17px] font-semibold tracking-[-0.02em] text-ink">
         Ghost<span className="font-medium text-ink-mute">design</span>co
       </span>
     </span>

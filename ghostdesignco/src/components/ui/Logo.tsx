@@ -16,7 +16,7 @@ export function Logo({ className }: { className?: string }) {
   return (
     <span className={`inline-flex items-center gap-2.5 ${className ?? ""}`}>
       <GhostMark className="h-[1.35em] w-auto text-acid drop-shadow-[0_0_10px_rgba(182,255,59,0.55)]" />
-      <span className="font-display text-[1.05em] font-semibold tracking-[-0.02em] text-bone">
+      <span className="wordmark font-display text-[1.05em] font-semibold tracking-[-0.02em] text-bone">
         Ghost<span className="font-medium text-fog">design</span>co
       </span>
       <span className="sr-only">{brand.name}</span>

@@ -32,8 +32,8 @@ export default function Legal() {
         </Link>
       </header>
       <main className="mx-auto max-w-[860px] px-5 pb-24 pt-10 sm:px-10">
-        <h1 className="font-display text-[clamp(2.4rem,6vw,4.4rem)] font-semibold leading-[0.98] tracking-[-0.04em] text-bone">
-          Mentions légales <span className="font-serif font-normal italic text-acid">& confidentialité</span>
+        <h1 className="font-display text-[clamp(2.4rem,6vw,4.4rem)] font-medium leading-[0.98] tracking-[-0.028em] text-bone">
+          Mentions légales <span className="text-acid">& confidentialité</span>
         </h1>
 
         <Block title="Éditeur du site">
